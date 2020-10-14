@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper_Annotation          Luebeck            --
 -- Implementation                                  Summer, 2011       --
 --                                                                    --
---                                Last revision :  21:57 12 Jan 2020  --
+--                                Last revision :  19:08 30 Jan 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -931,37 +931,41 @@ package body Gtk.Layered.Graph_Paper_Annotation is
          end if;
          if Layer.Updated then -- Renewing texts
             declare
-               V, V2  : GDouble;
-               Suffix : constant String := +Layer.Suffix;
+               V, V1, V2 : GDouble;
+               Suffix    : constant String := +Layer.Suffix;
             begin
                if Step > 0.0 then
                   case Layer.Location.Orientation is
                      when Horizontal =>
+                        V1 := Layer.T1;
                         V2 := Layer.T2;
                      when Vertical =>
+                        V1 := Layer.V1;
                         V2 := Layer.V2;
                   end case;
                   for Index in Natural'Range loop
                      V := V0 + Step * GDouble (Index);
                      exit when V > V2;
-                     if Layer.Renderer = null then
-                        Layer.Set_Text
-                        (  Index + 1,
-                           (  Graph_Paper_Annotation_Layer'Class
-                              (  Layer
-                              ) .Render (V, Layer.Raster)
-                           &  Suffix
-                        )  );
-                     else
-                        Layer.Set_Text
-                        (  Index + 1,
-                           (  Layer.Renderer
-                              (  Layer,
-                                 V,
-                                 Layer.Raster
-                              )
-                           &  Suffix
-                        )  );
+                     if V >= V1 then
+                        if Layer.Renderer = null then
+                           Layer.Set_Text
+                           (  Index + 1,
+                              (  Graph_Paper_Annotation_Layer'Class
+                                 (  Layer
+                                 ) .Render (V, Layer.Raster)
+                              &  Suffix
+                           )  );
+                        else
+                           Layer.Set_Text
+                           (  Index + 1,
+                              (  Layer.Renderer
+                                 (  Layer,
+                                    V,
+                                    Layer.Raster
+                                 )
+                              &  Suffix
+                           )  );
+                        end if;
                      end if;
                   end loop;
                end if;
