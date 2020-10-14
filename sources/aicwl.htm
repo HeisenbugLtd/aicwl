@@ -5,14 +5,14 @@
 <TITLE>Ada industrial control widget library</TITLE>
 <meta http-equiv="Content-Style-Type" content="text/css">
 <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
-<META name="keywords" content="Cairo, Gtk, Gtk+, gtkada, cairoada, Ada, Ada 95, Ada programming, gauge, clock, speedometer, widget, oscillograph, oscilloscope, graph paper, real-time graph, waveform, plot, thermometer">
+<META name="keywords" content="Cairo, Gtk, Gtk+, gtkada, cairoada, Ada, Ada 95, Ada programming, gauge, clock, speedometer, widget, oscillograph, oscilloscope, gtk oscilloscope, cairo oscilloscope, graph paper, real-time graph, waveform, plot, thermometer">
 <META name="Author" content="Dmitry Kazakov">
 <META name="Description" content="Ada industrial control widget library">
 </HEAD>
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>ADA INDUSTRIAL CONTROL WIDGET LIBRARY</b></font><BIG><br>
-<EM>version 3.13</EM></BIG><br>
+<EM>version 3.14</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -92,12 +92,12 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">
-		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_13.tgz">aicwl_3_13.tgz</a> (<b>tar</b> +
+		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_14.tgz">aicwl_3_14.tgz</a> (<b>tar</b> +
 		<b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td>&nbsp;</td>
 		<td align="center">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_13.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_14.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td align="center">&nbsp;</td>
 	</tr>
 	</table>
@@ -5923,6 +5923,12 @@ access </font>Gtk_Adjustment_Record'Class := <font color="#0000FF">
 null</font>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mode</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : Interpolation_Mode := Linear;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Left</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
+False;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Right</b>&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+:= False;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Opacity</b>&nbsp;&nbsp; : Fill_Opacity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :=
 <font color="#800000">1.0</font>;<br>
@@ -5958,6 +5964,12 @@ access </font>Gtk_Adjustment_Record'Class := <font color="#0000FF">
 null</font>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mode</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : Interpolation_Mode := Linear;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Left</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
+False;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Right</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
+False;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Opacity</b>&nbsp;&nbsp; 
 : Fill_Opacity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := <font color="#800000">1.0</font>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Scaled</b>&nbsp;&nbsp;&nbsp; 
@@ -5983,7 +5995,10 @@ is the object controlling the vertical axis. When this parameter is
 <font color="#0000FF">null</font> the waveform must be scaled using explicit 
 calls to the procedure <a href="#Gtk.Layered.Waveform.Amplify">Amplify</a>. The 
 parameter <b>Mode</b> specified the interpolation mode as defined by the type <a href="#Gtk.Layered.Interpolation_Mode">
-Interpolation_Mode</a>. When the parameter <b>Scaled</b> is <i>
+Interpolation_Mode</a>. The parameters <b>Left</b> and <b>Right</b> when set <i>
+<font color="#800000">true</font></i> allow extrapolation to the left and to the 
+right correspondingly. The extrapolation uses the first or last sampled value 
+accordingly. When the parameter <b>Scaled</b> is <i>
 <font color="#800000">true</font></i> the layer is scaled to fit the parent 
 widget. The scaling s performed as follows:</p>
 <ul>
@@ -6061,6 +6076,14 @@ modes are defined by the type <a href="#Gtk.Layered.Interpolation_Mode">
 Interpolation_Mode</a> declared in the package <a href="#Gtk.Layered.Waveform">
 Gtk.Layered</a>.</p>
 <blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Layered.Waveform.Get_Left_Extrapolation_Mode"></a>function</font> 
+Get_Left_Extrapolation_Mode (<b>Layer</b> 
+: Waveform_Layer)<br>
+&nbsp;&nbsp; <font color="#0000FF">return</font> Boolean;</tt></p></blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the 
+waveform extrapolates data left of the first sampled value.</p>
+<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Line (<b>Layer</b> : 
 Waveform_Layer) <font color="#0000FF">return</font> Line_Parameters;</tt></p></blockquote>
 <p>This function returns the <a href="#Gtk.Layered.Line_Parameters">line 
@@ -6097,6 +6120,14 @@ around <b>X</b>.</p>
 : Waveform_Layer)<br>
 <font color="#0000FF">&nbsp;&nbsp; return</font> Waveform_Drawing_Method;</tt></p></blockquote>
 <p>This function returns the preferred rendering method used for the waveform.</p>
+<blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Layered.Waveform.Get_Right_Extrapolation_Mode"></a>function</font> 
+Get_Right_Extrapolation_Mode (<b>Layer</b> 
+: Waveform_Layer)<br>
+&nbsp;&nbsp; <font color="#0000FF">return</font> Boolean;</tt></p></blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the 
+waveform extrapolates data right of the first sampled value.</p>
 <blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Source<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b> : 
@@ -6172,6 +6203,19 @@ Amplifier</b> : <font color="#0000FF">access</font> Gtk_Adjustment_Record'Class
 Color</b> : Gdk_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure changes the waveform line color to <b>Color</b>.</p>
+<blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Layered.Waveform.Set_Extrapolation_Mode"></a>procedure</font> Set_Extrapolation_Mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b> :
+<font color="#0000FF">in out</font> Waveform_Layer;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Left</b>&nbsp; 
+: Boolean;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Right</b> : Boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure sets the extrapolation mode. The parameters <b>Left</b> and <b>
+Right</b> determine the extrapolation to the left and to the right 
+correspondingly.</p>
 <blockquote>
 <p><tt><font color="#0000FF">procedure</font> Set_Interpolation_Mode<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b> :
@@ -6560,7 +6604,7 @@ axis rasters to place its texts accordingly.</p>
 <p>The procedure is called when <b>Annotation</b> is detached from a graph paper 
 layer.</p>
 <blockquote>
-<p><tt><font color="#0000FF">function</font> Render<br>
+<p><tt><font color="#0000FF"><a name="Gtk.Layered.Graph_Paper.Render"></a>function</font> Render<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp; : 
 Graph_Paper_Annotation_Interface;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Value</b>&nbsp; 
@@ -6927,6 +6971,16 @@ Graph_Paper_Annotation_Layer)<br>
 <font color="#0000FF">&nbsp;&nbsp; return</font> GDouble;</tt></p></blockquote>
 <p>This function returns the annotation text stretch.</p>
 <blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Layered.Graph_Paper_Annotation.Get_Suffix"></a>function</font> 
+Get_Suffix (<b>Layer</b> : 
+Graph_Paper_Annotation_Layer)<br>
+<font color="#0000FF">&nbsp;&nbsp; return</font> UTF8_String;</tt></p></blockquote>
+<p>This function returns the text added to the end all annotation text created 
+by the primitive operation
+<a href="#Gtk.Layered.Graph_Paper.Render">Render</a> or by the function set by&nbsp;<a href="#Gtk.Layered.Graph_Paper_Annotation.Set_Renderer">Set_Renderer</a>. 
+By default the suffix is empty. It can be set using the procedure Set_Suffix.</p>
+<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Superscript (<b>Layer</b> : 
 Graph_Paper_Annotation_Layer)<br>
 <font color="#0000FF">&nbsp;&nbsp; return</font> GDouble;</tt></p></blockquote>
@@ -6937,6 +6991,16 @@ superscript is allowed when formatting numbers.</p>
 Graph_Paper_Annotation_Layer)<br>
 <font color="#0000FF">&nbsp;&nbsp; return</font> GDouble;</tt></p></blockquote>
 <p>This function returns the annotation text angle.</p>
+<blockquote>
+<p><tt><font color="#0000FF">function</font> Image<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b> : 
+Graph_Paper_Annotation_Layer;<br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value</b> 
+: GDouble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> UTF8_String;</tt></p></blockquote>
+<p>This function returns the text representing <b>Value</b> in the format the 
+annotation layer would use to render a tick's value.</p>
 <blockquote>
 <p><tt><font color="#0000FF">procedure</font> Set<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">in out</font> Graph_Paper_Annotation_Layer;<br>
@@ -6979,6 +7043,43 @@ Add_Graph_Paper_Annotation</a>.</p>
 Enlarged</b> : Boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure sets the annotation texts enlargement mode.</p>
+<blockquote>
+<p><tt><font color="#0000FF">type</font> Renderer_Function <font color="#0000FF">
+is access function</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp; : 
+Graph_Paper_Annotation_Layer'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Value</b>&nbsp; : GDouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Raster</b> : 
+Gtk.Layered.Waveform.Rasters.Scale<br>
+&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">return</font> 
+UTF8_String;<br>
+<font color="#0000FF">
+<a name="Gtk.Layered.Graph_Paper_Annotation.Set_Renderer"></a>procedure</font> 
+Set_Renderer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">in out</font> Graph_Paper_Annotation_Layer;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Renderer</b> : Renderer_Function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure sets the custom annotation texts rendering function. When set 
+not-null it overrides the primitive operation
+<a href="#Gtk.Layered.Graph_Paper.Render">Render</a>. Otherwise the function set 
+is used instead. The function's parameters are similar to ones of
+<a href="#Gtk.Layered.Graph_Paper.Render">Render</a>.</p>
+<blockquote>
+<p>
+<font color="#0000FF">
+<tt>
+<a name="Gtk.Layered.Graph_Paper_Annotation.Set_Suffix"></a></tt></font> 
+<tt><font color="#0000FF">procedure</font> Set_Suffix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp; 
+: <font color="#0000FF">in out</font> Graph_Paper_Annotation_Layer;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Suffix</b> : UTF8_String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure sets the text to add to the annotation texts created by the 
+primitive operation
+<a href="#Gtk.Layered.Graph_Paper.Render">Render</a> or else by the function set by&nbsp;<a href="#Gtk.Layered.Graph_Paper_Annotation.Set_Renderer">Set_Renderer</a>.</p>
 <h4><a name="9.6.3"></a>9.6.3. Time annotation implementation</h4>
 <p>When the horizontal axis is time its values require rendering in a human 
 readable format. The package
@@ -10651,8 +10752,12 @@ access all</font> Gtk_Oscilloscope_Record'Class;</tt></p></blockquote>
 : Gdk_Color; ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mode</b>&nbsp;&nbsp;&nbsp; 
 : Interpolation_Mode := Linear;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Left</b>&nbsp;&nbsp;&nbsp; 
+: Boolean := False;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Right</b>&nbsp;&nbsp; 
+: Boolean := False;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Name</b>&nbsp;&nbsp;&nbsp; 
-: String := &quot;&quot;;<br>
+: String&nbsp; := &quot;&quot;;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type := Lower;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Buffer</b>&nbsp; 
@@ -10663,7 +10768,11 @@ return</font> Channel_Number;</tt></p></blockquote>
 is the group the channel belongs to. When omitted, a new group is created for the 
 channel. The parameter <b>Color</b> is the color used for the channel's 
 waveform. When omitted a color is selected automatically. <b>Mode</b> is the 
-interpolation mode of the waveform. Linear interpolation is used by default. <b>Name</b> is the channel name. When empty 
+interpolation mode of the waveform. Linear interpolation is used by default.&nbsp; 
+The parameters <b>Left</b> and <b>Right</b> when set <i><font color="#800000">
+true</font></i> allow extrapolation to the left and to the right 
+correspondingly. The extrapolation uses the first or last sampled value 
+accordingly. <b>Name</b> is the channel name. When empty 
 the channel name is generated using the channel number. <b>Sweeper</b> specifies the
 <a href="#Gtk.Oscilloscope.Sweeper_Type">time scale and the sweeper</a> 
 used to with the waveform. The parameter <b>Buffer</b> is the
@@ -10696,16 +10805,19 @@ Add_Channel</a>, except for the parameter <b>Measured</b> which indicates which
 source</a> to render.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Add_Group<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
 <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Name</b>&nbsp;&nbsp; 
-: String := &quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Name</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: String := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
+: Gtk_Waveform_Amplifier := <font color="#0000FF">null</font><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Group_Number;</tt></p></blockquote>
 <p>This function creates a new, initially empty, group of channels. The 
 parameter <b>Name</b> is the group's name. When empty, the name is generated out 
-for the group number. The function returns the number of the created group. 
-Constraint_Error is propagated when there is too many groups. The maximal number 
+for the group number. The parameter <b>Amplifier</b> specifies the amplifier 
+object to use with the group. If <font color="#0000FF">null</font> the amplifier 
+is created automatically. The function returns the number of the created group. Constraint_Error is propagated when there is too many groups. The maximal number 
 of groups is equal to the maximal number of channels.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Add_Shadow_Channel<br>
@@ -10875,7 +10987,8 @@ or when <b>Group</b> does not specify an existing group.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Box"></a>function</font> Get_Box<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Cairo_Box;</tt></p></blockquote>
 <p>This function returns the box where waveforms are drawn. The box coordinates 
@@ -10884,7 +10997,8 @@ scales.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Buffer"></a>function</font> Get_Buffer<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -10898,7 +11012,8 @@ channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscillograph.Get_Channel_List"></a>function</font> Get_Channel_List<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Gtk_List_Store;</tt></p></blockquote>
 <p>This function returns the
@@ -10911,13 +11026,16 @@ columns containing:</p>
 	<li>The visibility status as GType_Boolean;</li>
 	<li>The interpolation mode as GType_Int (nterpolation_Mode'Pos);</li>
 	<li>The current value as GType_String. The value is set upon selection and 
-	has the meaning depending on the operation chosen.</li>
+	has the meaning depending on the operation chosen;</li>
+	<li>The status of the extrapolation to the left as GType_Boolean;</li>
+	<li>The status of the extrapolation to the right as GType_Boolean.</li>
 </ul>
 <p>The list store shall not be modified directly. </p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -10928,15 +11046,27 @@ channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Default_Face<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp; <b>Widget</b>&nbsp;: <font color="#0000FF">not null access</font> 
-<font color="#0000FF">constant</font> Gtk_Oscilloscope_Record<br>
+<font color="#0000FF">constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Pango_Cairo_Font;</tt></p></blockquote>
 <p>This function gets the face of the font to use by default when an annotation 
 is added to an axis.</p>
 	<blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Oscilloscope.Get_Enabled_Dropdown_Items"></a>function</font> Get_Enabled_Dropdown_Items<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp; <b>Widget</b>&nbsp;: <font color="#0000FF">not null access 
+constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">return</font> Dropdown_Items;</tt></p></blockquote>
+<p>This returns the menu item enabled to show in the drop-down menu. The items 
+list is an or-combination of <a href="#Gtk.Oscilloscope.Dropdown_Items">Dropdown_Items</a> 
+constants.</p>
+	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_From<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type := Lower<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -10947,7 +11077,8 @@ is either Ada.Real_Time.Time or Ada.Calendar.Time.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Frozen<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type := Lower<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -10958,7 +11089,8 @@ is frozen the waveforms associated with the sweeper do not move.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Get_Grid_Colors<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Major_Color</b> : <font color="#0000FF">out</font> Gdk_Color;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
@@ -10969,14 +11101,16 @@ minor ticks of the scale when the graph paper is shown.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Group<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Group_Number;<br>
 <font color="#0000FF">function</font> Get_Group<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -10989,7 +11123,8 @@ channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Group_List<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Gtk_List_Store;</tt></p></blockquote>
 <p>This function returns the
@@ -11000,7 +11135,8 @@ widget. </p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Groups_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Group_Count;</tt></p></blockquote>
 <p>This function returns the
@@ -11008,7 +11144,8 @@ number of groups.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Interpolation_Mode<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11017,10 +11154,27 @@ return</font> Interpolation_Mode;</tt></p></blockquote>
 <a href="#Gtk.Layered.Interpolation_Mode">interpolation mode</a> of the channel. Constraint_Error 
 is propagated when <b>Channel</b> does not specify an existing 
 channel.</p>
+<blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Oscilloscope.Get_Left_Extrapolation_Mode"></a>function</font> 
+Get_Left_Extrapolation_Mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
+: Channel_Number<br>
+&nbsp;&nbsp; <font color="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; return</font> 
+Boolean;</tt></p></blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the 
+waveform extrapolates data left of the first sampled value. Constraint_Error 
+is propagated when <b>Channel</b> does not specify an existing 
+channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Manual_Sweep<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Boolean;</tt></p></blockquote>
 <p>This function returns <i><font color="#800000">true</font></i> if the user 
@@ -11028,7 +11182,8 @@ can freeze/release the widget sweeper using the dropdown menu.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Name<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11039,7 +11194,8 @@ channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Name<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Group</b>&nbsp; 
 : Group_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11050,7 +11206,8 @@ existing group.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Offset<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11060,13 +11217,52 @@ with <b>Sweeper</b> appear at the oscilloscope's right margin.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Page_Span<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Duration;</tt></p></blockquote>
 <p>This function returns the duration between the oscilloscope's right and left 
 margin for the scale indicated by the parameter <b>Sweeper</b>.</p>
+	<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Redo_Stub"></a>function</font> Get_Redo_Stub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;:
+<font color="#0000FF">not null access </font>Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Depth</b>&nbsp; 
+: Positive := <font color="#800000">1</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean;</tt></p></blockquote>
+<p>This function returns the name of a stub on the redo stack. The topmost stub 
+has the depth 1. End_Error is propagated when there is no such stub.</p>
+	<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Release_To_Latest">
+</a>function</font> Get_Release_To_Latest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean;</tt></p></blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> the sweeper 
+when released by the user from frozen state is also moved to the latest time. By 
+default the sweeper position is not changed (the function returns
+<font color="#800000"><i>false</i></font>). See also Set_Release_To_Latest.</p>
+<blockquote>
+<p><tt><font color="#0000FF">
+<a name="Gtk.Oscilloscope.Get_Right_Extrapolation_Mode"></a>function</font> 
+Get_Right_Extrapolation_Mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
+<font color="#0000FF">not null access constant</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
+: Channel_Number<br>
+&nbsp;&nbsp; <font color="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; return</font> 
+Boolean;</tt></p></blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the 
+waveform extrapolates data right of the last sampled value. Constraint_Error 
+is propagated when <b>Channel</b> does not specify an existing 
+channel.</p>
 <blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Selection_Mode<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
@@ -11124,7 +11320,9 @@ object </a>of the scale specified by the parameter <b>Sweeper</b>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Sweeper<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access</font> 
+<font color="#0000FF">constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11136,7 +11334,9 @@ existing channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time"></a>function</font> Get_Time<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access</font> 
+<font color="#0000FF">constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ <b>X</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -11150,7 +11350,8 @@ of the widget.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Axis"></a>function</font> Get_Time_Axis<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11161,7 +11362,8 @@ parameter <b>Sweeper</b>. When the axis is visible, the result is <i>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Axis_Annotation"></a>function</font> 
 Get_Time_Axis_Annotation<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11175,7 +11377,8 @@ annotation is used.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Axis_Height">
 </a>function</font> Get_Time_Axis_Height<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11184,7 +11387,8 @@ return</font> Natural;</tt></p></blockquote>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Grid"></a>function</font> Get_Time_Grid<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11196,7 +11400,8 @@ lines drawn the scale's ticks. When the grid is visible, the result is <i>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Scale"></a>function</font> Get_Time_Scale<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font> &nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11207,7 +11412,8 @@ Set_Time_Scale</a>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Text_Angle"></a>function</font> Get_Time_Text_Angle<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11217,7 +11423,8 @@ and the texts at the time scale specified by the parameter <b>Sweeper</b>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Text_Color"></a>function</font> Get_Time_Text_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11227,7 +11434,8 @@ the parameter <b>Sweeper</b>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Text_Face"></a>function</font> Get_Time_Text_Face<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11238,7 +11446,8 @@ specified by the parameter <b>Sweeper</b>.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Text_Height">
 </a>function</font> Get_Time_Text_Height<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11249,7 +11458,8 @@ the parameter <b>Sweeper</b>.</p>
 <p><tt><font color="#0000FF">
 <a name="Gtk.Oscilloscope.Get_Time_Text_Horizontal_Alignment"></a>function</font> Get_Time_Text_Horizontal_Alignment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11260,7 +11470,8 @@ specified by the parameter <b>Sweeper</b>.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Text_Stretch">
 </a>function</font> Get_Time_Text_Stretch<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11271,7 +11482,8 @@ the parameter <b>Sweeper</b>.</p>
 <p><tt><font color="#0000FF">
 <a name="Gtk.Oscilloscope.Get_Time_Text_Vertical_Alignment"></a>function</font> Get_Time_Text_Vertical_Alignment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11281,16 +11493,32 @@ specified by the parameter <b>Sweeper</b>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Tooltip"></a>function</font> Get_Time_Tooltip<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> Boolean;</tt></p></blockquote>
 <p>The tooltip when the mouse cursor hovers a waveform indicates the 
 corresponding channel value under the cursor. When the value is accompanied by 
 the corresponding time, this function returns <i><font color="#800000">true</font></i>.</p>
+<blockquote>
+	<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Time_Tooltip_Suffix"></a>function</font> Get_Time_Tooltip_Suffix<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; 
+	<b>Widget</b>&nbsp; :
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<b>Channel</b> 
+: Channel_Number<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; 
+	<font color="#0000FF">return</font> UTF8_String;</tt></p>
+</blockquote>
+<p>This function returns the suffix added to the time value shown in the tooltip 
+when the mouse is hovering over a channel. Constraint_Error is propagated when 
+there is no channel with the number <b>Channel</b>. The suffix text is set by 
+the procedure <a href="#Gtk.Oscilloscope.Set_Time_Tooltip_Suffix">
+Set_Time_Tooltip_Suffix</a>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_To"></a>function</font> Get_To<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type := Lower<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11298,10 +11526,38 @@ return</font> [Ada.Calendar.]Time;</tt></p></blockquote>
 <p>These functions return the
 last time of the sweeper specified by the parameter <b>Sweeper</b>. The result 
 is either Ada.Real_Time.Time or Ada.Calendar.Time.</p>
+<blockquote>
+	<p><tt><font color="#0000FF">
+	<a name="Gtk.Oscilloscope.Get_Tooltip_Annotation"></a>function</font> Get_Tooltip_Annotation<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; 
+	<b>Widget</b>&nbsp; :
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<b>Channel</b> 
+: Channel_Number<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; 
+	<font color="#0000FF">return</font> UTF8_String;</tt></p>
+</blockquote>
+<p>This function returns the text introducing the channel specified by <b>
+Channel</b> in the tooltip text shown when the mouse hovers over the channel 
+curve. Constraint_Error is propagated when 
+there is no channel with the number <b>Channel</b>. The text is set by the 
+procedure <a href="#Gtk.Oscilloscope.Set_Tooltip_Annotation">
+Set_Tooltip_Annotation</a>.</p>
+	<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Undo_Stub"></a>function</font> Get_Undo_Stub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;:
+<font color="#0000FF">not null access </font>Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Depth</b>&nbsp; 
+: Positive := <font color="#800000">1</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean;</tt></p></blockquote>
+<p>This function returns the name of a stub on the undo stack. The topmost stub 
+has the depth 1. End_Error is propagated when there is no such stub. Subs are 
+pushed using the procedure <a href="#Gtk.Oscilloscope.Push_Stub">Push_Stub</a>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Value"></a>function</font> Get_Value<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access</font> <font color="#0000FF">constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Y</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -11310,7 +11566,8 @@ is either Ada.Real_Time.Time or Ada.Calendar.Time.</p>
 return</font> GDouble;<br>
 <font color="#0000FF">function</font> Get_Value<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access</font> <font color="#0000FF">constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Group</b>&nbsp; 
 : Group_Number;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Y </b>&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -11324,7 +11581,8 @@ or when <b>Group</b> does not specify an existing group.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Axis"></a>function</font> Get_Values_Axis<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11336,7 +11594,8 @@ specified by the parameter <b>Amplifier</b> is visible.</p>
 <a name="Gtk.Oscilloscope.Get_Values_Axis_Annotation"></a>function</font> 
 Get_Values_Axis_Annotation<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11351,7 +11610,8 @@ annotation is used.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Axis_Width">
 </a>function</font> Get_Values_Axis_Width<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11362,7 +11622,8 @@ Amplifier</b>, when the axis is visible.</p>
 <p><tt><font color="#0000FF">
 <a name="Gtk.Oscilloscope.Get_Values_Horizontal_Alignment"></a>function</font> Get_Values_Horizontal_Alignment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11372,7 +11633,8 @@ vertical scale specified by the parameter <b>Amplifier</b>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Grid"></a>function</font> Get_Values_Grid<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11383,7 +11645,8 @@ grid is a set of horizontal lines drawn at the vertical scale ticks.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Scale"></a>function</font> Get_Values_Scale<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11393,7 +11656,8 @@ the parameter <b>Amplifier</b>. See <a href="#Gtk.Oscilloscope.Set_Values_Scale"
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Text_Angle"></a>function</font> Get_Values_Text_Angle<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11404,7 +11668,8 @@ and the texts at the axis specified by the parameter <b>Amplifier</b>.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Text_Color">
 </a>function</font> Get_Values_Text_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11414,7 +11679,8 @@ the parameter <b>Amplifier</b>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Text_Face"></a>function</font> Get_Values_Text_Face<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11425,7 +11691,8 @@ specified by the parameter <b>Amplifier</b>.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Text_Height">
 </a>function</font> Get_Values_Text_Height<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11436,17 +11703,34 @@ the parameter <b>Amplifier</b>.</p>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Values_Text_Stretch">
 </a>function</font> Get_Values_Text_Stretch<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; :
-<font color="#0000FF">not null access constant</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
 return</font> GDouble;</tt></p></blockquote>
 <p>This function returns the stretch of the texts at the axis specified by 
 the parameter <b>Amplifier</b>.</p>
+<blockquote>
+	<p><tt><font color="#0000FF">
+	<a name="Gtk.Oscilloscope.Get_Values_Tooltip_Suffix"></a>function</font> Get_Values_Tooltip_Suffix<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; 
+	<b>Widget</b>&nbsp; :
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>Gtk_Oscilloscope_Record;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<b>Channel</b> 
+: Channel_Number<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; 
+	<font color="#0000FF">return</font> UTF8_String;</tt></p>
+</blockquote>
+<p>This function returns the suffix added to the value shown in the tooltip 
+when the mouse is hovering over a channel. Constraint_Error is propagated when 
+there is no channel with the number <b>Channel</b>. The suffix text is set by 
+the procedure <a href="#Gtk.Oscilloscope.Set_Values_Tooltip_Suffix">
+Set_Values_Tooltip_Suffix</a>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Waveform"></a>function</font> Get_Waveform<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Channel</b> 
 : Channel_Number<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
@@ -11457,7 +11741,8 @@ channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_X"></a>function</font> Get_X<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sweeper</b> 
 : Sweeper_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Stamp</b>&nbsp;&nbsp; 
@@ -11478,7 +11763,8 @@ propagated.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Get_Y"></a>function</font> Get_Y<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+: <font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Amplifier</b> 
 : Amplifier_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Value</b>&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -11489,7 +11775,8 @@ propagated.</p>
 return</font> GInt;<br>
 <font color="#0000FF">function</font> Get_Y<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
-<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+<font color="#0000FF">not null access constant<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>&nbsp;Gtk_Oscilloscope_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Group</b>&nbsp; 
 : Group_Number;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Value</b>&nbsp; 
@@ -11648,6 +11935,18 @@ mode</a> is set on <i>User_Action</i>. The parameter <b>Selected</b> specifies
 the selected rectangle. The default implementation does nothing. It can 
 overridden to provide user-defined behavior on selection.</p>
 	<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Push_Stub"></a>procedure</font> 
+Push_Stub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> 
+: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Name </b>&nbsp; : UTF8_String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>The procedure pushes a stub with the name <b>Name</b> onto the the undo 
+stack. All actions after the stub can be reverted using a pattern that matches
+<b>Name</b> as the parameter <b>Till</b> in <a href="#Gtk.Oscilloscope.Undo">
+Undo</a>.</p>
+	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Push_Undo"></a>procedure</font> Push_Undo<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> 
 : <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
@@ -11669,11 +11968,22 @@ Time_Zooming&nbsp;&nbsp; : <font color="#0000FF">constant</font> Zooming_State
 When used to keep on track of user actions, the redo stack is also erased using
 <a href="#Gtk.Oscilloscope.Erase_Redo_Stack">Erase_Redo_Stack</a>.</p>
 	<blockquote>
-<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Redo"></a>procedure</font> Redo (<b>Widget</b> 
-: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record);</tt></p></blockquote>
-<p>The procedure repeats one reverted user action of zooming stored on the top 
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Redo"></a>procedure</font> Redo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<b>&nbsp; Widget</b> 
+: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Till</b>&nbsp;&nbsp; 
+: UTF8_String := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Stub</b>&nbsp;&nbsp; 
+: UTF8_String := &quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>When <b>Till </b>is empty the procedure repeats one reverted user action of zooming stored on the top 
 of the redo stack. The top of the redo stack is popped. The information to 
-revert this action is pushed onto the undo stack.</p>
+revert this action is pushed onto the undo stack. When <b>Till</b> is not empty 
+the procedure repeats all actions until a stub action with the name matched by 
+the wildcard pattern contained by <b>Till</b>. The parameter <b>Stub</b> is the 
+name of a stub to push onto the undo stack when <b>Till</b> is not empty. This 
+allows to undo all actions re-done by the operation by specifying the name of 
+this stub.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Auto_Scaling"></a>procedure</font> Set_Auto_Scaling<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp; 
@@ -11704,6 +12014,30 @@ has no group assigned.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure sets the face of the font to use by default when an annotation 
 is added to an axis.</p>
+	<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Enabled_Dropdown_Items"></a>procedure</font> 
+Set_Enabled_Dropdown_Items<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Items</b>&nbsp; : Dropdown_Items<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure sets menu item enabled to show in the drop-down menu. The 
+items list is an or-combination of <a href="#Gtk.Oscilloscope.Dropdown_Items">Dropdown_Items</a> 
+constants.</p>
+<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Set_Extrapolation_Mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; : <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Channel</b> : Channel_Number;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Left</b>&nbsp;&nbsp;&nbsp; 
+: Boolean;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Right</b>&nbsp;&nbsp; : Boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure sets the extrapolation mode of the channel <b>Channel</b>. The 
+parameters <b>Left</b> and <b>Right</b> determine the extrapolation to the left 
+and to the right correspondingly. Constraint_Error is propagated when <b>Channel</b> 
+does not specify a channel.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Frequency"></a>procedure</font> Set_Frequency<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
@@ -11802,6 +12136,20 @@ Method</b> : Waveform_Drawing_Method<br>
 <a href="#Gtk.Layered.Waveform.Waveform_Drawing_Method">preferred drawing method</a> 
 for the waveforms of <b>Widget</b>.</p>
 <blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Release_To_Latest">
+</a>procedure</font> Set_Release_To_Latest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+<font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Enable</b> : Boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure specifies what happens when a frozen sweeper is released by 
+the user. When <b>Enable</b> is <i><font color="#800000">false</font></i>, which 
+is the default, the sweeper position is not changed. When <b>Enable</b> is
+<font color="#800000"><i>true</i></font> the sweeper is moved to the latest 
+time. The current behavior is returned by
+<a href="#Gtk.Oscilloscope.Get_Release_To_Latest">Get_Release_To_Latest</a>.</p>
+<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Selection_Mode"></a>procedure</font> 
 Set_Selection_Mode<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
@@ -11863,12 +12211,28 @@ manual scrolling the waveforms attached to it.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Sweeper</b> : Sweeper_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Visible</b> : Boolean<br>
+Visible</b> : Boolean;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+As_Time</b> : Boolean := True<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure changes the visibility status of the axis specified by the 
 parameter <b>Sweeper</b>. The axis contains the annotation texts drawn at the 
 axis ticks. The texts represent in human-readable form the time corresponding to 
-the scale ticks.</p>
+the scale ticks when <b>As_Time</b> is <font color="#800000"><i>true</i></font>. 
+Otherwise, it is rendered as a plain number. When all visible sweepers are 
+rendered as numbers, the right button click pop-up menu does not show the <i>
+Latest data</i> item.</p>
+	<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Time_Axis_Height"></a>procedure</font> Set_Time_Axis_Height<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
+: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Sweeper</b> : Sweeper_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Height </b>&nbsp;: Natural<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure sets the height of the time axis specified by the parameter <b>
+Sweeper</b> when the axis is visible. </p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Time_Grid"></a>procedure</font> Set_Time_Grid<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
@@ -11946,6 +12310,40 @@ Visible</b> : Boolean<br>
 is <i><font color="#800000">true</font></i>, the tooltip contains the time 
 specification for the values under the mouse cursor. When <b>Visible</b> is <i>
 <font color="#800000">false</font></i>, only the value is indicated.</p>
+<blockquote>
+	<p><tt><font color="#0000FF">
+	<a name="Gtk.Oscilloscope.Set_Time_Tooltip_Suffix"></a>
+	procedure</font> Set_Time_Tooltip_Suffix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
+	: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Channel</b> : Channel_Number;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Suffix</b>&nbsp; : UTF8_String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p align="left">This procedure sets the suffix added to the channel time value shown in the 
+tooltip when the mouse is hovering over the channel curve. Constraint_Error is propagated when 
+there is no channel with the number <b>Channel</b>. The current suffix text is 
+returned by the function <a href="#Gtk.Oscilloscope.Get_Time_Tooltip_Suffix">
+Get_Time_Tooltip_Suffix</a>.</p>
+<blockquote>
+	<p><tt><font color="#0000FF">
+	<a name="Gtk.Oscilloscope.Set_Tooltip_Annotation"></a>
+	procedure</font> Set_Tooltip_Annotation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
+	: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Channel</b> : Channel_Number;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Text&nbsp;
+	</b>&nbsp; : UTF8_String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure sets the text introducing the channel specified by <b>Channel</b> 
+in the tooltip text shown when the mouse hovers over the channel curve. 
+Constraint_Error is propagated when there is no channel with the number <b>
+Channel</b>. The current text is returned by
+<a href="#Gtk.Oscilloscope.Get_Tooltip_Annotation">Get_Tooltip_Annotation</a>.</p>
 	<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Values_Alignment">
 </a>procedure</font> Set_Values_Alignment<br>
@@ -12053,6 +12451,22 @@ face. <b>Height</b> is the font height. <b>Stretch</b> is the text stretch. <b>
 Color</b> is the color. <b>Angle</b> is the angle between the annotation text 
 and the cairo's <i>x</i>-coordinate.</p>
 <blockquote>
+	<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Values_Tooltip_Suffix"></a>
+	procedure</font> Set_Values_Tooltip_Suffix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
+	: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Channel</b> : Channel_Number;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Suffix</b>&nbsp; : UTF8_String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure sets the suffix added to the channel value shown in the 
+tooltip when the mouse is hovering over the channel curve. Constraint_Error is propagated when 
+there is no channel with the number <b>Channel</b>. The current suffix text is 
+returned by the function <a href="#Gtk.Oscilloscope.Get_Values_Tooltip_Suffix">
+Get_Values_Tooltip_Suffix</a>.</p>
+<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Set_Visible"></a>procedure</font> Set_Visible<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
 : <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
@@ -12065,11 +12479,23 @@ Visible</b> : Boolean<br>
 invisible, its waveform is not drawn. Constraint_Error is propagated when <b>
 Channel</b> does not specify an existing channel.</p>
 	<blockquote>
-<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Undo"></a>procedure</font> Undo (<b>Widget</b> 
-: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record);</tt></p></blockquote>
-<p>The procedure reverts one user action caused a change of zooming stored on 
+<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Undo"></a>procedure</font> Undo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<b>&nbsp; Widget</b> 
+: <font color="#0000FF">not null access</font> Gtk_Oscilloscope_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Till</b>&nbsp;&nbsp; 
+: UTF8_String := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Stub</b>&nbsp;&nbsp; 
+: UTF8_String := &quot;&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>When <b>Till</b> is empty the procedure reverts one user action caused a change of zooming stored on 
 the top of the undo stack. The top of the undo stack is popped. The information 
-to revert this action is pushed onto the redo stack.</p>
+to revert this action is pushed onto the redo stack. When <b>Till</b> is not 
+empty the procedure reverts all actions until a stub action with the name 
+matched by the wildcard pattern contained by <b>Till</b>. A stub pushed onto the 
+undo stack using the procedure <a href="#Gtk.Oscilloscope.Push_Stub">Push_Stub</a>. 
+The parameter <b>Stub</b> is the name of a stub to push onto the redo stack when
+<b>Till</b> is not empty. This allows to redo all actions undone by the 
+operation by specifying the name of this stub.</p>
 <h4><a name="12.1.6"></a>12.1.6. Signals</h4>
 <p>The oscilloscope widget emits the following signals:</p>
 <TABLE border="5" cellpadding="3" cellspacing="0">
@@ -12091,24 +12517,54 @@ to revert this action is pushed onto the redo stack.</p>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top">The scaling mode of the group's amplifier has been changed</TD>
   </TR>
-  <TR>
-    <TD valign="top"><i>raster-mode-changed</i></TD>
-    <TD valign="top">Group number<br>
+  <tr>
+    <TD valign="top"><i>channel-added</i></TD>
+    <TD valign="top">Channel number<br>
 	GUInt</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">
-	<a href="#Gtk.Layered.Waveform.Amplifier.Set_Raster_Scaling">Raster mode</a> 
-	of the group's amplifier has been changed</TD>
-  </TR>
-  <TR>
+    <TD valign="top">The channel has been added</TD>
+  </tr>
+	<tr>
+    <TD valign="top"><i>channel-deleted</i></TD>
+    <TD valign="top">Channel number<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The channel has been deleted</TD>
+  </tr>
+	<tr>
+    <TD valign="top"><i>extrapolation-changed</i></TD>
+    <TD valign="top">Channel number <br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The channel extrapolation mode has been changed</TD>
+  </tr>
+	<tr>
     <TD valign="top"><i>freezing-changed</i></TD>
     <TD valign="top">Sweeper (Sweeper_Type'Pos)<br>
 	GUInt</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top">Freezing mode of the sweeper has been changed</TD>
-  </TR>
+  </tr>
+	<tr>
+    <TD valign="top"><i>group-changed</i></TD>
+    <TD valign="top">Amplifier (Amplifier_Type'Pos)<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The axis' group has been changed</TD>
+  </tr>
+	<tr>
+    <TD valign="top"><i>interpolation-changed</i></TD>
+    <TD valign="top">Channel number <br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The channel interpolation mode has been changed</TD>
+  </tr>
   <TR>
     <TD valign="top"><i>offset-changed</i></TD>
     <TD valign="top">Sweeper (Sweeper_Type'Pos)<br>
@@ -12117,63 +12573,7 @@ to revert this action is pushed onto the redo stack.</p>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top">The offset of the sweeper has been changed</TD>
   </TR>
-  <TR>
-    <TD valign="top"><i>group-changed</i></TD>
-    <TD valign="top">Amplifier (Amplifier_Type'Pos)<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The axis' group has been changed</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>x-axis-toggled</i></TD>
-    <TD valign="top">Sweeper (Sweeper_Type'Pos)<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The horizontal axis visibility has been toggled</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>y-axis-toggled</i></TD>
-    <TD valign="top">Amplifier (Amplifier_Type'Pos)<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The vertical axis visibility has been toggled</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>x-grid-toggled</i></TD>
-    <TD valign="top">Sweeper (Sweeper_Type'Pos)<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The visibility of the grid has been toggled</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>y-grid-toggled</i></TD>
-    <TD valign="top">Amplifier (Amplifier_Type'Pos)<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The visibility of the grid has been toggled</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>visibility-toggled</i></TD>
-    <TD valign="top">Channel number<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The visibility of the channel has been toggled</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>interpolation-changed</i></TD>
-    <TD valign="top">Channel number <br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The channel interpolation mode has been changed</TD>
-  </TR>
-  <TR>
+  <tr>
     <TD valign="top"><i>position-changed</i></TD>
     <TD valign="top">
 	Sweeper (Sweeper_Type'Pos)<br>
@@ -12188,29 +12588,63 @@ to revert this action is pushed onto the redo stack.</p>
 	values</a> was chosen in the drop-down menu when a rectangular area was selected. The width 
 	is measured in seconds. The values or values differences are stored in the
 	<a href="#Gtk.Oscillograph.Get_Channel_List">Get_Channel_List</a> store.</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>channel-added</i></TD>
-    <TD valign="top">Channel number<br>
+  </tr>
+	<tr>
+    <TD valign="top"><i>raster-mode-changed</i></TD>
+    <TD valign="top">Group number<br>
 	GUInt</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The channel has been added</TD>
-  </TR>
-  <TR>
-    <TD valign="top"><i>channel-deleted</i></TD>
-    <TD valign="top">Channel number<br>
-	GUInt</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
-    <TD valign="top">The channel has been deleted</TD>
-  </TR>
-  <TR>
+    <TD valign="top">
+	<a href="#Gtk.Layered.Waveform.Amplifier.Set_Raster_Scaling">Raster mode</a> 
+	of the group's amplifier has been changed</TD>
+  </tr>
+	<tr>
     <TD valign="top"><i>snapshot-captured</i></TD>
     <TD valign="top">String</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
     <TD valign="top">The name of the snapshot file, successfully written</TD>
+  </tr>
+	<tr>
+    <TD valign="top"><i>visibility-toggled</i></TD>
+    <TD valign="top">Channel number<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The visibility of the channel has been toggled</TD>
+  </tr>
+  <TR>
+    <TD valign="top"><i>x-axis-toggled</i></TD>
+    <TD valign="top">Sweeper (Sweeper_Type'Pos)<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The horizontal axis visibility has been toggled</TD>
+  </TR>
+  <tr>
+    <TD valign="top"><i>x-grid-toggled</i></TD>
+    <TD valign="top">Sweeper (Sweeper_Type'Pos)<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The visibility of the grid has been toggled</TD>
+  </tr>
+  <TR>
+    <TD valign="top"><i>y-axis-toggled</i></TD>
+    <TD valign="top">Amplifier (Amplifier_Type'Pos)<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The vertical axis visibility has been toggled</TD>
+  </TR>
+  <TR>
+    <TD valign="top"><i>y-grid-toggled</i></TD>
+    <TD valign="top">Amplifier (Amplifier_Type'Pos)<br>
+	GUInt</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top" bgcolor="#C0C0C0">&nbsp;</TD>
+    <TD valign="top">The visibility of the grid has been toggled</TD>
   </TR>
   </TABLE>
 <h4><a name="12.1.7"></a>12.1.7. Selection and drop-down menu</h4>
@@ -12275,16 +12709,37 @@ type </font>Selection_Action<font color="#0000FF"> is</font><br>
 	<li>The value <i>None</i> removes the selection;</li>
 	<li>Other values correspond to the menu elements described above.</li>
 </ul>
-<p>The right mouse button drop-down menu provides the following items:</p>
+<p>The right mouse button drop-down menu provides the following items enumerated 
+by the type <a href="#Gtk.Oscilloscope.Dropdown_Items">Dropdown_Items</a>:</p>
+<blockquote>
+	<p><tt><font color="#0000FF"><a name="Gtk.Oscilloscope.Dropdown_Items"></a>
+type </font>Dropdown_Items <font color="#0000FF">is mod </font>
+	<font color="#800000">2</font>**<font color="#800000">6</font>;<br>
+	Grid_Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 
+	<font color="#0000FF">constant</font> Dropdown_Items := 
+	<font color="#800000">2</font>**<font color="#800000">0</font>;<br>
+	Hold_Release_Item&nbsp; : <font color="#0000FF">constant</font> 
+	Dropdown_Items := <font color="#800000">2</font>**<font color="#800000">1</font>;<br>
+	Interpolation_Item : <font color="#0000FF">constant</font> Dropdown_Items := 
+	<font color="#800000">2</font>**<font color="#800000">2</font>;<br>
+	Latest_Data_Item&nbsp;&nbsp; : <font color="#0000FF">constant</font> 
+	Dropdown_Items := <font color="#800000">2</font>**<font color="#800000">3</font>;<br>
+	Snapshot_Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">constant</font> 
+	Dropdown_Items := <font color="#800000">2</font>**<font color="#800000">4</font>;<br>
+	Undo_Redo_Item&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">constant</font> 
+	Dropdown_Items := <font color="#800000">2</font>**<font color="#800000">5</font>;</tt></p>
+</blockquote>
 <ul>
 	<li><i>Hold</i>/<i>Release</i> the oscilloscope sweepers;</li>
 	<li><i>Latest data</i> to move the sweepers to the most recent data;</li>
 	<li><i>Toggle grid</i> to show or hide the graph paper;</li>
+	<li><i>Toggle interpolation</i> to turn linear interpolation on and off;</li>
 	<li><i>Undo/Redo</i> zooming actions;</li>
 	<li><i>Snapshot</i> to capture the oscilloscope's contents into a file. Note 
 	that this item appears only if <a href="#Gtk.Oscilloscope.Set_Snapshot_File">
 	Set_Snapshot_File</a> was used to set the file to write.</li>
 </ul>
+<p>The individual items can be enabled or disabled. The following type</p>
 <H3><a name="12.2"></a>12.2. Sweeper panel</H3>
 <blockquote>
 	<p>
@@ -12648,7 +13103,9 @@ The buffer could also be filled using direct calls to
 (continuation)</EM>:
 <TABLE border="1" cellpadding="15" cellspacing="0">
   <TR>
-<TD bgcolor="#C0D8D6"><tt>&nbsp;&nbsp; Show_All (Window);<br>
+<TD bgcolor="#C0D8D6"><tt>&nbsp;&nbsp; Window.Set_Size_Request (<font color="#800000">400</font>,
+<font color="#800000">300</font>);<br>
+&nbsp;&nbsp; Show_All (Window);<br>
 &nbsp;&nbsp; Gtk.Main.Main;<br>
 <font color="#0000FF">exception<br>
 &nbsp;&nbsp; when</font> Error : <font color="#0000FF">others</font> =&gt;<br>
@@ -14222,12 +14679,33 @@ The following versions were tested with the compilers:</i>
 <ul>
   <li>
 <i>GNAT GPL 2015 (20150428-49)</i></li>
-	<li><i>GNAT 5.2</i></li>
+	<li><i>GNAT 5.3</i></li>
   </ul>
 <P>
 <i>and the GtkAda versions:</i><ul>
 	<li><i>GtkAda 3.8.3</i></li>
 	</ul>
+<p>Changes (12 April 2016) to the version 3.13:</p>
+<ul>
+  <li>In Gtk_Oscilloscope, when the selection mode is set to None, the selection 
+	highlighting on left button press is turned off;</li>
+	<li>The right button click drop-down Gtk_Oscilloscope menu item <i>Latest data</i> 
+	is shown only if at least one sweeper does render time;</li>
+	<li>Gtk_Oscilloscope drop-down menu items can be individually enabled and 
+	disabled;</li>
+	<li>Add_Group of Gtk_Oscilloscope accepts an amplifier object to use with 
+	the group;</li>
+	<li>Set_Renderer was added to Gtk.Layered.Graph_Paper_Annotation;</li>
+	<li>Get_Suffix and Set_Suffix were added to Gtk.Layered.Graph_Paper_Annotation;</li>
+	<li>Get_Time_Tooltip_Suffix, Get_Tooltip_Annotation, Get_Values_Tooltip_Suffix, 
+	Set_Time_Tooltip_Suffix, Set_Tooltip_Annotation, Set_Values_Tooltip_Suffix were added to Gtk_Oscilloscope;</li>
+	<li>Function Image was added to Gtk.Layered.Graph_Paper_Annotation;</li>
+	<li>Extrapolation left and right was added to Gtk.Layered.Waveform and 
+	Gtk.Oscilloscope;</li>
+	<li>Get_Release_To_Latest and Set_Release_To_Latest were added to 
+	Gtk.Oscilloscope;</li>
+	<li>Undo/redo stubs with pattern matched names added to Gtk.Oscilloscope.</li>
+</ul>
 <p>Changes (4 March 2016) to the version 3.12:</p>
 <ul>
   <li>Minor changes improving performance;</li>

@@ -2,7 +2,7 @@
 --  package GIO.GVolume             Copyright (c)  Dmitry A. Kazakov  --
 --  Implementation                                 Summer, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -23,11 +23,6 @@
 --  exception  does not however invalidate any other reasons why the  --
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
-
-with GLib;                  use GLib;
-with Interfaces.C;          use Interfaces.C;
-with Interfaces.C.Strings;  use Interfaces.C.Strings;
-with System;                use System;
 
 with Interfaces.C;          use Interfaces.C;
 with Interfaces.C.Strings;  use Interfaces.C.Strings;
@@ -65,7 +60,7 @@ package body GIO.Volume is
          return "";
       else
          declare
-            Result : UTF8_String := Value (Ptr);
+            Result : constant UTF8_String := Value (Ptr);
          begin
             Free (Ptr);
             return Result;

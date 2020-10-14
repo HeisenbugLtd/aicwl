@@ -109,6 +109,7 @@ begin
          end loop;
       end;
    end;
+   Window.Set_Size_Request (400, 300);
    Show_All (Window);
    Gtk.Main.Main;
 exception

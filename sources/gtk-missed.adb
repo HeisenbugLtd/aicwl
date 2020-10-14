@@ -26,7 +26,6 @@
 
 with Ada.Exceptions;        use Ada.Exceptions;
 with Ada.IO_Exceptions;     use Ada.IO_Exceptions;
-with Gdk.Cursor;            use Gdk.Cursor;
 with Gdk.Window;            use Gdk.Window;
 with GLib.Messages;         use GLib.Messages;
 with GLib.Properties;       use GLib.Properties;
@@ -41,16 +40,13 @@ with Gtk.Icon_Theme;        use Gtk.Icon_Theme;
 with Gtk.Image;             use Gtk.Image;
 with Gtk.Label;             use Gtk.Label;
 with Gtk.Style_Provider;    use Gtk.Style_Provider;
-with Gtk.Tree_Model;        use Gtk.Tree_Model;
 with Interfaces.C;          use Interfaces.C;
 with Interfaces.C.Strings;  use Interfaces.C.Strings;
 with System;                use System;
 
 with Ada.Unchecked_Conversion;
-with Gdk.Pixbuf;
 with GLib.Object.Checked_Destroy;
 with Gtk.Adjustment;
-with Gtk.Widget;
 
 package body Gtk.Missed is
    use Gtk.Cell_Renderer;
@@ -218,7 +214,7 @@ package body Gtk.Missed is
          Result := Insert (Stock_Icons, Key, Set.Get_Object);
       else
          declare
-            Address : System.Address :=
+            Address : constant System.Address :=
                       Look_Up (Stock_Icons, Value (Key));
          begin
             if Address = Null_Address then
@@ -248,13 +244,13 @@ package body Gtk.Missed is
       pragma Import (C, Internal, "g_build_filenamev");
       First  : aliased Char_Array := To_C (First_Element);
       Second : aliased Char_Array := To_C (Second_Element);
-      Ptr    : Chars_Ptr :=
+      Ptr    : constant Chars_Ptr :=
                   Internal
                   (  (  0 => To_Chars_Ptr (First'Unchecked_Access),
                         1 => To_Chars_Ptr (Second'Unchecked_Access),
                         2 => Null_Ptr
                   )  );
-      Result : UTF8_String := Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -270,14 +266,14 @@ package body Gtk.Missed is
       First  : aliased Char_Array := To_C (First_Element);
       Second : aliased Char_Array := To_C (Second_Element);
       Third  : aliased Char_Array := To_C (Third_Element);
-      Ptr    : Chars_Ptr :=
+      Ptr    : constant Chars_Ptr :=
                   Internal
                   (  (  0 => To_Chars_Ptr (First'Unchecked_Access),
                         1 => To_Chars_Ptr (Second'Unchecked_Access),
                         2 => To_Chars_Ptr (Third'Unchecked_Access),
                         3 => Null_Ptr
                   )  );
-      Result : UTF8_String := Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -295,7 +291,7 @@ package body Gtk.Missed is
       Second : aliased Char_Array := To_C (Second_Element);
       Third  : aliased Char_Array := To_C (Third_Element);
       Fourth : aliased Char_Array := To_C (Fourth_Element);
-      Ptr    : Chars_Ptr :=
+      Ptr    : constant Chars_Ptr :=
                   Internal
                   (  (  0 => To_Chars_Ptr (First'Unchecked_Access),
                         1 => To_Chars_Ptr (Second'Unchecked_Access),
@@ -303,7 +299,7 @@ package body Gtk.Missed is
                         3 => To_Chars_Ptr (Fourth'Unchecked_Access),
                         4 => Null_Ptr
                   )  );
-      Result : UTF8_String := Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -323,7 +319,7 @@ package body Gtk.Missed is
       Third  : aliased Char_Array := To_C (Third_Element);
       Fourth : aliased Char_Array := To_C (Fourth_Element);
       Fifth  : aliased Char_Array := To_C (Fifth_Element);
-      Ptr    : Chars_Ptr :=
+      Ptr    : constant Chars_Ptr :=
                   Internal
                   (  (  0 => To_Chars_Ptr (First'Unchecked_Access),
                         1 => To_Chars_Ptr (Second'Unchecked_Access),
@@ -332,7 +328,7 @@ package body Gtk.Missed is
                         4 => To_Chars_Ptr (Fifth'Unchecked_Access),
                         5 => Null_Ptr
                   )  );
-      Result : UTF8_String := Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -394,8 +390,8 @@ package body Gtk.Missed is
          end if;
       else
          declare
-            First  : Gtk_Tree_Path := Get_Path (Model, A);
-            Result : Row_Order     := Compare (Model, First, B);
+            First  : constant Gtk_Tree_Path := Get_Path (Model, A);
+            Result : constant Row_Order := Compare (Model, First, B);
          begin
             Path_Free (First);
             return Result;
@@ -417,8 +413,8 @@ package body Gtk.Missed is
          end if;
       else
          declare
-            Second : Gtk_Tree_Path := Get_Path (Model, B);
-            Result : Row_Order     := Compare (Model, A, Second);
+            Second : constant Gtk_Tree_Path := Get_Path (Model, B);
+            Result : constant Row_Order := Compare (Model, A, Second);
          begin
             Path_Free (Second);
             return Result;
@@ -443,9 +439,10 @@ package body Gtk.Missed is
             return After;
          else
             declare
-               First  : Gtk_Tree_Path := Get_Path (Model, A);
-               Second : Gtk_Tree_Path := Get_Path (Model, B);
-               Result : Row_Order     := Compare (Model, First, Second);
+               First  : constant Gtk_Tree_Path := Get_Path (Model, A);
+               Second : constant Gtk_Tree_Path := Get_Path (Model, B);
+               Result : constant Row_Order :=
+                        Compare (Model, First, Second);
             begin
                Path_Free (First);
                Path_Free (Second);
@@ -511,7 +508,7 @@ package body Gtk.Missed is
    pragma Import (C, G_Dir_Read_Name, "g_dir_read_name_utf8");
 
    function Dir_Read_Name (Dir : GDir) return UTF8_String is
-      Ptr : Chars_Ptr := G_Dir_Read_Name (Dir);
+      Ptr : constant Chars_Ptr := G_Dir_Read_Name (Dir);
    begin
       if Ptr = Null_Ptr then
          raise End_Error;
@@ -543,7 +540,7 @@ package body Gtk.Missed is
    begin
       Store.Get_Value (Row, Column, Data);
       declare
-         Result : String := Get_String (Data);
+         Result : constant String := Get_String (Data);
       begin
          Unset (Data);
          return Result;
@@ -562,7 +559,7 @@ package body Gtk.Missed is
    begin
       Get_Value (Store, Row, Column, Data);
       declare
-         Result : String := Get_String (Data);
+         Result : constant String := Get_String (Data);
       begin
          Unset (Data);
          return Result;
@@ -581,7 +578,7 @@ package body Gtk.Missed is
    begin
       Store.Get_Value (Row, Column, Data);
       declare
-         Result : String := Get_String (Data);
+         Result : constant String := Get_String (Data);
       begin
          Unset (Data);
          return Result;
@@ -631,7 +628,7 @@ package body Gtk.Missed is
    end File_Test;
 
    function File_Test (File_Name : UTF8_String) return GFileTest is
-      Name : Char_Array := To_C (File_Name);
+      Name : constant Char_Array := To_C (File_Name);
    begin
       if 0 = G_File_Test (Name, File_Test_Exists) then
          return 0;
@@ -714,7 +711,7 @@ package body Gtk.Missed is
    begin
       Ptr := G_Get_Current_Dir_UTF8;
       declare
-         Result : UTF8_String := Value (Ptr);
+         Result : constant UTF8_String := Value (Ptr);
       begin
          G_Free (Ptr);
          return Result;
@@ -797,8 +794,8 @@ package body Gtk.Missed is
    function Get_Basename (File_Name : UTF8_String) return UTF8_String is
       function Internal (File_Name : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_path_get_basename");
-      Ptr    : Chars_Ptr   := Internal (To_C (File_Name));
-      Result : UTF8_String := Value (Ptr);
+      Ptr    : constant Chars_Ptr   := Internal (To_C (File_Name));
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -836,7 +833,7 @@ package body Gtk.Missed is
    function Get_Column (Value : GValue) return Gtk_Tree_View_Column is
       use System;
       Stub : Gtk_Tree_View_Column_Record;
-      Data : Address := Get_Address (Value);
+      Data : constant Address := Get_Address (Value);
    begin
       if Data = Null_Address then
          return null;
@@ -851,7 +848,7 @@ package body Gtk.Missed is
                            Gtk_Tree_View_Column_Record'Class
             )  return GInt is
       This : Gtk_Tree_View_Column;
-      That : Address := Get_Object (Column);
+      That : constant Address := Get_Object (Column);
    begin
       for Index in 0..GInt'Last loop
          This := Get_Column (Tree_View, Index);
@@ -866,8 +863,8 @@ package body Gtk.Missed is
    function Get_Dirname (File_Name : UTF8_String) return UTF8_String is
       function Internal (File_Name : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_path_get_dirname");
-      Ptr    : Chars_Ptr   := Internal (To_C (File_Name));
-      Result : UTF8_String := Value (Ptr);
+      Ptr    : constant Chars_Ptr   := Internal (To_C (File_Name));
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -890,7 +887,7 @@ package body Gtk.Missed is
       function Internal (File_Name : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_path_skip_root");
       Name : Char_Array := To_C (File_Name);
-      Ptr  : Chars_Ptr  := Internal (Name);
+      Ptr  : constant Chars_Ptr  := Internal (Name);
    begin
       if Ptr = Null_Ptr then
          raise Use_Error;
@@ -932,7 +929,7 @@ package body Gtk.Missed is
             (  Model : Gtk_Tree_Model;
                Iter  : Gtk_Tree_Iter
             )  return GInt is
-      Path : Gtk_Tree_Path := Get_Path (Model, Iter);
+      Path : constant Gtk_Tree_Path := Get_Path (Model, Iter);
    begin
       if Path = Null_Gtk_Tree_Path then
          return -1;
@@ -971,8 +968,8 @@ package body Gtk.Missed is
                   To_Path   : Address
                )  return GBoolean;
       pragma Import (C, Internal, "gtk_tree_view_get_visible_range");
-      From_Path : Address := Null_Address;
-      To_Path   : Address := Null_Address;
+      From_Path : constant Address := Null_Address;
+      To_Path   : constant Address := Null_Address;
       Result    : GBoolean;
    begin
       Result := Internal (Get_Object (Tree_View), From_Path, To_Path);
@@ -1078,9 +1075,9 @@ package body Gtk.Missed is
          return True;
       else
          declare
-            First  : Gtk_Tree_Path := Get_Path (Model, A);
-            Second : Gtk_Tree_Path := Get_Path (Model, B);
-            Result : Boolean := Is_Descendant (First, Second);
+            First  : constant Gtk_Tree_Path := Get_Path (Model, A);
+            Second : constant Gtk_Tree_Path := Get_Path (Model, B);
+            Result : constant Boolean := Is_Descendant (First, Second);
          begin
             Path_Free (First);
             Path_Free (Second);
@@ -1103,8 +1100,8 @@ package body Gtk.Missed is
          return True;
       else
          declare
-            First  : Gtk_Tree_Path := Get_Path (Model, A);
-            Result : Boolean := Is_Descendant (First, B);
+            First  : constant Gtk_Tree_Path := Get_Path (Model, A);
+            Result : constant Boolean := Is_Descendant (First, B);
          begin
             Path_Free (First);
             return Result;
@@ -1126,8 +1123,8 @@ package body Gtk.Missed is
          return False;
       else
          declare
-            Second : Gtk_Tree_Path := Get_Path (Model, B);
-            Result : Boolean := Is_Descendant (A, Second);
+            Second : constant Gtk_Tree_Path := Get_Path (Model, B);
+            Result : constant Boolean := Is_Descendant (A, Second);
          begin
             Path_Free (Second);
             return Result;
@@ -1173,8 +1170,8 @@ package body Gtk.Missed is
          return Get_Indices (B)'Length = 1;
       end if;
       declare
-         A_Path : Gtk_Tree_Path := Get_Path (Model, A);
-         Result : Boolean := Is_Parent (Model, A_Path, B);
+         A_Path : constant Gtk_Tree_Path := Get_Path (Model, A);
+         Result : constant Boolean := Is_Parent (Model, A_Path, B);
       begin
          Path_Free (A_Path);
          return Result;
@@ -1193,8 +1190,8 @@ package body Gtk.Missed is
          return Parent (Model, B) = Null_Iter;
       end if;
       declare
-         B_Path : Gtk_Tree_Path := Get_Path (Model, B);
-         Result : Boolean := Is_Parent (Model, A, B_Path);
+         B_Path : constant Gtk_Tree_Path := Get_Path (Model, B);
+         Result : constant Boolean := Is_Parent (Model, A, B_Path);
       begin
          Path_Free (B_Path);
          return Result;
@@ -1254,8 +1251,8 @@ package body Gtk.Missed is
          return False;
       end if;
       declare
-         A_Path : Gtk_Tree_Path := Get_Path (Model, A);
-         Result : Boolean := Is_Sibling (Model, A_Path, B);
+         A_Path : constant Gtk_Tree_Path := Get_Path (Model, A);
+         Result : constant Boolean := Is_Sibling (Model, A_Path, B);
       begin
          Path_Free (A_Path);
          return Result;
@@ -1274,8 +1271,8 @@ package body Gtk.Missed is
          return False;
       end if;
       declare
-         B_Path : Gtk_Tree_Path := Get_Path (Model, B);
-         Result : Boolean := Is_Sibling (Model, A, B_Path);
+         B_Path : constant Gtk_Tree_Path := Get_Path (Model, B);
+         Result : constant Boolean := Is_Sibling (Model, A, B_Path);
       begin
          Path_Free (B_Path);
          return Result;
@@ -1342,7 +1339,7 @@ package body Gtk.Missed is
       Box    : Gtk_Box;
       Image  : Gtk_Image;
       Result : Gtk_Response_Type;
-      Top    : Gtk_Widget := Parent.Get_Toplevel;
+      Top    : constant Gtk_Widget := Parent.Get_Toplevel;
    begin
       if Top = null or else Top.all not in Gtk_Window_Record'Class then
          if Response /= null then
@@ -1485,9 +1482,9 @@ package body Gtk.Missed is
                 Color  : Gdk_RGBA
              )  is
       Provider : Gtk_CSS_Provider;
-      CSS      : String := "* { background-color: " &
-                           To_String (Color) &
-                           "; }";
+      CSS      : constant String := "* { background-color: " &
+                                    To_String (Color) &
+                                    "; }";
    begin
       Gtk_New (Provider);
       if Provider.Load_From_Data (CSS, null) then
@@ -1553,8 +1550,8 @@ package body Gtk.Missed is
    function Skip_Root (File_Name : UTF8_String) return UTF8_String is
       function Internal (File_Name : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_path_skip_root");
-      Name : Char_Array := To_C (File_Name);
-      Ptr  : Chars_Ptr  := Internal (Name);
+      Name : constant Char_Array := To_C (File_Name);
+      Ptr  : constant Chars_Ptr  := Internal (Name);
    begin
       if Ptr = Null_Ptr then
          raise Use_Error;
@@ -1735,7 +1732,7 @@ package body Gtk.Missed is
       Get_Value (Model, Iter, Data, Value);
       Width := Get_Property (Cell, Build ("stock-size"));
       declare
-         Name : String := Get_String (Value);
+         Name : constant String := Get_String (Value);
       begin
          Unset (Value);
          declare
@@ -1759,7 +1756,7 @@ package body Gtk.Missed is
          end;
          declare
             Icon    : Gdk_Pixbuf;
-            Default : Gtk_Icon_Theme := Get_Default;
+            Default : constant Gtk_Icon_Theme := Get_Default;
             Info    : Gtk_Icon_Info;
          begin
             if Default /= null then

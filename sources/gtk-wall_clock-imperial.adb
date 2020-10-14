@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Wall_Clock.Imperial               Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -68,7 +68,7 @@ package body Gtk.Wall_Clock.Imperial is
                 Widget     : Gtk_Wall_Clock_Imperial
              )  is
    begin
-      Set (Widget, GDouble (Get_Value (Widget.Adjustment)));
+      Set (Widget, Get_Value (Widget.Adjustment));
       if (  Widget.Hour_Needle.Is_Updated
          or else
             Widget.Minute_Needle.Is_Updated

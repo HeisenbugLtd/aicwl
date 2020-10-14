@@ -3,7 +3,7 @@
 --     Gtk.Layered.                                Luebeck            --
 --        Rectangular_Clip_Region                  Winter, 2010       --
 --  Implementation                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -552,9 +552,9 @@ package body Gtk.Layered.Rectangular_Clip_Region is
              (  Layer  : in out Rectangular_Clip_Region_On_Layer;
                 Factor : GDouble
              )  is
-      Radius : GDouble := Layer.Radius * Factor;
-      Height : GDouble := Layer.Height * Factor;
-      Width  : GDouble := Layer.Width  * Factor;
+      Radius : constant GDouble := Layer.Radius * Factor;
+      Height : constant GDouble := Layer.Height * Factor;
+      Width  : constant GDouble := Layer.Width  * Factor;
    begin
       if 2.0 * Radius > Height then
          raise Constraint_Error with

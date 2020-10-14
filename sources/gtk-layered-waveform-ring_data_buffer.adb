@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.                       Luebeck            --
 --        Ring_Data_Buffer                         Winter, 2011       --
 --  Implementation                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -543,7 +543,7 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
          begin
             for Index in 1..Source.Layers.Connected loop
                declare
-                  Layer : Waveform_Layer_Ptr := Layers (Index);
+                  Layer : constant Waveform_Layer_Ptr := Layers (Index);
                begin
                   if Layer /= null then
                      Layer.Changed (From, To);

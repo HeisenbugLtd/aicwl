@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.Amplifier              Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -86,14 +86,14 @@ package body Gtk.Layered.Waveform.Amplifier is
          if 0 /= (Tracing_Mode and Trace_Amplifier) then ---------------
             Trace_Line
             (  Amplifier'Address,
-               (  "Set to"
-               &  Fixed'Image (Fixed (Amplifier.Y1))
-               &  " .."
-               &  Fixed'Image (Fixed (Amplifier.Y2))
-               &  " to"
-               &  Fixed'Image (Fixed (Lower))
-               &  " .."
-               &  Fixed'Image (Fixed (Upper))
+               (  "Set to "
+               &  Edit.Image (GDouble (Amplifier.Y1))
+               &  ".."
+               &  Edit.Image (GDouble (Amplifier.Y2))
+               &  " to "
+               &  Edit.Image (GDouble (Lower))
+               &  ".."
+               &  Edit.Image (GDouble (Upper))
             )  );
          end if; -------------------------------------------------------
          Amplifier.Y1 := Y_Axis'Min (Amplifier.Y1, Lower);
@@ -105,10 +105,10 @@ package body Gtk.Layered.Waveform.Amplifier is
          if 0 /= (Tracing_Mode and Trace_Amplifier) then ---------------
             Trace_Line
             (  Amplifier'Address,
-               (  "Reset to"
-               &  Fixed'Image (Fixed (Lower))
-               &  " .."
-               &  Fixed'Image (Fixed (Upper))
+               (  "Reset to "
+               &  Edit.Image (GDouble (Lower))
+               &  ".."
+               &  Edit.Image (GDouble (Upper))
             )  );
          end if; -------------------------------------------------------
       end if;
@@ -236,7 +236,7 @@ package body Gtk.Layered.Waveform.Amplifier is
       );
       if Autoscaling_Changed_ID = Invalid_Signal_Id then
          declare
-            Widget_Type : GType := Get_Type (Amplifier);
+            Widget_Type : constant GType := Get_Type (Amplifier);
          begin
             Autoscaling_Changed_ID :=
                Lookup (Widget_Type, "autoscaling-changed");
@@ -244,7 +244,7 @@ package body Gtk.Layered.Waveform.Amplifier is
       end if;
       if Raster_Mode_Changed_ID = Invalid_Signal_Id then
          declare
-            Widget_Type : GType := Get_Type (Amplifier);
+            Widget_Type : constant GType := Get_Type (Amplifier);
          begin
             Raster_Mode_Changed_ID :=
                Lookup (Widget_Type, "raster-mode-changed");
@@ -268,7 +268,7 @@ package body Gtk.Layered.Waveform.Amplifier is
              (  Amplifier : in out Gtk_Waveform_Amplifier_Record
              )  is
       function Get_Count return Positive is
-         Length : GDouble := GDouble (Amplifier.Width);
+         Length : GDouble := Amplifier.Width;
       begin
          Length := Length / GDouble (Amplifier.Tick);
          if Length < 1.0 then
@@ -294,7 +294,7 @@ package body Gtk.Layered.Waveform.Amplifier is
             Raster_V2   : constant Adjustment_Type := 2**5;
             Empty       : constant Adjustment_Type := 2**6;
             Changed : Adjustment_Type := 0;
-            Parent  : not null access Gtk_Adjustment_Record :=
+            Parent  : constant not null access Gtk_Adjustment_Record :=
                          Gtk_Adjustment_Record
                          (  Amplifier
                          ) 'Unchecked_Access;
@@ -366,135 +366,133 @@ package body Gtk.Layered.Waveform.Amplifier is
                   if 0 /= (Changed and Undeflow_V1) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  Fixed'Image (Fixed (Amplifier.Y1))
+                        (  Edit.Image (GDouble (Amplifier.Y1))
                         &  " = V1 < ["
-                        &  Fixed'Image (Fixed (Get_Value (Parent)))
-                        &  " set to"
-                        &  Fixed'Image (Fixed (V1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        &  Edit.Image (Get_Value (Parent))
+                        &  " set to "
+                        &  Edit.Image (V1)
+                        &  ".."
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
-                        &  " ]"
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  ".."
+                        &  Edit.Image (GDouble (Amplifier.Y2))
+                        &  "]"
                      )  );
                   end if;
                   if 0 /= (Changed and Overflow_V1) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  Fixed'Image (Fixed (Get_Value (Parent)))
+                        (  Edit.Image (Get_Value (Parent))
                         &  "]>>>"
-                        &  Fixed'Image (Fixed (Span))
-                        &  " < V1 ="
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " set to"
-                        &  Fixed'Image (Fixed (V1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        &  Edit.Image (Span)
+                        &  " < V1 = "
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  " set to "
+                        &  Edit.Image (V1)
+                        &  ".."
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  ".."
+                        &  Edit.Image (GDouble (Amplifier.Y2))
                         &  " ]"
                      )  );
                   end if;
                   if 0 /= (Changed and Undeflow_V2) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  Fixed'Image
-                           (  Fixed
-                              (  Get_Value (Parent)
-                              +  Get_Page_Size (Parent)
-                           )  )
-                        &  "] < V2 ="
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
-                        &  " set to"
-                        &  Fixed'Image (Fixed (V1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        (  Edit.Image
+                           (  Get_Value (Parent)
+                           +  Get_Page_Size (Parent)
+                           )
+                        &  "] < V2 = "
+                        &  Edit.Image (GDouble (Amplifier.Y2))
+                        &  " set to "
+                        &  Edit.Image (V1)
+                        &  ".."
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  ".."
+                        &  Edit.Image (GDouble (Amplifier.Y2))
                         &  " ]"
                      )  );
                   end if;
                   if 0 /= (Changed and Overflow_V2) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  Fixed'Image (Fixed (Amplifier.Y2))
-                        &  " = V2 <"
-                        &  Fixed'Image (Fixed (Span))
+                        (  Edit.Image (GDouble (Amplifier.Y2))
+                        &  " = V2 < "
+                        &  Edit.Image (Span)
                         &  " <<<["
-                        &  Fixed'Image
-                           (  Fixed
-                              (  Get_Value (Parent)
-                              +  Get_Page_Size (Parent)
-                           )  )
+                        &  Edit.Image
+                           (  Get_Value (Parent)
+                           +  Get_Page_Size (Parent)
+                           )
                         &  " set to "
-                        &  Fixed'Image (Fixed (V1))
+                        &  Edit.Image (V1)
                         &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
+                        &  Edit.Image (GDouble (Amplifier.Y1))
                         &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
+                        &  Edit.Image (GDouble (Amplifier.Y2))
                         &  " ]"
                      )  );
                   end if;
                   if 0 /= (Changed and Raster_V1) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  "Set lower at raster"
-                        &  Fixed'Image (Fixed (V1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        (  "Set lower at raster "
+                        &  Edit.Image (V1)
+                        &  ".."
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  ".."
+                        &  Edit.Image (GDouble (Amplifier.Y2))
                         &  " ]"
                      )  );
                   end if;
                   if 0 /= (Changed and Raster_V2) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  "Set upper at raster"
-                        &  Fixed'Image (Fixed (V1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        (  "Set upper at raster "
+                        &  Edit.Image (V1)
+                        &  ".."
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  ".."
+                        &  Edit.Image (GDouble (Amplifier.Y2))
                         &  " ]"
                      )  );
                   end if;
                   if 0 /= (Changed and Empty) then
                      Trace_Line
                      (  Amplifier'Address,
-                        (  "Empty range"
-                        &  Fixed'Image (Fixed (V1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (V2))
+                        (  "Empty range "
+                        &  Edit.Image (V1)
+                        &  ".."
+                        &  Edit.Image (V2)
                         &  " ["
-                        &  Fixed'Image (Fixed (Amplifier.Y1))
-                        &  " .."
-                        &  Fixed'Image (Fixed (Amplifier.Y2))
+                        &  Edit.Image (GDouble (Amplifier.Y1))
+                        &  ".."
+                        &  Edit.Image (GDouble (Amplifier.Y2))
                         &  " ]"
                      )  );
                   end if;
                   Trace_Line
                   (  Amplifier'Address,
-                     (  "Configured value"
-                     &  Fixed'Image (Fixed (V1))
-                     &  " page"
-                     &  Fixed'Image (Fixed (Size))
-                     &  " range"
-                     &  Fixed'Image (Fixed (Lower))
-                     &  " .."
-                     &  Fixed'Image (Fixed (Upper))
+                     (  "Configured value "
+                     &  Edit.Image (V1)
+                     &  " page "
+                     &  Edit.Image (Size)
+                     &  " range "
+                     &  Edit.Image (Lower)
+                     &  ".."
+                     &  Edit.Image (Upper)
                   )  );
                end if; -------------------------------------------------
                Amplifier.Setting := False;

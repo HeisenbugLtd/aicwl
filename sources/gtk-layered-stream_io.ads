@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  10:27 26 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -111,6 +111,36 @@ package Gtk.Layered.Stream_IO is
                 Value_3 : out Boolean;
                 Value_4 : out Boolean;
                 Value_5 : out Boolean
+             );
+   procedure Restore
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : out Boolean;
+                Value_2 : out Boolean;
+                Value_3 : out Boolean;
+                Value_4 : out Boolean;
+                Value_5 : out Boolean;
+                Value_6 : out Boolean
+             );
+   procedure Restore
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : out Boolean;
+                Value_2 : out Boolean;
+                Value_3 : out Boolean;
+                Value_4 : out Boolean;
+                Value_5 : out Boolean;
+                Value_6 : out Boolean;
+                Value_7 : out Boolean
+             );
+   procedure Restore
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : out Boolean;
+                Value_2 : out Boolean;
+                Value_3 : out Boolean;
+                Value_4 : out Boolean;
+                Value_5 : out Boolean;
+                Value_6 : out Boolean;
+                Value_7 : out Boolean;
+                Value_8 : out Boolean
              );
    procedure Restore
              (  Stream : in out Root_Stream_Type'Class;
@@ -241,6 +271,36 @@ package Gtk.Layered.Stream_IO is
                 Value_3 : Boolean;
                 Value_4 : Boolean;
                 Value_5 : Boolean
+             );
+   procedure Store
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : Boolean;
+                Value_2 : Boolean;
+                Value_3 : Boolean;
+                Value_4 : Boolean;
+                Value_5 : Boolean;
+                Value_6 : Boolean
+             );
+   procedure Store
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : Boolean;
+                Value_2 : Boolean;
+                Value_3 : Boolean;
+                Value_4 : Boolean;
+                Value_5 : Boolean;
+                Value_6 : Boolean;
+                Value_7 : Boolean
+             );
+   procedure Store
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : Boolean;
+                Value_2 : Boolean;
+                Value_3 : Boolean;
+                Value_4 : Boolean;
+                Value_5 : Boolean;
+                Value_6 : Boolean;
+                Value_7 : Boolean;
+                Value_8 : Boolean
              );
    procedure Store
              (  Stream : in out Root_Stream_Type'Class;

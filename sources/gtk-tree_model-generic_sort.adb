@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Generic_Sort                 Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -223,7 +223,7 @@ package body Gtk.Tree_Model.Generic_Sort is
              (  System.Address,
                 Gtk_Tree_Model_Sort
              );
-      Store : Gtk_Tree_Model_Sort := To_Store (User_Data);
+      Store : constant Gtk_Tree_Model_Sort := To_Store (User_Data);
    begin
       case Compare (Store, A.all, B.all) is
          when Gtk.Missed.Before => return -1;

@@ -2,7 +2,7 @@
 --  package GIO.Content_Type        Copyright (c)  Dmitry A. Kazakov  --
 --  Implementation                                 Summer, 2010       --
 --                                                                    --
---                                Last revision :  19:13 28 Jul 2010  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -50,13 +50,13 @@ package body GIO.Content_Type is
    function From_MIME_Type (MIME : UTF8_String) return UTF8_String is
       function Internal (Instance : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_content_type_from_mime_type");
-      Ptr : Chars_Ptr := Internal (To_C (MIME));
+      Ptr : constant Chars_Ptr := Internal (To_C (MIME));
    begin
       if Ptr = Null_Ptr then
          return "";
       else
          declare
-            Result : UTF8_String := Value (Ptr);
+            Result : constant UTF8_String := Value (Ptr);
          begin
             Free (Ptr);
             return Result;
@@ -68,13 +68,13 @@ package body GIO.Content_Type is
       return UTF8_String is
       function Internal (Instance : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_content_type_get_description");
-      Ptr : Chars_Ptr := Internal (To_C (Instance));
+      Ptr : constant Chars_Ptr := Internal (To_C (Instance));
    begin
       if Ptr = Null_Ptr then
          return "";
       else
          declare
-            Result : UTF8_String := Value (Ptr);
+            Result : constant UTF8_String := Value (Ptr);
          begin
             Free (Ptr);
             return Result;
@@ -92,7 +92,7 @@ package body GIO.Content_Type is
    function Get_MIME_Type (Instance : UTF8_String) return UTF8_String is
       function Internal (Instance : Char_Array) return Chars_Ptr;
       pragma Import (C, Internal, "g_content_type_get_mime_type");
-      Ptr : Chars_Ptr := Internal (To_C (Instance));
+      Ptr : constant Chars_Ptr := Internal (To_C (Instance));
    begin
       if Ptr = Null_Ptr then
          return "";
@@ -109,13 +109,13 @@ package body GIO.Content_Type is
                   Uncertain : Address := Null_Address
                )  return Chars_Ptr;
       pragma Import (C, Internal, "g_content_type_guess");
-      Ptr : Chars_Ptr := Internal (To_C (File_Name));
+      Ptr : constant Chars_Ptr := Internal (To_C (File_Name));
    begin
       if Ptr = Null_Ptr then
          return "";
       else
          declare
-            Result : UTF8_String := Value (Ptr);
+            Result : constant UTF8_String := Value (Ptr);
          begin
             Free (Ptr);
             return Result;

@@ -166,10 +166,10 @@ package body Gtk.Widget.Styles.CSS_Store is
       end if;
       declare
          Class_Name : constant String := Type_Name (Get_Type (Widget));
-         Class : GObject_Class :=
-                    Gtk.Missed.Class_From_Type (Get_Type (Widget));
-         List  : Param_Spec_Array :=
-                    Class_List_Style_Properties (Class);
+         Class : constant GObject_Class :=
+                 Gtk.Missed.Class_From_Type (Get_Type (Widget));
+         List  : constant Param_Spec_Array :=
+                 Class_List_Style_Properties (Class);
       begin
          Put_Line
          (  File,
@@ -189,9 +189,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                Put (File, "      /* " & Type_Name (Param_Type));
                if Param_Type = GType_String then
                   declare
-                     This  : Param_Spec_String :=
-                                Param_Spec_String (Param);
-                     Value : String := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_String :=
+                             Param_Spec_String (Param);
+                     Value : constant String :=
+                             Style_Get (Widget, Name);
                   begin
                      Put (File, " Default is ");
                      Put_String (Default (This));
@@ -207,9 +208,9 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_Char then
                   declare
-                     This  : Param_Spec_Char :=
-                                Param_Spec_Char (Param);
-                     Value : GChar := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_Char :=
+                             Param_Spec_Char (Param);
+                     Value : constant GChar := Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -232,9 +233,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_Double then
                   declare
-                     This  : Param_Spec_Double :=
-                                Param_Spec_Double (Param);
-                     Value : GDouble := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_Double :=
+                             Param_Spec_Double (Param);
+                     Value : constant GDouble :=
+                             Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -259,9 +261,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_Float then
                   declare
-                     This  : Param_Spec_Float :=
-                                Param_Spec_Float (Param);
-                     Value : GFloat := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_Float :=
+                             Param_Spec_Float (Param);
+                     Value : constant GFloat :=
+                             Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -286,9 +289,9 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_Long then
                   declare
-                     This  : Param_Spec_Long :=
-                                Param_Spec_Long (Param);
-                     Value : GLong := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_Long :=
+                             Param_Spec_Long (Param);
+                     Value : constant GLong := Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -313,9 +316,9 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_Int then
                   declare
-                     This  : Param_Spec_Int :=
-                                Param_Spec_Int (Param);
-                     Value : GInt := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_Int :=
+                             Param_Spec_Int (Param);
+                     Value : constant GInt := Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -340,9 +343,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_UChar then
                   declare
-                     This  : Param_Spec_UChar :=
-                                Param_Spec_UChar (Param);
-                     Value : GUChar := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_UChar :=
+                             Param_Spec_UChar (Param);
+                     Value : constant GUChar :=
+                             Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -367,9 +371,9 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_UInt then
                   declare
-                     This  : Param_Spec_UInt :=
-                                Param_Spec_UInt (Param);
-                     Value : GUInt := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_UInt :=
+                             Param_Spec_UInt (Param);
+                     Value : constant GUInt := Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -394,9 +398,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_ULong then
                   declare
-                     This  : Param_Spec_ULong :=
-                                Param_Spec_ULong (Param);
-                     Value : GULong := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_ULong :=
+                             Param_Spec_ULong (Param);
+                     Value : constant GULong :=
+                             Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -421,9 +426,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Param_Type = GType_Boolean then
                   declare
-                     This  : Param_Spec_Boolean :=
-                                Param_Spec_Boolean (Param);
-                     Value : Boolean := Style_Get (Widget, Name);
+                     This  : constant Param_Spec_Boolean :=
+                             Param_Spec_Boolean (Param);
+                     Value : constant Boolean :=
+                             Style_Get (Widget, Name);
                   begin
                      Put_Line
                      (  File,
@@ -469,10 +475,12 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Is_A (Param_Type, GType_Enum) then
                   declare
-                     This  : Param_Spec_Enum := Param_Spec_Enum (Param);
-                     Value : Enum_Value;
-                     First : Boolean := True;
-                     Class_Of : Enum_Class := Enumeration (This);
+                     This     : constant Param_Spec_Enum :=
+                                Param_Spec_Enum (Param);
+                     Value    : Enum_Value;
+                     First    : Boolean := True;
+                     Class_Of : constant Enum_Class :=
+                                Enumeration (This);
                   begin
                      Put (File, " (");
                      for Index in 0..GUInt'Last loop
@@ -515,9 +523,10 @@ package body Gtk.Widget.Styles.CSS_Store is
                   end;
                elsif Is_A (Param_Type, GType_Flags) then
                   declare
-                     This     : Param_Spec_Flags :=
-                                   Param_Spec_Flags (Param);
-                     Class_Of : Flags_Class := Flags_Enumeration (This);
+                     This     : constant Param_Spec_Flags :=
+                                Param_Spec_Flags (Param);
+                     Class_Of : constant Flags_Class :=
+                                Flags_Enumeration (This);
                      Value    : Flags_Value;
                      First    : Boolean := True;
                   begin

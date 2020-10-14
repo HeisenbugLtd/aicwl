@@ -2,7 +2,7 @@
 --  package GIO.Volume_Monitor      Copyright (c)  Dmitry A. Kazakov  --
 --  Implementation                                 Summer, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -81,7 +81,8 @@ package body GIO.Volume_Monitor is
                 Internal,
                 "g_volume_monitor_get_mount_for_uuid"
              );
-      Ptr : Address := Internal (Get_Object (Monitor), To_C (UUID));
+      Ptr : constant Address :=
+            Internal (Get_Object (Monitor), To_C (UUID));
    begin
       if Ptr = Null_Address then
          return null;
@@ -118,7 +119,8 @@ package body GIO.Volume_Monitor is
                 Internal,
                 "g_volume_monitor_get_volume_for_uuid"
              );
-      Ptr : Address := Internal (Get_Object (Monitor), To_C (UUID));
+      Ptr : constant Address :=
+            Internal (Get_Object (Monitor), To_C (UUID));
    begin
       if Ptr = Null_Address then
          return null;

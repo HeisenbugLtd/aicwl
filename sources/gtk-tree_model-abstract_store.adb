@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Abstract_Store               Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -372,7 +372,7 @@ package body Gtk.Tree_Model.Abstract_Store is
    end To_Ada;
 
    function On_Get_Flags (Model : Address) return Tree_Model_Flags is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -400,7 +400,7 @@ package body Gtk.Tree_Model.Abstract_Store is
    end On_Get_Flags;
 
    function On_Get_N_Columns (Model : Address) return GInt is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -429,7 +429,7 @@ package body Gtk.Tree_Model.Abstract_Store is
 
    function On_Get_Column_Type (Model : Address; Index : GInt)
       return GType is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -461,7 +461,7 @@ package body Gtk.Tree_Model.Abstract_Store is
                Iter  : access Gtk_Tree_Iter;
                Path  : Address
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -504,7 +504,7 @@ package body Gtk.Tree_Model.Abstract_Store is
             (  Model : Address;
                Iter  : access Gtk_Tree_Iter
             )  return Address is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -537,7 +537,7 @@ package body Gtk.Tree_Model.Abstract_Store is
                 Column : GInt;
                 Value  : access GValue
              )  is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -567,7 +567,7 @@ package body Gtk.Tree_Model.Abstract_Store is
                Iter   : access Gtk_Tree_Iter;
                Parent : Gtk_Tree_Iter_Ptr
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -604,7 +604,7 @@ package body Gtk.Tree_Model.Abstract_Store is
    end On_Children;
 
    procedure On_Delete (Model : Address) is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This /= null then
          This.Finalize;
@@ -630,7 +630,7 @@ package body Gtk.Tree_Model.Abstract_Store is
             (  Model : Address;
                Iter  : access Gtk_Tree_Iter
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -685,7 +685,7 @@ package body Gtk.Tree_Model.Abstract_Store is
             (  Model : Address;
                Iter  : access Gtk_Tree_Iter
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -726,7 +726,7 @@ package body Gtk.Tree_Model.Abstract_Store is
             (  Model : Address;
                Iter  : Gtk_Tree_Iter_Ptr
             )  return GInt is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -761,7 +761,7 @@ package body Gtk.Tree_Model.Abstract_Store is
                Parent : Gtk_Tree_Iter_Ptr;
                N      : GInt
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -807,7 +807,7 @@ package body Gtk.Tree_Model.Abstract_Store is
                Iter  : access Gtk_Tree_Iter;
                Child : access Gtk_Tree_Iter
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -818,7 +818,7 @@ package body Gtk.Tree_Model.Abstract_Store is
          return 0;
       else
          declare
-            Result : Gtk_Tree_Iter := This.Parent (Child.all);
+            Result : constant Gtk_Tree_Iter := This.Parent (Child.all);
          begin
             if Result = Null_Iter then
                return 0;
@@ -847,7 +847,7 @@ package body Gtk.Tree_Model.Abstract_Store is
             (  Model : Address;
                Iter  : access Gtk_Tree_Iter
             )  return GBoolean is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -888,7 +888,7 @@ package body Gtk.Tree_Model.Abstract_Store is
              (  Model : Address;
                 Iter  : access Gtk_Tree_Iter
              )  is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -917,7 +917,7 @@ package body Gtk.Tree_Model.Abstract_Store is
              (  Model : Address;
                 Iter  : access Gtk_Tree_Iter
              )  is
-      This : Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
+      This : constant Gtk_Abstract_Model_Record_Ptr := To_Ada (Model);
    begin
       if This = null then
          Log
@@ -1115,8 +1115,9 @@ package body Gtk.Tree_Model.Abstract_Store is
          for Index in Signals'Range loop
             declare
                Count : Natural := 0;
-               I     : Natural := Natural (Index - Signals'First) +
-                                  Parameters'First (1);
+               I     : constant Natural :=
+                          Natural (Index - Signals'First) +
+                          Parameters'First (1);
             begin
                for J in Parameters'Range (2) loop
                   exit when Parameters (I, J) = GType_None;

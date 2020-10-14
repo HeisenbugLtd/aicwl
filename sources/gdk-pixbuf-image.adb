@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Summer, 2013       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -36,8 +36,8 @@ package body Gdk.Pixbuf.Image is
       new Ada.Unchecked_Deallocation (RGB_Buffer, RGB_Buffer_Ptr);
 
    procedure Adjust (Image : in out RGB_Image) is
-      Size : GInt := GInt (Image.X_Size) * GInt (Image.Y_Size);
-      Old  : RGB_Buffer_Ptr := Image.Buffer;
+      Size : constant GInt := GInt (Image.X_Size) * GInt (Image.Y_Size);
+      Old  : constant RGB_Buffer_Ptr := Image.Buffer;
    begin
       if Size > 0 then
          Image.Buffer := new RGB_Buffer (1..Size);
@@ -101,7 +101,7 @@ package body Gdk.Pixbuf.Image is
              (  Image : in out RGB_Image;
                 Pixel : RGB_Pixel
              )  is
-      Size : GInt := GInt (Image.X_Size) * GInt (Image.Y_Size);
+      Size : constant GInt := GInt (Image.X_Size) * GInt (Image.Y_Size);
    begin
       if Size > 0 then
          Image.Buffer (1..Size) := (others => Pixel);
@@ -112,8 +112,9 @@ package body Gdk.Pixbuf.Image is
              (  Image : in out RGB_Image;
                 Color : Gdk_Color
              )  is
-      Pixel : RGB_Pixel := To_Pixel (Color);
-      Size  : GInt := GInt (Image.X_Size) * GInt (Image.Y_Size);
+      Pixel : constant RGB_Pixel := To_Pixel (Color);
+      Size  : constant GInt :=
+              GInt (Image.X_Size) * GInt (Image.Y_Size);
    begin
       if Size > 0 then
          Image.Buffer (1..Size) := (others => Pixel);
@@ -229,8 +230,9 @@ package body Gdk.Pixbuf.Image is
                 Width  : X_Axis;
                 Height : Y_Axis
              )  is
-      New_Size : GInt := GInt (Width) * GInt (Height);
-      Old_Size : GInt := GInt (Image.X_Size) * GInt (Image.Y_Size);
+      New_Size : constant GInt := GInt (Width) * GInt (Height);
+      Old_Size : constant GInt :=
+                 GInt (Image.X_Size) * GInt (Image.Y_Size);
    begin
       if New_Size > Old_Size then
          Free (Image.Buffer);

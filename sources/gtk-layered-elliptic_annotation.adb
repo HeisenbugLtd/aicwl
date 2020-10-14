@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Annotation             Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -662,13 +662,14 @@ package body Gtk.Layered.Elliptic_Annotation is
          This  := Next (This);
       end loop;
       declare
-         Result : Annotation_List_Ptr := new Annotation_List (1..Count);
+         Result : constant Annotation_List_Ptr :=
+                  new Annotation_List (1..Count);
          List   : Annotation_List renames Result.all;
       begin
          This := Texts;
          for Index in List'Range loop
             declare
-               Text : UTF8_String := Get_Data (This);
+               Text : constant UTF8_String := Get_Data (This);
             begin
                List (Index) :=
                   new Annotation_Text'
@@ -698,7 +699,8 @@ package body Gtk.Layered.Elliptic_Annotation is
          end if;
       end loop;
       declare
-         Result : Annotation_List_Ptr := new Annotation_List (1..Count);
+         Result : constant Annotation_List_Ptr :=
+                  new Annotation_List (1..Count);
          List   : Annotation_List renames Result.all;
          Start  : Integer := Texts'First;
          Stop   : Integer;
@@ -1245,7 +1247,7 @@ package body Gtk.Layered.Elliptic_Annotation is
       );
       declare
          use Gtk.Layered.Stream_IO;
-         Markup : Bit_Array := Restore (Stream'Access);
+         Markup : constant Bit_Array := Restore (Stream'Access);
       begin
          Free (Layer.Texts);
          Layer.Texts := new Annotation_List (Markup'Range);
@@ -1440,7 +1442,7 @@ package body Gtk.Layered.Elliptic_Annotation is
                );
             when Property_Markup =>
                declare
-                  Markup : String := Get_String (Value);
+                  Markup : constant String := Get_String (Value);
                begin
                   if Layer.Texts /= null then
                      for Index in Markup'Range loop

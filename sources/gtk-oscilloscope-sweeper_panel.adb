@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Sweeper_Panel              Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  19:09 09 Oct 2015  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -499,7 +499,7 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
          declare
             use Ada.Calendar;
             use Strings_Edit;
-            Text    : String  := Panel.Offset_Edit.Get_Text;
+            Text    : constant String  := Panel.Offset_Edit.Get_Text;
             Pointer : Integer := Text'First;
             procedure Get (Symbol : Character) is
             begin
@@ -657,11 +657,10 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       (  Panel.Sweeper,
          Time'
          (  To_Time
-            (  GDouble
-               (  Panel.Oscilloscope.Time_Axis
-                  (  Panel.Sweeper
-                  ) .Sweeper.Get_Upper
-      )  )  )  );
+            (  Panel.Oscilloscope.Time_Axis
+               (  Panel.Sweeper
+               ) .Sweeper.Get_Upper
+      )  )  );
       Panel.Show_Offset;
    exception
       when Error : others =>
@@ -962,9 +961,9 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
                 Values : GValues;
                 Panel  : Gtk_Oscilloscope_Sweeper_Panel
              )  is
-      Sweeper : GUInt   := Get_UInt (Nth (Values,  1));
-      Stamp   : GDouble := Get_Double (Nth (Values, 2));
-      Diff    : GDouble := Get_Double (Nth (Values, 3));
+      Sweeper : constant GUInt   := Get_UInt   (Nth (Values, 1));
+      Stamp   : constant GDouble := Get_Double (Nth (Values, 2));
+      Diff    : constant GDouble := Get_Double (Nth (Values, 3));
       function Image_Span (Span : GDouble) return String is
       begin
          if Span >= 1_000.0 then
@@ -989,7 +988,7 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
          if Panel.Time_Stamp /= null then
             Panel.Time_Stamp.Set_Markup
             (  "<i>t</i><sub>2</sub>="
-            &  Image (To_Time (GDouble (Stamp)))
+            &  Image (To_Time (Stamp))
             &  "   <i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>="
             &  Image_Span (Diff)
             );

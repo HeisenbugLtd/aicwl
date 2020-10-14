@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  20:53 22 May 2009  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,12 +25,11 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Interfaces.C;  use Interfaces.C;
-
 with GLib.Wrappers;
 with System.Address_To_Access_Conversions;
 
 package body GLib.Spawn is
+   use Interfaces.C;
 
    function G_Spawn_Command_Line_Async_UTF8
             (  Command_Line : Char_Array;

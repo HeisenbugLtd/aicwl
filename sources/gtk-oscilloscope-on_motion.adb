@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        On_Motion                                Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -44,7 +44,7 @@ separate (Gtk.Oscilloscope)
          Put (Destination, Pointer, V);
       else
          declare
-            Power : Integer :=
+            Power : constant Integer :=
                        (  Integer
                           (  GDouble'Truncation
                              (  Log (GDouble (abs V), 10.0)
@@ -80,9 +80,10 @@ separate (Gtk.Oscilloscope)
          end;
       end if;
    end Put;
-   Box     : Cairo_Box   := Oscilloscope.Get_Box;
-   Point   : Cairo_Tuple := Oscilloscope.Mouse_Event (Event, True);
-   Pointer : Integer     := 1;
+   Box     : constant Cairo_Box := Oscilloscope.Get_Box;
+   Point   : constant Cairo_Tuple :=
+             Oscilloscope.Mouse_Event (Event, True);
+   Pointer : Integer := 1;
 begin
    if Oscilloscope.Selection.Area /= null then
       Oscilloscope.Change_Selection (Point);
@@ -101,9 +102,9 @@ begin
             Got_It   : Boolean;
             Position : Integer;
          begin
-            Waveform.Get_Point (GDouble (Point.X), T, V, Got_It);
+            Waveform.Get_Point (Point.X, T, V, Got_It);
             if Got_It then
-               Y := GDouble (Waveform.Get_Y (V));
+               Y := Waveform.Get_Y (V);
                if abs (Point.Y - Y) <= Oscilloscope.Proximity then
                   Position := Pointer;
                   if Position > 1 then
@@ -150,11 +151,23 @@ begin
                   Put
                   (  Destination => Oscilloscope.Tip_Text,
                      Pointer     => Position,
+                     Value       =>
+                        +Oscilloscope.Channels (Index).Tip_Prefix
+                  );
+                  Put
+                  (  Destination => Oscilloscope.Tip_Text,
+                     Pointer     => Position,
                      X1          => GInt (Box.Y1),
                      X2          => GInt (Box.Y2),
                      V1          => GDouble (Waveform.Get_V2),
                      V2          => GDouble (Waveform.Get_V1),
                      V           => GDouble (V)
+                  );
+                  Put
+                  (  Destination => Oscilloscope.Tip_Text,
+                     Pointer     => Position,
+                     Value       =>
+                        +Oscilloscope.Channels (Index).Tip_Y_Suffix
                   );
                   if Oscilloscope.Show_Time then
                      declare
@@ -182,6 +195,12 @@ begin
                               V           => GDouble (T)
                            );
                         end if;
+                        Put
+                        (  Destination => Oscilloscope.Tip_Text,
+                           Pointer     => Position,
+                           Value       =>
+                             +Oscilloscope.Channels (Index).Tip_X_Suffix
+                        );
                      end;
                   end if;
                   Pointer := Position;

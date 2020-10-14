@@ -3,7 +3,7 @@
 --     Gtk.Handlers.Generic_Callback               Luebeck            --
 --  Implementation                                 Autumn, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -132,7 +132,7 @@ package body Gtk.Handlers.Generic_Callback is
                 User_Data       : Closure_Data_Ptr
              )  is
       Stub      : Object_Type;
-      Values    : GValues := Make_Values (N_Params, Params);
+      Values    : constant GValues := Make_Values (N_Params, Params);
       Arguments : GValue_Array (1..GInt (N_Params) - 1);
    begin
       for Index in Arguments'Range loop

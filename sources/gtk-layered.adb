@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -35,7 +35,6 @@ with GLib.Object;               use GLib.Object;
 with GtkAda.Types;              use GtkAda.Types;
 with Interfaces.C.Strings;      use Interfaces.C;
 
-with Cairo;
 with GLib.Object.Checked_Destroy;
 with System.Storage_Elements;
 
@@ -303,7 +302,7 @@ package body Gtk.Layered is
    end Erase;
 
    procedure Finalize (Layer : in out Abstract_Layer) is
-      Widget : Gtk_Layered := Layer.Widget;
+      Widget : constant Gtk_Layered := Layer.Widget;
    begin
       Remove (Layer);
       if Widget /= null then
@@ -319,7 +318,7 @@ package body Gtk.Layered is
    begin
       for Index in 1..Layer.Get_Properties_Number loop
          declare
-            Property : Param_Spec :=
+            Property : constant Param_Spec :=
                        Get_Property_Specification (Layer, Index);
          begin
             if (  Nick_Name (Property) = Name
@@ -346,7 +345,7 @@ package body Gtk.Layered is
    begin
       for Index in 1..Layer.Get_Properties_Number loop
          declare
-            Property : Param_Spec :=
+            Property : constant Param_Spec :=
                        Get_Property_Specification (Layer, Index);
          begin
             if (  Nick_Name (Property) = Nick_Name (Constraint)
@@ -493,7 +492,7 @@ package body Gtk.Layered is
 
    function Get_Upper (Widget : not null access Gtk_Layered_Record)
       return access Abstract_Layer'Class is
-      This : Abstract_Layer_Ptr := Widget.Bottom;
+      This : constant Abstract_Layer_Ptr := Widget.Bottom;
    begin
       if This = null then
          return null;
@@ -532,14 +531,14 @@ package body Gtk.Layered is
       Gtk.Drawing_Area.Initialize (Widget);
       if Layer_Added_ID = Invalid_Signal_Id then
          declare
-            Widget_Type : GType := Get_Type (Widget);
+            Widget_Type : constant GType := Get_Type (Widget);
          begin
             Layer_Added_ID := Lookup (Widget_Type, "layer-added");
          end;
       end if;
       if Layer_Removed_ID = Invalid_Signal_Id then
          declare
-            Widget_Type : GType := Get_Type (Widget);
+            Widget_Type : constant GType := Get_Type (Widget);
          begin
             Layer_Removed_ID := Lookup (Widget_Type, "layer-removed");
          end;
@@ -580,7 +579,7 @@ package body Gtk.Layered is
                 Position : Positive
              )  is
       Under   : access Abstract_Layer'Class;
-      Current : Natural := Layer.Get_Position;
+      Current : constant Natural := Layer.Get_Position;
    begin
       Layer.Remove;
       if Current > 0 or else Position < Current then
@@ -605,7 +604,8 @@ package body Gtk.Layered is
                 Params : GValues
              )  is
       This  : Abstract_Layer_Ptr := Widget.Bottom;
-      Param : Param_Spec := Param_Spec (Get_Proxy (Nth (Params, 1)));
+      Param : constant Param_Spec :=
+              Param_Spec (Get_Proxy (Nth (Params, 1)));
    begin
       if Widget.Get_Realized then
          for Position in 1..Widget.Depth loop
@@ -755,8 +755,10 @@ package body Gtk.Layered is
       Widget.Aspect_Ratio := Aspect_Ratio;
       if Widget.Get_Realized then
          declare
-            Width  : GDouble := GDouble (Widget.Get_Allocated_Width);
-            Height : GDouble := GDouble (Widget.Get_Allocated_Height);
+            Width  : constant GDouble :=
+                     GDouble (Widget.Get_Allocated_Width);
+            Height : constant GDouble :=
+                     GDouble (Widget.Get_Allocated_Height);
          begin
             Widget.Size := GDouble'Min (Width, Height * Aspect_Ratio);
          end;
@@ -841,7 +843,7 @@ package body Gtk.Layered is
              (  Widget : not null access Gtk_Layered_Record;
                 Target : Cairo_Surface
              )  is
-      Context : Cairo_Context := Create (Target);
+      Context : constant Cairo_Context := Create (Target);
    begin
       Widget.Snapshot (Context);
       Destroy (Context);

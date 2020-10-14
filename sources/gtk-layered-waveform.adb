@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -53,7 +53,7 @@ package body Gtk.Layered.Waveform is
       if Dump_X_Value then
          Trace (Layer'Address, Horizontal_Offset'Image (X) & " :");
       end if;
-      Trace (Layer'Address, Fixed'Image (Fixed (V)));
+      Trace (Layer'Address, Edit.Image (GDouble (V)));
       if Dump_Y_Value then
          Trace
          (  Layer'Address,
@@ -105,6 +105,8 @@ package body Gtk.Layered.Waveform is
         (  Property_Scaled,
            Property_Widened,
            Property_Opacity,
+           Property_Extrapolate_Left,
+           Property_Extrapolate_Right,
            Property_Interpolation_Mode,
            Property_Preferred_Method,
            Property_X1,
@@ -167,6 +169,8 @@ package body Gtk.Layered.Waveform is
                 Sweeper   : access Gtk_Adjustment_Record'Class := null;
                 Amplifier : access Gtk_Adjustment_Record'Class := null;
                 Mode      : Interpolation_Mode := Linear;
+                Left      : Boolean            := False;
+                Right     : Boolean            := False;
                 Opacity   : Fill_Opacity       := 1.0;
                 Scaled    : Boolean            := False;
                 Widened   : Boolean            := False
@@ -181,6 +185,8 @@ package body Gtk.Layered.Waveform is
       (  Layer   => Layer,
          Box     => Box,
          Mode    => Mode,
+         Left    => Left,
+         Right   => Right,
          Opacity => Opacity,
          Line    => (  Color    => Color,
                        Width    => Width,
@@ -203,6 +209,8 @@ package body Gtk.Layered.Waveform is
                Sweeper   : access Gtk_Adjustment_Record'Class := null;
                Amplifier : access Gtk_Adjustment_Record'Class := null;
                Mode      : Interpolation_Mode := Linear;
+               Left      : Boolean            := False;
+               Right     : Boolean            := False;
                Opacity   : Fill_Opacity       := 1.0;
                Scaled    : Boolean            := False;
                Widened   : Boolean            := False
@@ -217,6 +225,8 @@ package body Gtk.Layered.Waveform is
       (  Layer   => Layer,
          Box     => Box,
          Mode    => Mode,
+         Left    => Left,
+         Right   => Right,
          Opacity => Opacity,
          Line    => (  Color    => Color,
                        Width    => Width,
@@ -247,9 +257,9 @@ package body Gtk.Layered.Waveform is
                Trace_Line
                (  Layer'Address,
                   (  "Amplify V1 ="
-                  &  Fixed'Image (Fixed (Layer.V1))
+                  &  Edit.Image (GDouble (Layer.V1))
                   &  " /="
-                  &  Fixed'Image (Fixed (Upper))
+                  &  Edit.Image (GDouble (Upper))
                   &  " = upper"
                )  );
             end if;
@@ -257,9 +267,9 @@ package body Gtk.Layered.Waveform is
                Trace_Line
                (  Layer'Address,
                   (  "Amplify V2 ="
-                  &  Fixed'Image (Fixed (Layer.V2))
+                  &  Edit.Image (GDouble (Layer.V2))
                   &  " /="
-                  &  Fixed'Image (Fixed (Lower))
+                  &  Edit.Image (GDouble (Lower))
                   &  " = lower"
                )  );
             end if;
@@ -446,13 +456,14 @@ package body Gtk.Layered.Waveform is
    end Get;
 
    function Get (Layer : Waveform_Layer; X : GDouble) return Y_Axis is
+      Got_It : Boolean;
+      V      : Y_Axis;
    begin
-      if Layer.Data = null then
-         raise End_Error;
+      Layer.Get (X, V, Got_It);
+      if Got_It then
+         return V;
       else
-         return V : Y_Axis do
-            Layer.Data.Get (Get_T (Layer, X), Layer.Mode, V);
-         end return;
+         raise End_Error;
       end if;
    end Get;
 
@@ -466,7 +477,35 @@ package body Gtk.Layered.Waveform is
       if Layer.Data = null then
          Got_It := False;
       else
-         Layer.Data.Get (Get_T (Layer, X), Layer.Mode, Y, Got_It);
+         declare
+            T : constant X_Axis := Get_T (Layer, X);
+         begin
+            Layer.Data.Get (T, Layer.Mode, Y, Got_It);
+            if (  not Got_It
+               and then
+                  (  Layer.Extrapolate_Left
+                  or else
+                     Layer.Extrapolate_Right
+               )  )
+            then
+               declare
+                  T1, T2 : X_Axis;
+                  V1, V2 : Y_Axis;
+               begin
+                  Layer.Data.First (T1, V1, Got_It);
+                  Layer.Data.Last  (T2, V2, Got_It);
+                  if Got_It then
+                     if T <= T1 and then Layer.Extrapolate_Left then
+                        Y := V1;
+                        Got_It := True;
+                     elsif T >= T2 and then Layer.Extrapolate_Right then
+                        Y := V2;
+                        Got_It := True;
+                     end if;
+                  end if;
+               end;
+            end if;
+         end;
       end if;
    end Get;
 
@@ -497,6 +536,12 @@ package body Gtk.Layered.Waveform is
       return Layer.Mode;
    end Get_Interpolation_Mode;
 
+   function Get_Left_Extrapolation_Mode (Layer : Waveform_Layer)
+      return Boolean is
+   begin
+      return Layer.Extrapolate_Left;
+   end Get_Left_Extrapolation_Mode;
+
    function Get_Line (Layer : Waveform_Layer) return Line_Parameters is
    begin
       return Layer.Line;
@@ -519,12 +564,11 @@ package body Gtk.Layered.Waveform is
                 T     : out X_Axis;
                 V     : out Y_Axis
              )  is
+      Got_It : Boolean;
    begin
-      if Layer.Data = null then
+      Layer.Get_Point (X, T, V, Got_It);
+      if not Got_It then
          raise End_Error;
-      else
-         T := Get_T (Layer, X);
-         Layer.Data.Get (T, Layer.Mode, V);
       end if;
    end Get_Point;
 
@@ -541,6 +585,28 @@ package body Gtk.Layered.Waveform is
       else
          T := Get_T (Layer, X);
          Layer.Data.Get (T, Layer.Mode, V, Got_It);
+         if (  not Got_It
+            and then
+               (Layer.Extrapolate_Left or else Layer.Extrapolate_Right)
+            )
+         then
+            declare
+               T1, T2 : X_Axis;
+               V1, V2 : Y_Axis;
+            begin
+               Layer.Data.First (T1, V1, Got_It);
+               Layer.Data.Last  (T2, V2, Got_It);
+               if Got_It then
+                  if T <= T1 and then Layer.Extrapolate_Left then
+                     V := V1;
+                     Got_It := True;
+                  elsif T >= T2 and then Layer.Extrapolate_Right then
+                     V := V2;
+                     Got_It := True;
+                  end if;
+               end if;
+            end;
+         end if;
       end if;
    end Get_Point;
 
@@ -678,6 +744,26 @@ package body Gtk.Layered.Waveform is
                      Nick       => "color",
                      Blurb      => "The waveform color"
                   );
+            when Property_Extrapolate_Left =>
+               return
+                  Gnew_Boolean
+                  (  Name    => "extrapolate-left",
+                     Nick    => "extrapolate-left",
+                     Default => False,
+                     Blurb   => "Extrapolation of waveform data " &
+                                "to the left is allowed when is set " &
+                                "to true"
+                  );
+            when Property_Extrapolate_Right =>
+               return
+                  Gnew_Boolean
+                  (  Name    => "extrapolate-right",
+                     Nick    => "extrapolate-right",
+                     Default => False,
+                     Blurb   => "Extrapolation of waveform data " &
+                                "to the right is allowed when is set " &
+                                "to true"
+                  );
             when Property_Interpolation_Mode =>
                return
                   Gtk.Layered.Interpolation_Mode_Property.Gnew_Enum
@@ -794,6 +880,12 @@ package body Gtk.Layered.Waveform is
                   (  Value,
                      Layer.Line.Line_Cap
                   );
+               when Property_Extrapolate_Left =>
+                  Init (Value, GType_Boolean);
+                  Set_Boolean (Value, Layer.Extrapolate_Left);
+               when Property_Extrapolate_Right =>
+                  Init (Value, GType_Boolean);
+                  Set_Boolean (Value, Layer.Extrapolate_Right);
                when Property_Interpolation_Mode =>
                   Gtk.Layered.Interpolation_Mode_Property.Set_Enum
                   (  Value,
@@ -818,6 +910,12 @@ package body Gtk.Layered.Waveform is
          end;
       end if;
    end Get_Property_Value;
+
+   function Get_Right_Extrapolation_Mode (Layer : Waveform_Layer)
+      return Boolean is
+   begin
+      return Layer.Extrapolate_Right;
+   end Get_Right_Extrapolation_Mode;
 
    function Get_Scaled (Layer : Waveform_Layer) return Boolean is
    begin
@@ -1112,6 +1210,8 @@ package body Gtk.Layered.Waveform is
       Opacity   : GDouble;
       Amplifier : Boolean;
       Sweeper   : Boolean;
+      Left      : Boolean;
+      Right     : Boolean;
    begin
       Restore (Stream, Box.X1);
       Restore (Stream, Box.X2);
@@ -1126,7 +1226,9 @@ package body Gtk.Layered.Waveform is
          Layer.Scaled,
          Layer.Widened,
          Amplifier,
-         Sweeper
+         Sweeper,
+         Left,
+         Right
       );
       Opacity := GDouble'Min (1.0, GDouble'Max (0.0, Opacity));
       Set
@@ -1134,6 +1236,8 @@ package body Gtk.Layered.Waveform is
          Box     => Box,
          Line    => Line,
          Mode    => Mode,
+         Left    => Left,
+         Right   => Right,
          Opacity => Opacity
       );
       Set_Preferred_Method (Layer, Preferred);
@@ -1187,15 +1291,21 @@ package body Gtk.Layered.Waveform is
              (  Layer  : in out Waveform_Layer;
                 Factor : GDouble
              )  is
-      Center_X    : GDouble := (Layer.Box.X1 + Layer.Box.X2) * 0.5;
-      Center_Y    : GDouble := (Layer.Box.Y1 + Layer.Box.Y2) * 0.5;
-      Half_Width  : GDouble := (Layer.Box.X2 - Layer.Box.X1 + 1.0) * 0.5;
-      Half_Height : GDouble := (Layer.Box.Y2 - Layer.Box.Y1 + 1.0) * 0.5;
+      Center_X    : constant GDouble :=
+                       (Layer.Box.X1 + Layer.Box.X2) * 0.5;
+      Center_Y    : constant GDouble :=
+                       (Layer.Box.Y1 + Layer.Box.Y2) * 0.5;
+      Half_Width  : constant GDouble :=
+                       (Layer.Box.X2 - Layer.Box.X1 + 1.0) * 0.5;
+      Half_Height : constant GDouble :=
+                       (Layer.Box.Y2 - Layer.Box.Y1 + 1.0) * 0.5;
    begin
       Set
       (  Layer   => Layer,
          Line    => Layer.Line,
          Mode    => Layer.Mode,
+         Left    => Layer.Extrapolate_Left,
+         Right   => Layer.Extrapolate_Right,
          Opacity => Layer.Opacity,
          Box     => (  X1 => Center_X - Half_Width,
                        X2 => Center_X + Half_Width,
@@ -1209,6 +1319,8 @@ package body Gtk.Layered.Waveform is
                 Box     : Cairo_Box;
                 Line    : Line_Parameters;
                 Mode    : Interpolation_Mode;
+                Left    : Boolean;
+                Right   : Boolean;
                 Opacity : Fill_Opacity
              )  is
    begin
@@ -1226,9 +1338,11 @@ package body Gtk.Layered.Waveform is
             Trace_Line (Layer'Address, "Set box");
          end if; -------------------------------------------------------
       end if;
-      Layer.Line    := Line;
-      Layer.Mode    := Mode;
-      Layer.Updated := True;
+      Layer.Line              := Line;
+      Layer.Mode              := Mode;
+      Layer.Extrapolate_Left  := Left;
+      Layer.Extrapolate_Right := Right;
+      Layer.Updated           := True;
       Layer.Set_Opacity (Opacity);
    end Set;
 
@@ -1282,6 +1396,28 @@ package body Gtk.Layered.Waveform is
       Layer.Line.Color := Color;
       Layer.Updated := True;
    end Set_Color;
+
+   procedure Set_Extrapolation_Mode
+             (  Layer : in out Waveform_Layer;
+                Left  : Boolean;
+                Right : Boolean
+             )  is
+   begin
+      if (  Layer.Extrapolate_Left /= Left
+         or else
+            Layer.Extrapolate_Right /= Right
+         )
+      then
+         Layer.Extrapolate_Left  := Left;
+         Layer.Extrapolate_Right := Right;
+         Layer.Sampled := False;
+         Layer.Updated := True;
+         Layer.Valid   := False;
+         if 0 /= (Tracing_Mode and Trace_Waveform) then ----------------
+            Trace_Line (Layer'Address, "Set_Extrapolation_Mode");
+         end if; -------------------------------------------------------
+      end if;
+   end Set_Extrapolation_Mode;
 
    procedure Set_Interpolation_Mode
              (  Layer : in out Waveform_Layer;
@@ -1355,7 +1491,8 @@ package body Gtk.Layered.Waveform is
                )  )  );
             when Property_T1 =>
                declare
-                  New_Value : X_Axis := X_Axis (Get_Double (Value));
+                  New_Value : constant X_Axis :=
+                              X_Axis (Get_Double (Value));
                begin
                   if New_Value >= Layer.T2 then
                      Layer.T2 := New_Value + 1.0;
@@ -1370,7 +1507,8 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_T2 =>
                declare
-                  New_Value : X_Axis := X_Axis (Get_Double (Value));
+                  New_Value : constant X_Axis :=
+                              X_Axis (Get_Double (Value));
                begin
                   if Layer.T1 >= New_Value then
                      Layer.T1 := New_Value - 1.0;
@@ -1385,7 +1523,8 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_V1 =>
                declare
-                  New_Value : Y_Axis := Y_Axis (Get_Double (Value));
+                  New_Value : constant Y_Axis :=
+                              Y_Axis (Get_Double (Value));
                begin
                   if New_Value >= Layer.V2 then
                      Layer.V2 := New_Value + 1.0;
@@ -1400,7 +1539,8 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_V2 =>
                declare
-                  New_Value : Y_Axis := Y_Axis (Get_Double (Value));
+                  New_Value : constant Y_Axis :=
+                              Y_Axis (Get_Double (Value));
                begin
                   if Layer.V1 >= New_Value then
                      Layer.V1 := New_Value - 1.0;
@@ -1415,7 +1555,7 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_X1 =>
                declare
-                  New_Value : GDouble := GDouble (Get_Double (Value));
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if New_Value >= Layer.Box.X2 then
                      Layer.Box.X2 := New_Value + 1.0;
@@ -1430,7 +1570,7 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_X2 =>
                declare
-                  New_Value : GDouble := GDouble (Get_Double (Value));
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if Layer.Box.X1 > New_Value then
                      Layer.Box.X1 := New_Value - 1.0;
@@ -1445,7 +1585,7 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_Y1 =>
                declare
-                  New_Value : GDouble := GDouble (Get_Double (Value));
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if New_Value >= Layer.Box.Y2 then
                      Layer.Box.Y2 := New_Value + 1.0;
@@ -1460,7 +1600,7 @@ package body Gtk.Layered.Waveform is
                Layer.Updated := True;
             when Property_Y2 =>
                declare
-                  New_Value : GDouble := GDouble (Get_Double (Value));
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if Layer.Box.Y1 >= New_Value then
                      Layer.Box.Y1 := New_Value - 1.0;
@@ -1474,7 +1614,7 @@ package body Gtk.Layered.Waveform is
                end;
                Layer.Updated := True;
             when Property_Width =>
-               Layer.Line.Width := GDouble (Get_Double (Value));
+               Layer.Line.Width := Get_Double (Value);
                if Layer.Line.Width < 0.0 then
                   Layer.Line.Width := 0.0;
                end if;
@@ -1482,6 +1622,18 @@ package body Gtk.Layered.Waveform is
             when Property_Color =>
                Layer.Line.Color := Get_Value (Value);
                Layer.Updated    := True;
+            when Property_Extrapolate_Left =>
+               Set_Extrapolation_Mode
+               (  Layer => Layer,
+                  Left  => Get_Boolean (Value),
+                  Right => Layer.Extrapolate_Right
+               );
+            when Property_Extrapolate_Right =>
+               Set_Extrapolation_Mode
+               (  Layer => Layer,
+                  Left  => Layer.Extrapolate_Left,
+                  Right => Get_Boolean (Value)
+               );
             when Property_Interpolation_Mode =>
                Set_Interpolation_Mode
                (  Layer,
@@ -1670,7 +1822,9 @@ package body Gtk.Layered.Waveform is
          Layer.Scaled,
          Layer.Widened,
          Store_Amplifier,
-         Store_Sweeper
+         Store_Sweeper,
+         Layer.Extrapolate_Left,
+         Layer.Extrapolate_Right
       );
       if Store_Amplifier then
          Store (Stream, Layer.Amplifier_Adjustment);

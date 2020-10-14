@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper_Annotation          Luebeck            --
 -- Implementation                                  Summer, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -35,7 +35,6 @@ with Gtk.Layered.Label;           use Gtk.Layered.Label;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
 with Strings_Edit.Integers;       use Strings_Edit.Integers;
 
-with Ada.Calendar;
 with Cairo.Font_Slant_Property;
 with Pango.Enums.Weight_Property;
 with Gtk.Layered.Alignment_Property;
@@ -933,7 +932,8 @@ package body Gtk.Layered.Graph_Paper_Annotation is
          end if;
          if Layer.Updated then -- Renewing texts
             declare
-               V, V2 : GDouble;
+               V, V2  : GDouble;
+               Suffix : constant String := +Layer.Suffix;
             begin
                if Step > 0.0 then
                   case Layer.Location.Orientation is
@@ -945,13 +945,25 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   for Index in Natural'Range loop
                      V := V0 + Step * GDouble (Index);
                      exit when V > V2;
-                     Layer.Set_Text
-                     (  Index + 1,
-                        Render
-                        (  Graph_Paper_Annotation_Layer'Class (Layer),
-                           GDouble (V),
-                           Layer.Raster
-                     )  );
+                     if Layer.Renderer = null then
+                        Layer.Set_Text
+                        (  Index + 1,
+                           (  Graph_Paper_Annotation_Layer'Class
+                              (  Layer
+                              ) .Render (V, Layer.Raster)
+                           &  Suffix
+                        )  );
+                     else
+                        Layer.Set_Text
+                        (  Index + 1,
+                           (  Layer.Renderer
+                              (  Layer,
+                                 V,
+                                 Layer.Raster
+                              )
+                           &  Suffix
+                        )  );
+                     end if;
                   end loop;
                end if;
             end;
@@ -985,6 +997,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
       end if;
       Finalize (Abstract_Layer (Layer));
       Delete (Layer.Texts);
+      Free (Layer.Suffix);
    end Finalize;
 
    function Get_Background_Color (Layer : Graph_Paper_Annotation_Layer)
@@ -1387,7 +1400,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                            when Absolute =>
                               Set_Double
                               (  Value,
-                                 GDouble (Layer.Location.Y_Position)
+                                 Layer.Location.Y_Position
                               );
                            when Relative =>
                               Set_Double
@@ -1487,6 +1500,12 @@ package body Gtk.Layered.Graph_Paper_Annotation is
       return Layer.Stretch;
    end Get_Stretch;
 
+   function Get_Suffix (Layer : Graph_Paper_Annotation_Layer)
+      return UTF8_String is
+   begin
+      return +Layer.Suffix;
+   end Get_Suffix;
+
    function Get_Superscript (Layer : Graph_Paper_Annotation_Layer)
       return Boolean is
    begin
@@ -1498,6 +1517,26 @@ package body Gtk.Layered.Graph_Paper_Annotation is
    begin
       return Layer.Text_Angle;
    end Get_Text_Angle;
+
+   function Image
+            (  Layer : Graph_Paper_Annotation_Layer;
+               Value : GDouble
+            )  return UTF8_String is
+   begin
+      if Layer.Renderer = null then
+         return
+         (  Graph_Paper_Annotation_Layer'Class
+            (  Layer
+            ) .Render (Value, Layer.Raster)
+         &  (+Layer.Suffix)
+         );
+      else
+         return
+         (  Layer.Renderer (Layer, Value, Layer.Raster)
+         &  (+Layer.Suffix)
+         );
+      end if;
+   end Image;
 
    function Image (Interval : Duration) return String is
       use Strings_Edit;
@@ -1515,10 +1554,10 @@ package body Gtk.Layered.Graph_Paper_Annotation is
       use Ada.Calendar;
       use Gtk.Layered.Waveform.Edit;
       use Strings_Edit;
-      Now     : Ada.Calendar.Time := Clock;
+      Now     : constant Ada.Calendar.Time := Clock;
       Text    : String (1..80);
-      Value   : GDouble := GDouble (Seconds (Stamp));
-      Second  : Integer := Integer (GDouble'Floor (Value));
+      Value   : constant GDouble := GDouble (Seconds (Stamp));
+      Second  : constant Integer := Integer (GDouble'Floor (Value));
       Pointer : Integer := Text'First;
    begin
       Put
@@ -1648,7 +1687,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                Value  : GDouble;
                Raster : Gtk.Layered.Waveform.Rasters.Scale
             )  return UTF8_String is
-      Small : Integer := 0;
+      Small : constant Integer := 0;
       Power : Integer;
    begin
        if Raster.Small > 0 then
@@ -1659,7 +1698,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
           return Image (Value, AbsSmall => Raster.Small);
        end if;
        declare
-          Text : String :=
+          Text : constant String :=
                  Image (Value / 10.0 ** Power, AbsSmall => Small);
        begin
           if Text = "0" or else Power = 0 then
@@ -1688,8 +1727,9 @@ package body Gtk.Layered.Graph_Paper_Annotation is
       use Ada.Calendar;
       use Strings_Edit;
       Text    : String (1..80);
-      Stamp   : GDouble := GDouble (Seconds (To_Time (GDouble (Value))));
-      Second  : Integer := Integer (GDouble'Floor (Stamp));
+      Stamp   : constant GDouble :=
+                GDouble (Seconds (To_Time (Value)));
+      Second  : constant Integer := Integer (GDouble'Floor (Stamp));
       Pointer : Integer := Text'First;
    begin
       Put
@@ -1730,7 +1770,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
             );
             if Layer.Raster.Small < 0 then
                declare
-                  Fraction : String :=
+                  Fraction : constant String :=
                      Image
                      (  Value    => Stamp - GDouble (Second),
                         AbsSmall => Layer.Raster.Small
@@ -1835,7 +1875,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
              (  Layer  : in out Graph_Paper_Annotation_Layer;
                 Factor : GDouble
              )  is
-      Height : GDouble := Layer.Height * Factor;
+      Height : constant GDouble := Layer.Height * Factor;
       Length : GDouble;
    begin
       if Height <= 0.0 then
@@ -2175,6 +2215,14 @@ package body Gtk.Layered.Graph_Paper_Annotation is
       Layer.Updated := True;
    end Set_Property_Value;
 
+   procedure Set_Renderer
+             (  Layer    : in out Graph_Paper_Annotation_Layer;
+                Renderer : Renderer_Function
+             )  is
+   begin
+      Layer.Renderer := Renderer;
+   end Set_Renderer;
+
    procedure Set_Scaled
              (  Layer  : in out Graph_Paper_Annotation_Layer;
                 Scaled : Boolean
@@ -2183,6 +2231,31 @@ package body Gtk.Layered.Graph_Paper_Annotation is
       Layer.Scaled  := Scaled;
       Layer.Updated := True;
    end Set_Scaled;
+
+   procedure Set_Suffix
+             (  Layer  : in out Graph_Paper_Annotation_Layer;
+                Suffix : UTF8_String
+             )  is
+   begin
+      if Layer.Suffix = null then
+         Layer.Suffix := new Annotation_Text'
+                             (  Suffix'Length,
+                                Suffix'Length,
+                                Suffix
+                             );
+      elsif Layer.Suffix.Size < Suffix'Length then
+         Free (Layer.Suffix);
+         Layer.Suffix := new Annotation_Text'
+                             (  Suffix'Length,
+                                Suffix'Length,
+                                Suffix
+                             );
+      else
+         Layer.Suffix.Length := Suffix'Length;
+         Layer.Suffix.Buffer (1..Suffix'Length) := Suffix;
+      end if;
+      Layer.Updated := True;
+   end Set_Suffix;
 
    procedure Set_Text
              (  Layer    : in out Graph_Paper_Annotation_Layer;

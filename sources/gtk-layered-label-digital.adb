@@ -3,7 +3,7 @@
 --     Gtk.Layered.Label.Digital                   Luebeck            --
 --  Implementation                                 Summer, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -732,7 +732,7 @@ package body Gtk.Layered.Label.Digital is
             Value : GDouble;
          begin
             Restore (Stream, Value);
-            Set_Value (Layer, GDouble (Value));
+            Set_Value (Layer, Value);
          end;
       end if;
    end Restore;
@@ -855,7 +855,7 @@ package body Gtk.Layered.Label.Digital is
                Layer.Scaled := Get_Boolean (Value);
             when Property_Base =>
                declare
-                  Base : GUInt := Get_UInt (Value);
+                  Base : constant GUInt := Get_UInt (Value);
                begin
                   if Base in 2..16 then
                      Layer.Base := NumberBase (Base);
@@ -917,7 +917,7 @@ package body Gtk.Layered.Label.Digital is
          Layer.Adjustment /= null
       );
       if Layer.Adjustment = null then
-         Store (Stream, GDouble (Layer.Value));
+         Store (Stream, Layer.Value);
       else
          Store (Stream, Layer.Adjustment);
       end if;

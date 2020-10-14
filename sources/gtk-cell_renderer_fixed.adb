@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer_Fixed                     Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,10 +28,8 @@
 with Ada.Strings.Fixed;  use Ada.Strings.Fixed;
 with GLib.Properties;    use GLib.Properties;
 with Gtk.Enums;          use Gtk.Enums;
-with Gtk.Missed;         use Gtk.Missed;
 with Gtk.Style;          use Gtk.Style;
 with Gtk.Style_Context;  use Gtk.Style_Context;
-with Gtk.Widget;         use Gtk.Widget;
 with Pango.Cairo;        use Pango.Cairo;
 with Pango.Enums;        use Pango.Enums;
 with Pango.Font;         use Pango.Font;
@@ -39,6 +37,8 @@ with Pango.Font;         use Pango.Font;
 with Ada.Text_IO;
 
 package body Gtk.Cell_Renderer_Fixed is
+   use Gtk.Missed;
+   use Gtk.Widget;
 
    package GDouble_IO is new Ada.Text_IO.Float_IO (GDouble);
    use GDouble_IO;
@@ -133,7 +133,8 @@ package body Gtk.Cell_Renderer_Fixed is
                Flags  : Gtk_Cell_Renderer_State;
                Cell_Area : Gdk_Rectangle
             )  return Gdk_Rectangle is
-      Area   : Gdk_Rectangle := Cell.Get_Size (Widget, Cell_Area);
+      Area   : constant Gdk_Rectangle :=
+               Cell.Get_Size (Widget, Cell_Area);
       Result : Gdk_Rectangle;
    begin
       Result.X :=
@@ -200,7 +201,7 @@ package body Gtk.Cell_Renderer_Fixed is
       Text      : String (1..40);
       Start_Pos : Integer := Text'Last + 1;
       Point_Pos : Integer := Text'Last + 1;
-      Right     : GInt    := Cell.Width - Cell.Max_Offset;
+      Right     : constant GInt := Cell.Width - Cell.Max_Offset;
       Line      : GInt;
    begin
       if Cell.Text = null then
@@ -318,8 +319,9 @@ package body Gtk.Cell_Renderer_Fixed is
                 Cell_Area       : Gdk_Rectangle;
                 Flags           : Gtk_Cell_Renderer_State
              )  is
-      Area  : Gdk_Rectangle     := Cell.Get_Size (Widget, Cell_Area);
-      Style : Gtk_Style_Context := Get_Style_Context (Widget);
+      Area  : constant Gdk_Rectangle :=
+              Cell.Get_Size (Widget, Cell_Area);
+      Style : constant Gtk_Style_Context := Get_Style_Context (Widget);
    begin
       Save (Context);
       Rectangle

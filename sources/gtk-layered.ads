@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  10:27 26 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1192,7 +1192,6 @@ private
    Trace_Waveform  : Tracing_Flags := 2**1;
    Tracing_Mode    : constant Tracing_Flags := 0;
    Trace_File : constant String  := "c:/temp/aicwl.txt";
-   type Fixed is delta 0.001 digits 9;
 
    procedure Trace (Data : System.Address; Text : String);
    procedure Trace_Line (Data : System.Address; Text : String);

@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -187,7 +187,7 @@ package body Gtk.Layered.Cap is
                 Context : Cairo_Context;
                 Area    : Gdk_Rectangle
              )  is
-      Box     : Cairo_Box := Get_Path_Extents (Context);
+      Box     : constant Cairo_Box := Get_Path_Extents (Context);
       Radius  : constant GDouble := 0.5 *(Box.X2 - Box.X1);
       Matrix  : aliased Cairo_Matrix;
    begin
@@ -390,7 +390,7 @@ package body Gtk.Layered.Cap is
              (  Layer  : in out Cap_Layer;
                 Factor : GDouble
              )  is
-      Radius : GDouble := Layer.Radius * Factor;
+      Radius : constant GDouble := Layer.Radius * Factor;
    begin
       if Radius <= 0.0 then
          raise Constraint_Error with "Non-positive radius";

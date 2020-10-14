@@ -26,11 +26,9 @@
 --____________________________________________________________________--
 
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
-with GLib.Values;               use GLib.Values;
 with GLib.Values.Handling;      use GLib.Values.Handling;
 with Gtk.Missed;                use Gtk.Missed;
 
-with Interfaces.C.Strings;
 with System.Address_To_Access_Conversions;
 
 package body Gtk.Widget.Styles is
@@ -55,7 +53,7 @@ package body Gtk.Widget.Styles is
                 "gtk_widget_class_list_style_properties"
              );
       Count : aliased GUInt;
-      List  : Flat_Array_Ptr := Internal (Class, Count'Access);
+      List  : constant Flat_Array_Ptr := Internal (Class, Count'Access);
    begin
       declare
          Result : Param_Spec_Array (1..Natural (Count));
@@ -77,7 +75,7 @@ package body Gtk.Widget.Styles is
       Init (Value, GTK_Type);
       Style_Get_Property (Widget, Property_Name, Value);
       declare
-         Result : Ada_Type := Get (Value);
+         Result : constant Ada_Type := Get (Value);
       begin
          Unset (Value);
          return Result;
@@ -117,7 +115,7 @@ package body Gtk.Widget.Styles is
          );
       end if;
       declare
-         Result : String := Value (Path);
+         Result : constant String := Value (Path);
       begin
          Free (Path);
          return Result;
@@ -157,7 +155,7 @@ package body Gtk.Widget.Styles is
          );
       end if;
       declare
-         Result : String := Value (Path);
+         Result : constant String := Value (Path);
       begin
          Free (Path);
          return Result;
@@ -378,9 +376,10 @@ package body Gtk.Widget.Styles is
             (  Widget        : not null access Gtk_Widget_Record'Class;
                Property_Name : UTF8_String
             )  return GValue is
-      Class      : GObject_Class := Class_From_Type (Widget.Get_Type);
-      Parameter  : Param_Spec;
-      Value      : GValue;
+      Class     : constant GObject_Class :=
+                  Class_From_Type (Widget.Get_Type);
+      Parameter : Param_Spec;
+      Value     : GValue;
    begin
       Parameter := Find_Style_Property (Class, Property_Name);
       if Parameter = null then

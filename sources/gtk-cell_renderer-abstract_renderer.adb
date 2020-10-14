@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer.Abstract_Renderer         Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -425,7 +425,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
       function Class_Peek_Parent (Class : GtkCellRendererClass_Ptr)
          return GtkCellRendererClass_Ptr;
       pragma Import (C, Class_Peek_Parent, "g_type_class_peek_parent");
-      This : GtkCellRendererClass_Ptr := To_Ptr (Class);
+      This : constant GtkCellRendererClass_Ptr := To_Ptr (Class);
    begin
       if Parent_Class = null then
          Parent_Class := Class_Peek_Parent (This);
@@ -504,7 +504,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Height : out GInt;
                 Natural_Height : out GInt
              )  is
-      Area : Gdk_Rectangle :=
+      Area : constant Gdk_Rectangle :=
                 Get_Size
                 (  Gtk_Abstract_Renderer_Record'Class (Cell.all)'Access,
                    Widget
@@ -521,7 +521,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Height : out GInt;
                 Natural_Height : out GInt
              )  is
-      Area : Gdk_Rectangle :=
+      Area : constant Gdk_Rectangle :=
                 Get_Size
                 (  Gtk_Abstract_Renderer_Record'Class (Cell.all)'Access,
                    Widget
@@ -538,7 +538,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Width : out GInt;
                 Natural_Width : out GInt
              )  is
-      Area : Gdk_Rectangle :=
+      Area : constant Gdk_Rectangle :=
                 Get_Size
                 (  Gtk_Abstract_Renderer_Record'Class (Cell.all)'Access,
                    Widget
@@ -554,7 +554,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Width : out GInt;
                 Natural_Width : out GInt
              )  is
-      Area : Gdk_Rectangle :=
+      Area : constant Gdk_Rectangle :=
                 Get_Size
                 (  Gtk_Abstract_Renderer_Record'Class (Cell.all)'Access,
                    Widget
@@ -667,7 +667,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
 	       Cell_Area       : access Gdk_Rectangle;
 	       Flags           : Gtk_Cell_Renderer_State
             )  return GBoolean is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          declare
@@ -715,7 +715,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
    end On_Commit;
 
    procedure On_Delete (Object : Address) is
-      This : Gtk_Abstract_Renderer := To_Ada (Object);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Object);
    begin
       if This /= null then
          This.Finalize;
@@ -732,7 +732,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Cell_Rectangle : access Gdk_Rectangle;
                 Aligned_Area   : access Gdk_Rectangle
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          Aligned_Area.all :=
@@ -750,7 +750,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Size : in out GInt;
                 Natural_Size : in out GInt
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Get_Preferred_Height
@@ -768,7 +768,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Height : in out GInt;
                 Natural_Height : in out GInt
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Get_Preferred_Height_For_Width
@@ -786,7 +786,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Size : in out GInt;
                 Natural_Size : in out GInt
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Get_Preferred_Width
@@ -804,7 +804,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Minimum_Width : in out GInt;
                 Natural_Width : in out GInt
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Get_Preferred_Width_For_Height
@@ -822,7 +822,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Value    : in out GValue;
                 Param    : Param_Spec
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Get_Property (Param_ID, Value, Param);
@@ -832,7 +832,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
    function On_Get_Request_Mode
             (  Cell : Address
             )  return Gtk_Size_Request_Mode is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          return This.Get_Request_Mode;
@@ -849,7 +849,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
    	        Width     : GInt_Ptr;
    	        Height    : GInt_Ptr
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          declare
@@ -886,7 +886,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
              )  is
       function To_Context is
          new Ada.Unchecked_Conversion (Address, Cairo_Context);
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Render
@@ -894,7 +894,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
             Convert (Widget),
             Background_Area.all,
             Cell_Area.all,
-            Gtk_Cell_Renderer_State (Flags)
+            Flags
          );
       end if;
    end On_Render;
@@ -905,7 +905,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
                 Value    : GValue;
                 Param    : Param_Spec
              )  is
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          This.Set_Property (Param_ID, Value, Param);
@@ -924,7 +924,7 @@ package body Gtk.Cell_Renderer.Abstract_Renderer is
       function Internal (Object : Address; Interface_Type : GType)
          return Address;
       pragma Import (C, Internal, "g_type_check_instance_cast");
-      This : Gtk_Abstract_Renderer := To_Ada (Cell);
+      This : constant Gtk_Abstract_Renderer := To_Ada (Cell);
    begin
       if This /= null then
          if Path = Null_Ptr then

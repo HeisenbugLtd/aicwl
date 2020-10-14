@@ -3,7 +3,7 @@
 --     Gtk.Source_Mark_Attributes                  Luebeck            --
 --  Implementation                                 Summer, 2013       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -74,7 +74,7 @@ package body Gtk.Source_Mark_Attributes is
                 Internal,
                 "gtk_source_mark_attributes_get_icon_name"
              );
-      Result : Chars_Ptr := Internal (Get_Object (Attributes));
+      Result : constant Chars_Ptr := Internal (Get_Object (Attributes));
    begin
       if Result = Null_Ptr then
          return "";
@@ -113,7 +113,7 @@ package body Gtk.Source_Mark_Attributes is
                 Internal,
                 "gtk_source_mark_attributes_get_stock_id"
              );
-      Result : Chars_Ptr := Internal (Get_Object (Attributes));
+      Result : constant Chars_Ptr := Internal (Get_Object (Attributes));
    begin
       if Result = Null_Ptr then
          return "";
@@ -136,13 +136,13 @@ package body Gtk.Source_Mark_Attributes is
                 Internal,
                 "gtk_source_mark_attributes_get_tooltip_markup"
              );
-      Ptr : Chars_Ptr :=
+      Ptr : constant Chars_Ptr :=
             Internal (Get_Object (Attributes), Get_Object (Mark));
    begin
       if Ptr = Null_Ptr then
          return "";
       else
-         return Result : String := Value (Ptr) do
+         return Result : constant String := Value (Ptr) do
             g_free (Ptr);
          end return;
       end if;
@@ -162,13 +162,13 @@ package body Gtk.Source_Mark_Attributes is
                 Internal,
                 "gtk_source_mark_attributes_get_tooltip_text"
              );
-      Ptr : Chars_Ptr :=
+      Ptr : constant Chars_Ptr :=
             Internal (Get_Object (Attributes), Get_Object (Mark));
    begin
       if Ptr = Null_Ptr then
          return "";
       else
-         return Result : String := Value (Ptr) do
+         return Result : constant String := Value (Ptr) do
             g_free (Ptr);
          end return;
       end if;

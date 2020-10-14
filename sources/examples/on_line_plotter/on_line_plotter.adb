@@ -54,7 +54,7 @@ with Gtk.File_Chooser;
 with Gtk.File_Chooser_Dialog;
 with Gtk.Main.Router;
 with Worker;
-
+with gtk.layered.line;
 procedure On_Line_Plotter is
    Window          : Gtk_Window;
    Calculator      : Worker.Process;

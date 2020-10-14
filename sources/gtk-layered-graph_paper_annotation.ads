@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper_Annotation          Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  10:27 26 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -192,7 +192,7 @@ package Gtk.Layered.Graph_Paper_Annotation is
 --
 --    Layer - The annotation layer
 --
--- The  border  is  the  amount  added to the annotation text entents in
+-- The  border  is  the  amount  added to the annotation text extents in
 -- order to obtain the text's background box. The box is filled with the
 -- background color.
 --
@@ -318,6 +318,17 @@ package Gtk.Layered.Graph_Paper_Annotation is
    function Get_Stretch (Layer : Graph_Paper_Annotation_Layer)
       return GDouble;
 --
+-- Get_Suffix -- The text added to all annotation texts
+--
+--    Layer  - The annotation layer
+--
+-- Returns :
+--
+--    The suffix text
+--
+   function Get_Suffix (Layer : Graph_Paper_Annotation_Layer)
+      return UTF8_String;
+--
 -- Get_Superscript -- Usage of superscript
 --
 --    Layer - The annotation layer
@@ -339,6 +350,23 @@ package Gtk.Layered.Graph_Paper_Annotation is
 --
    function Get_Text_Angle (Layer : Graph_Paper_Annotation_Layer)
       return GDouble;
+--
+-- Image -- Textual representation of a value
+--
+--    Layer - The annotation layer
+--    Value - To render
+--
+-- This function returns the text  representing  Value in the format the
+-- annotation layer would use to render a tick's value.
+--
+-- Returns :
+--
+--    The representation of the value
+--
+   function Image
+            (  Layer : Graph_Paper_Annotation_Layer;
+               Value : GDouble
+            )  return UTF8_String;
 --
 -- Image -- Conversion of a time stamp to human-readable format
 --
@@ -407,6 +435,45 @@ package Gtk.Layered.Graph_Paper_Annotation is
    procedure Set_Face
              (  Layer : in out Graph_Paper_Annotation_Layer;
                 Face  : Pango_Cairo_Font
+             );
+--
+-- Set_Renderer -- Set custom annotation text renderer
+--
+--    Layer    - The annotation layer
+--    Renderer - The custom function to use for text rendering
+--
+-- When set as null, which is default, the primitive Render operation is
+-- used.  When not  null  it is  used  instead of Render.  The  renderer
+-- function profile is following:
+--
+--    Layer  - The annotation layer
+--    Value  - The value to render
+--    Raster - The scale used to render the text
+--
+-- Returns :
+--
+--    Result text
+--
+   type Renderer_Function is access function
+        (  Layer  : Graph_Paper_Annotation_Layer'Class;
+           Value  : GDouble;
+           Raster : Gtk.Layered.Waveform.Rasters.Scale
+        )  return UTF8_String;
+   procedure Set_Renderer
+             (  Layer    : in out Graph_Paper_Annotation_Layer;
+                Renderer : Renderer_Function
+             );
+--
+-- Set_Suffix -- A text to suffix all annotation texts
+--
+--    Layer  - The annotation layer
+--    Suffix - The text
+--
+-- The specified text is added to the end of all annotation texts
+--
+   procedure Set_Suffix
+             (  Layer  : in out Graph_Paper_Annotation_Layer;
+                Suffix : UTF8_String
              );
 
    overriding
@@ -646,8 +713,10 @@ private
       Overlap     : GDouble;
       Opacity     : Fill_Opacity;
       Texts       : Annotation_List_Ptr;
+      Suffix      : Annotation_Text_Ptr;
       Justify_X   : Alignment;
       Justify_Y   : Vertical_Alignment;
+      Renderer    : Renderer_Function;
       Enlarged    : Boolean := False;
       Scaled      : Boolean := False;
       Updated     : Boolean := True;

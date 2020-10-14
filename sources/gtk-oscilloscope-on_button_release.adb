@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        On_Button_Release                        Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  22:22 11 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -197,7 +197,6 @@ begin
                         Button => Gdk.Event.Get_Button (Event),
                         Activate_Time => Gdk.Event.Get_Time (Event)
                      );
-
                   when Zoom_In =>
                      On_Zoom_In (Oscilloscope, Oscilloscope);
                   when Zoom_In_Time =>
@@ -221,14 +220,16 @@ begin
                      );
                   when User_Action =>
                      declare
-                        Box : Cairo_Box :=
+                        Box : constant Cairo_Box :=
                               Oscilloscope.Selection.Area.Get_Box;
                      begin
                         Free (Oscilloscope.Selection.Area);
+                        Oscilloscope.Restore_State;
                         Oscilloscope.On_Selection (Box);
                      end;
                   when None =>
                      Free (Oscilloscope.Selection.Area);
+                     Oscilloscope.Restore_State;
                end case;
             end if;
          end if;

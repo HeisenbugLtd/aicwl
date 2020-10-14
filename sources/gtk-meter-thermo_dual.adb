@@ -3,7 +3,7 @@
 --     Gtk.Meter.Thermo_Dual                       Luebeck            --
 --  Implementation                                 Summer, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -394,14 +394,14 @@ package body Gtk.Meter.Thermo_Dual is
                 )  is
          Raster : constant Gtk.Layered.Waveform.Rasters.Scale :=
                            Gtk.Layered.Waveform.Rasters.Create
-                           (  GDouble (Lower),
-                              GDouble (Upper),
+                           (  Lower,
+                              Upper,
                               Sectors
                            );
       begin
          Scale.Sectors := Sectors;
-         Scale.From := GDouble (Lower);
-         Scale.Span := GDouble (Upper - Lower);
+         Scale.From := Lower;
+         Scale.Span := Upper - Lower;
          Scale.Factor := Length / Scale.Span;
          Scale.Small  := Integer'Min (Raster.Small, 0);
          Scale.Step :=
@@ -544,8 +544,8 @@ package body Gtk.Meter.Thermo_Dual is
             );
             Create_Ticks
             (  Widget.Fahrenheit,
-               GDouble (Fahrenheit (Lower)),
-               GDouble (Fahrenheit (Upper)),
+               Fahrenheit (Lower),
+               Fahrenheit (Upper),
                Left_Tick_Offset,
                -1.0,
                Integer'Max (1, (Count * 9) / 5)
@@ -705,8 +705,8 @@ package body Gtk.Meter.Thermo_Dual is
       (  Widget,
          Celsius_Mode,
          null,
-         GDouble (Lower),
-         GDouble (Upper),
+         Lower,
+         Upper,
          Sectors,
          Color
       );
@@ -745,8 +745,8 @@ package body Gtk.Meter.Thermo_Dual is
       (  Widget,
          Fahrenheit_Mode,
          null,
-         GDouble (Lower),
-         GDouble (Upper),
+         Lower,
+         Upper,
          Sectors,
          Color
       );

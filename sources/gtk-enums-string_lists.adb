@@ -2,7 +2,7 @@
 --  package                         Copyright (c)  Dmitry A. Kazakov  --
 --      Gtk.Enums.String_Lists                     Spring, 2007       --
 --  Implementation                                                    --
---                                Last revision :  10:00 13 Oct 2007  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -73,7 +73,7 @@ package body Gtk.Enums.String_Lists is
 
    function "/" (Left, Right : UTF8_String)
       return Controlled_String_List is
-      Ptr : String_List_Body_Ptr := new String_List_Body;
+      Ptr : constant String_List_Body_Ptr := new String_List_Body;
    begin
       Append (Ptr.List, Left);
       Append (Ptr.List, Right);

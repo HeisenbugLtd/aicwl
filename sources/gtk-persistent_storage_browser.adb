@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_Browser              Luebeck            --
 --  Implementation                                 Winter, 2008       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -148,7 +148,7 @@ package body Gtk.Persistent_Storage_Browser is
                      end;
                   else
                      declare
-                        Item : Root_Item_Handles.Handle :=
+                        Item : constant Root_Item_Handles.Handle :=
                                Ref (new Root_Item);
                      begin
                         Ptr (Item).Storage := Storage;
@@ -196,7 +196,7 @@ package body Gtk.Persistent_Storage_Browser is
                      end;
                   else
                      declare
-                        Item : Root_Item_Handles.Handle :=
+                        Item : constant Root_Item_Handles.Handle :=
                                Ref (new Root_Item);
                      begin
                         Ptr (Item).Storage := Storage;
@@ -244,7 +244,7 @@ package body Gtk.Persistent_Storage_Browser is
                      end;
                   else
                      declare
-                        Item : Root_Item_Handles.Handle :=
+                        Item : constant Root_Item_Handles.Handle :=
                                Ref (new Root_Item);
                      begin
                         Ptr (Item).Storage := Storage;
@@ -372,7 +372,7 @@ package body Gtk.Persistent_Storage_Browser is
       if Is_Root (Path) then
          -- Deleting a persistent storage
          declare
-            Name : UTF8_String := String (Get_Name (Path));
+            Name : constant UTF8_String := String (Get_Name (Path));
          begin
             Remove_Item
             (  Data.Manager,
@@ -383,7 +383,7 @@ package body Gtk.Persistent_Storage_Browser is
       else
          -- Deleting an object
          declare
-            Directory : Item_Path := Get_Directory (Store, Path);
+            Directory : constant Item_Path := Get_Directory (Store, Path);
          begin
             Browse (Store, Directory, Storage, Object);
             Unname
@@ -732,7 +732,7 @@ package body Gtk.Persistent_Storage_Browser is
             (  Widget : not null access
                         Gtk_Persistent_Storage_Tree_View_Record
             )  return Gtk_Persistent_Directory is
-      Cache : Gtk_Abstract_Directory := Get_Cache (Widget);
+      Cache : constant Gtk_Abstract_Directory := Get_Cache (Widget);
    begin
       return
          Gtk_Persistent_Directory_Record'Class
@@ -744,7 +744,7 @@ package body Gtk.Persistent_Storage_Browser is
             (  Widget : not null access
                         Gtk_Persistent_Storage_Items_View_Record
             )  return Gtk_Persistent_Directory is
-      Cache : Gtk_Abstract_Directory := Get_Cache (Widget);
+      Cache : constant Gtk_Abstract_Directory := Get_Cache (Widget);
    begin
       return
          Gtk_Persistent_Directory_Record'Class
@@ -799,7 +799,7 @@ package body Gtk.Persistent_Storage_Browser is
             return "";
          end if;
       end Get_Path;
-      Path    : Item_Path := Get_Path;
+      Path    : constant Item_Path := Get_Path;
       Pointer : Integer   := Path'First;
       Start   : Integer;
       Length  : Natural;
@@ -1249,7 +1249,7 @@ package body Gtk.Persistent_Storage_Browser is
                           Gtk_Recent_Manager_Record'Class;
                 Tracing : Traced_Actions
              )  is
-      Data : Directory_Data_Ptr := new Directory_Data;
+      Data : constant Directory_Data_Ptr := new Directory_Data;
    begin
       Directory_Data_Handles.Set (Store.Data, Data);
       Data.Query   := Query;
@@ -1514,7 +1514,7 @@ package body Gtk.Persistent_Storage_Browser is
       Cache   : Gtk_Persistent_Directory_Record'Class renames
                    Get_Directory_Cache (Widget).all;
       Item    : Natural   := Index;
-      Path    : Item_Path := Get_Directory (Widget);
+      Path    : constant Item_Path := Get_Directory (Widget);
       Storage : Storage_Handle;
       Parent  : Deposit_Handle;
       Changed : Boolean;
@@ -1655,7 +1655,7 @@ package body Gtk.Persistent_Storage_Browser is
             end if;
             Data.Index := Data.Index + 1;
             declare
-               Name  : String := Get (Data.Folder, Data.Index);
+               Name  : constant String := Get (Data.Folder, Data.Index);
                Class : String renames
                           Get_Class (Data.Storage, Name, Data.Parent);
             begin
@@ -1717,7 +1717,8 @@ package body Gtk.Persistent_Storage_Browser is
          declare
             Exec : UTF8_String renames Get_Application_Name;
             Info : Gtk_Recent_Info;
-            List : Gtk_Recent_Info_Array := Get_Items (Data.Manager);
+            List : constant Gtk_Recent_Info_Array :=
+                   Get_Items (Data.Manager);
             Item : Root_Item_Handles.Handle;
          begin
             for Index in List'Range loop
@@ -1730,7 +1731,8 @@ package body Gtk.Persistent_Storage_Browser is
                   -- This item is from us
                   declare
                      URI : UTF8_String renames Get_URI (Info);
-                     DSN : UTF8_String := UTF8_String (Get_DSN (URI));
+                     DSN : constant UTF8_String :=
+                           UTF8_String (Get_DSN (URI));
                   begin
                      if (  DSN'Length > 0
                         and then

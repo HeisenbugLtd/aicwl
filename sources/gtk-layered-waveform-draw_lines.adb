@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.                       Luebeck            --
 --        Draw_Lines                               Winter, 2011       --
 --  Separate body                                                     --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -43,7 +43,7 @@ separate (Gtk.Layered.Waveform)
       Line_To (Context, Point.X, Point.Y);
    end Line_To;
 
-   Antialias : Cairo_Antialias := Get_Antialias (Context);
+   Antialias : constant Cairo_Antialias := Get_Antialias (Context);
    X1, X2    : GDouble;
    Y1, Y2    : GDouble;
 begin
@@ -86,7 +86,7 @@ begin
 
             function Point (Offset : Natural) return Cairo_Tuple is
                pragma Inline (Point);
-               Result : Point_Data :=
+               Result : constant  Point_Data :=
                   Points ((Data.First + Offset) mod Points'Length);
             begin
                return
@@ -97,7 +97,7 @@ begin
 
             function Line_Point (Offset : Natural) return Cairo_Tuple is
                pragma Inline (Line_Point);
-               Result : Point_Data :=
+               Result : constant Point_Data :=
                   Points ((Data.First + Offset) mod Points'Length);
             begin
                return

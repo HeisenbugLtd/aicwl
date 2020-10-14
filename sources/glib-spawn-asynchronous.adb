@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  15:24 01 Apr 2015  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -75,8 +75,8 @@ package body GLib.Spawn.Asynchronous is
    end Completed;
 
    function Copy (List : Chars_Ptr_Array) return Chars_Ptr_Array_Ptr is
-      Result : Chars_Ptr_Array_Ptr :=
-                  new Chars_Ptr_Array (List'First..List'Last + 1);
+      Result : constant Chars_Ptr_Array_Ptr :=
+               new Chars_Ptr_Array (List'First..List'Last + 1);
    begin
       for Index in Result'Range loop
          Result (Index) := New_Char_Array (Value (List (Index)));
@@ -89,8 +89,8 @@ package body GLib.Spawn.Asynchronous is
             (  Name : UTF8_String;
                List : Chars_Ptr_Array
             )  return Chars_Ptr_Array_Ptr is
-      Result : Chars_Ptr_Array_Ptr :=
-                  new Chars_Ptr_Array (List'First..List'Last + 2);
+      Result : constant Chars_Ptr_Array_Ptr :=
+               new Chars_Ptr_Array (List'First..List'Last + 2);
    begin
       Result (List'First) := New_String (Name);
       for Index in List'Range loop
@@ -109,8 +109,8 @@ package body GLib.Spawn.Asynchronous is
          Ptr   := Next (Ptr);
       end loop;
       declare
-         Result : Chars_Ptr_Array_Ptr :=
-                     new Chars_Ptr_Array (1..Count + 1);
+         Result : constant Chars_Ptr_Array_Ptr :=
+                  new Chars_Ptr_Array (1..Count + 1);
       begin
          Ptr := List;
          for Index in 1..Count loop
@@ -134,8 +134,8 @@ package body GLib.Spawn.Asynchronous is
          Ptr   := Next (Ptr);
       end loop;
       declare
-         Result : Chars_Ptr_Array_Ptr :=
-                     new Chars_Ptr_Array (1..Count + 2);
+         Result : constant Chars_Ptr_Array_Ptr :=
+                  new Chars_Ptr_Array (1..Count + 2);
       begin
          Result (1) := New_String (Name);
          Ptr := List;

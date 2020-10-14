@@ -3,7 +3,7 @@
 --     Gtk.Layered.Abstract_Bordered               Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -618,10 +618,10 @@ package body Gtk.Layered.Abstract_Bordered is
                   );
                when Property_Depth =>
                   Init (Value, GType_Double);
-                  Set_Double (Value, GDouble (Layer.Border_Depth));
+                  Set_Double (Value, Layer.Border_Depth);
                when Property_Width =>
                   Init (Value, GType_Double);
-                  Set_Double (Value, GDouble (Layer.Border_Width));
+                  Set_Double (Value, Layer.Border_Width);
                when Property_Default_Color =>
                   Init (Value, GType_Boolean);
                   Set_Boolean (Value, Layer.Border_Color.Style_Color);

@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        Do_Init                                  Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -39,10 +39,8 @@ separate (Gtk.Oscilloscope)
 begin
    G_New (Widget, Get_Type);
    Gtk.Grid.Initialize (Widget);
-   Widget.Insert_Column (3);
-   Widget.Insert_Row (3);
    declare
-      Widget_Type : GType := Get_Type (Widget);
+      Widget_Type : constant GType := Get_Type (Widget);
    begin
       for Index in Signal_Names'Range loop
          if Signal_IDs (Index) = Invalid_Signal_Id then
@@ -70,7 +68,7 @@ begin
    Gtk.Layered.Initialize (Widget.Layers);
    Widget.Layers.Set_Hexpand (True);
    Widget.Layers.Set_Vexpand (True);
-   Widget.Attach (Widget.Layers, 1, 2, 1, 2);
+   Widget.Attach (Widget.Layers, 0, 0, 1, 1);
    Widget.Values_Axis (Left  ).Justify_X := Right;
    Widget.Values_Axis (Middle).Justify_X := Left;
    Widget.Values_Axis (Right ).Justify_X := Left;
@@ -110,7 +108,9 @@ begin
          2 => GType_Int,
          3 => GType_Boolean,
          4 => GType_Int,
-         5 => GType_String
+         5 => GType_String,
+         6 => GType_Boolean,
+         7 => GType_Boolean
    )  );
    Gtk_New (Widget.Group_Names, (0 => GType_String));
    --

@@ -3,7 +3,7 @@
 --     Gtk.Layered.Flat_Needle                     Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -103,9 +103,9 @@ package body Gtk.Layered.Flat_Needle is
             Layer'Unchecked_Access
          );
       declare
-         Lower : GDouble := GDouble (Adjustment.Get_Lower);
-         Upper : GDouble := GDouble (Adjustment.Get_Upper);
-         Value : GDouble := GDouble (Adjustment.Get_Value);
+         Lower : constant GDouble := Adjustment.Get_Lower;
+         Upper : constant GDouble := Adjustment.Get_Upper;
+         Value : constant GDouble := Adjustment.Get_Value;
       begin
          if Upper <= Lower or else Value <= Lower then
             Layer.Set_Value (0.0);
@@ -297,9 +297,9 @@ package body Gtk.Layered.Flat_Needle is
              (  Adjustment : access GObject_Record'Class;
                 Needle     : Flat_Needle_Ptr
              )  is
-      Lower : GDouble := GDouble (Get_Lower (Needle.Adjustment));
-      Upper : GDouble := GDouble (Get_Upper (Needle.Adjustment));
-      Value : GDouble := GDouble (Get_Value (Needle.Adjustment));
+      Lower : constant GDouble := Get_Lower (Needle.Adjustment);
+      Upper : constant GDouble := Get_Upper (Needle.Adjustment);
+      Value : constant GDouble := Get_Value (Needle.Adjustment);
    begin
       if Upper <= Lower or else Value <= Lower then
          Needle.Set_Value (0.0);

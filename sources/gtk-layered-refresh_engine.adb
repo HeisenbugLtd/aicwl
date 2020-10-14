@@ -3,7 +3,7 @@
 --     Gtk.Layered.Refresh_Engine                  Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -156,7 +156,8 @@ package body Gtk.Layered.Refresh_Engine is
    begin
       if Period /= Engine.Period then
          declare
-            Interval : GUInt := GUInt (GDouble (Period) * 1_000.0);
+            Interval : constant GUInt :=
+                       GUInt (GDouble (Period) * 1_000.0);
          begin
             if Engine.Timer /= 0 then
                if 0 = Remove (Engine.Timer) then

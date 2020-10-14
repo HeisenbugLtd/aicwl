@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -86,8 +86,8 @@ package body Gtk.Layered.Cache is
                 Context : Cairo_Context;
                 Area    : Gdk_Rectangle
              )  is
-      Height : GInt := Layer.Widget.Get_Allocated_Height;
-      Width  : GInt := Layer.Widget.Get_Allocated_Width;
+      Height : constant GInt := Layer.Widget.Get_Allocated_Height;
+      Width  : constant GInt := Layer.Widget.Get_Allocated_Width;
    begin
       if (  Layer.Cache /= Null_Context
          and then
@@ -175,8 +175,8 @@ package body Gtk.Layered.Cache is
              (  Layer   : in out Cache_Layer;
                 Context : Cairo_Context
              )  is
-      Height : GInt := Layer.Widget.Get_Allocated_Height;
-      Width  : GInt := Layer.Widget.Get_Allocated_Width;
+      Height : constant GInt := Layer.Widget.Get_Allocated_Height;
+      Width  : constant GInt := Layer.Widget.Get_Allocated_Width;
    begin
       if (  Layer.Cache = Null_Context
          or else
@@ -186,7 +186,7 @@ package body Gtk.Layered.Cache is
          )
       then
          declare
-            Surface : Cairo_Surface :=
+            Surface : constant Cairo_Surface :=
                          Create_Similar
                          (  Get_Target (Context),
                             CAIRO_CONTENT_COLOR,

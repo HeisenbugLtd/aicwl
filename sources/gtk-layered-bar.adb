@@ -3,7 +3,7 @@
 --     Gtk.Layered.Bar                    Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -87,9 +87,9 @@ package body Gtk.Layered.Bar is
             Layer'Unchecked_Access
          );
       declare
-         Lower : GDouble := GDouble (Adjustment.Get_Lower);
-         Upper : GDouble := GDouble (Adjustment.Get_Upper);
-         Value : GDouble := GDouble (Adjustment.Get_Value);
+         Lower : constant GDouble := Adjustment.Get_Lower;
+         Upper : constant GDouble := Adjustment.Get_Upper;
+         Value : constant GDouble := Adjustment.Get_Value;
       begin
          if Upper <= Lower or else Value <= Lower then
             Layer.Set_Value (0.0);
@@ -254,9 +254,9 @@ package body Gtk.Layered.Bar is
              (  Adjustment : access GObject_Record'Class;
                 Bar        : Bar_Ptr
              )  is
-      Lower : GDouble := GDouble (Get_Lower (Bar.Adjustment));
-      Upper : GDouble := GDouble (Get_Upper (Bar.Adjustment));
-      Value : GDouble := GDouble (Get_Value (Bar.Adjustment));
+      Lower : constant GDouble := Get_Lower (Bar.Adjustment);
+      Upper : constant GDouble := Get_Upper (Bar.Adjustment);
+      Value : constant GDouble := Get_Value (Bar.Adjustment);
    begin
       if Upper <= Lower or else Value <= Lower then
          Bar.Set_Value (0.0);

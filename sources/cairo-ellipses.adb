@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -50,7 +50,7 @@ package body Cairo.Ellipses is
                 From    : Ellipse_Angle := 0.0;
                 Length  : Ellipse_Angle := 2.0 * Pi
              )  is
-      To : Ellipse_Angle := From + Length;
+      To : constant Ellipse_Angle := From + Length;
    begin
       if Ellipse.Major_Curvature < Eps then
          if abs Length >= Pi then
@@ -58,7 +58,8 @@ package body Cairo.Ellipses is
                   "Greater than Pi angular length of flat elliptic arc";
          end if;
          declare
-            Start : Ellipse_Angle := Ellipse_Angle'Remainder (From, Pi);
+            Start : constant Ellipse_Angle :=
+                    Ellipse_Angle'Remainder (From, Pi);
          begin
             if Start = 0.0 then
                raise Constraint_Error;
@@ -122,7 +123,7 @@ package body Cairo.Ellipses is
                 From    : GDouble := 0.0;
                 Length  : GDouble := 2.0 * Pi
              )  is
-      Start : Ellipse_Angle := Ellipse * From;
+      Start : constant Ellipse_Angle := Ellipse * From;
       Angle : Ellipse_Angle := Ellipse * (From + Length) - Start;
    begin
       if Length > 0.0 then
@@ -166,8 +167,8 @@ package body Cairo.Ellipses is
    begin
       if abs Ellipse.Major_Curvature < Eps then
          declare
-            Beta      : GDouble := GDouble (Angle) + Ellipse.Angle;
-            Cos_Gamma : GDouble :=
+            Beta : constant GDouble := GDouble (Angle) + Ellipse.Angle;
+            Cos_Gamma : constant GDouble :=
                            abs cos (Pi/2.0 + Ellipse.Angle - Beta);
          begin
             if Cos_Gamma < Eps then
@@ -202,8 +203,8 @@ package body Cairo.Ellipses is
    begin
       if abs Ellipse.Major_Curvature < Eps then
          declare
-            Beta      : GDouble := GDouble (Angle) + Ellipse.Angle;
-            Cos_Gamma : GDouble :=
+            Beta : constant GDouble := GDouble (Angle) + Ellipse.Angle;
+            Cos_Gamma : constant GDouble :=
                            abs cos (Pi/2.0 + Ellipse.Angle - Beta);
          begin
             if Cos_Gamma < Eps then
@@ -235,8 +236,8 @@ package body Cairo.Ellipses is
    begin
       if abs Ellipse.Major_Curvature < Eps then
          declare
-            Beta      : GDouble := GDouble (Angle) + Ellipse.Angle;
-            Cos_Gamma : GDouble :=
+            Beta : constant GDouble := GDouble (Angle) + Ellipse.Angle;
+            Cos_Gamma : constant GDouble :=
                            abs cos (Pi/2.0 + Ellipse.Angle - Beta);
          begin
             if Cos_Gamma < Eps then

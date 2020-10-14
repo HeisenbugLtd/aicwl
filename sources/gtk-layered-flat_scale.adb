@@ -3,7 +3,7 @@
 --     Gtk.Layered.Flat_Scale                      Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -157,7 +157,7 @@ package body Gtk.Layered.Flat_Scale is
       Y_Size : GDouble := sin (Layer.Angle);
       This   : GDouble;
       From   : Cairo_Tuple;
-      Width  : GDouble  := Layer.Breadth * 0.5;
+      Width  : constant GDouble := Layer.Breadth * 0.5;
       Thick  : Natural := Layer.Ticks.First;
       Length : constant GDouble := Layer.Length
                                  + Layer.Ticks.Step * 0.05;
@@ -528,8 +528,8 @@ package body Gtk.Layered.Flat_Scale is
              (  Layer  : in out Flat_Scale_Layer;
                 Factor : GDouble
              )  is
-      Ticks   : Tick_Parameters := Layer.Ticks;
-      Breadth : GDouble          := Layer.Breadth * Factor;
+      Ticks   : Tick_Parameters  := Layer.Ticks;
+      Breadth : constant GDouble := Layer.Breadth * Factor;
    begin
       Ticks.Step := Ticks.Step * Factor;
       if Ticks.Step < Min_Step then

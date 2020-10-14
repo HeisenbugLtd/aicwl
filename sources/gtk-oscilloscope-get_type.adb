@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  10:27 26 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -49,7 +49,8 @@ begin
                  11 => (0 => GType_UInt,   1..2 => GType_Double),
                  12 => (0 => GType_UInt,   1..2 => GType_None),
                  13 => (0 => GType_UInt,   1..2 => GType_None),
-                 14 => (0 => GType_String, 1..2 => GType_None)
+                 14 => (0 => GType_String, 1..2 => GType_None),
+                 15 => (0 => GType_UInt,   1..2 => GType_None)
       )    )
    then
       Install_Style_Property

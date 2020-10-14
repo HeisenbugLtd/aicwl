@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Alt                      Luebeck            --
 --  Implementation                                 Winter, 2008       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -282,7 +282,7 @@ package body Gtk.Recent_Manager_Alt is
       function Internal (Manager : System.Address)
          return GList_Ptr;
       pragma Import (C, Internal, "gtk_recent_manager_get_items");
-      List : GList_Ptr := Internal (Get_Object (Manager));
+      List : constant GList_Ptr := Internal (Get_Object (Manager));
    begin
       if List = null then
          return (1..0 => null);
@@ -442,7 +442,7 @@ package body Gtk.Recent_Manager_Alt is
                )  return Gtk_Recent_Info;
       pragma Import (C, Internal, "gtk_recent_manager_lookup_item");
       Code : aliased GError;
-      Item : Gtk_Recent_Info :=
+      Item : constant Gtk_Recent_Info :=
                 Internal
                 (  Get_Object (Manager),
                    To_C (URI),

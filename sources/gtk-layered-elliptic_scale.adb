@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Scale                  Luebeck            --
 --  Implementation                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -619,8 +619,8 @@ package body Gtk.Layered.Elliptic_Scale is
              (  Layer  : in out Elliptic_Scale_Layer;
                 Factor : GDouble
              )  is
-      Outer : Ellipse_Parameters := Layer.Outer * Factor;
-      Inner : Ellipse_Parameters := Layer.Inner * Factor;
+      Outer : constant Ellipse_Parameters := Layer.Outer * Factor;
+      Inner : constant Ellipse_Parameters := Layer.Inner * Factor;
    begin
       if Inner.Minor_Radius <= 0.0 then
          raise Constraint_Error with

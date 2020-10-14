@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  22:21 02 Mar 2016  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with Ada.Characters.Handling;  use Ada.Characters.Handling;
 with Ada.Characters.Latin_1;   use Ada.Characters.Latin_1;
-with Ada.Exceptions;           use Ada.Exceptions;
 with Ada.Streams;              use Ada.Streams;
 with Ada.Strings.Fixed;        use Ada.Strings.Fixed;
 with Ada.Task_Identification;  use Ada.Task_Identification;
@@ -47,7 +46,6 @@ with Gtk.Image_Menu_Item;      use Gtk.Image_Menu_Item;
 with Gtk.Menu;                 use Gtk.Menu;
 with Gtk.Missed;               use Gtk.Missed;
 with Gtk.Scrolled_Window;      use Gtk.Scrolled_Window;
-with Gtk.Stock;                use Gtk.Stock;
 with Gtk.Style_Context;        use Gtk.Style_Context;
 with Gtk.Text_Buffer;          use Gtk.Text_Buffer;
 with Gtk.Text_Iter;            use Gtk.Text_Iter;
@@ -723,7 +721,7 @@ package body Gtk.Main.Router is
    procedure On_Paste_Trace
              (  Item : access Gtk_Image_Menu_Item_Record'Class
              )  is
-      Text    : String  := Wait_For_Text (Get);
+      Text    : constant String := Wait_For_Text (Get);
       Pointer : Integer := Text'First;
       procedure Skip is
       begin
@@ -812,7 +810,7 @@ package body Gtk.Main.Router is
                 Params : GValues;
                 Parent : Gtk_Dialog
              )  is
-      Buffer : Gtk_Text_Buffer := Get_Buffer (Dialog);
+      Buffer : constant Gtk_Text_Buffer := Get_Buffer (Dialog);
       Widget : Gtk_Widget;
       Menu   : Gtk_Menu;
       Item   : Gtk_Image_Menu_Item;
@@ -1049,7 +1047,7 @@ package body Gtk.Main.Router is
       end if;
       declare
 --           Max_Buffer_Size : constant := 10_000;
-         Offset : GInt := Messages_List.Get_Char_Count;
+         Offset : constant GInt := Messages_List.Get_Char_Count;
       begin
 --           while Offset > Max_Buffer_Size loop
 --              Messages_List.Get_Iter_At_Line (Start, 0);
@@ -1090,7 +1088,7 @@ package body Gtk.Main.Router is
          )  )  );
       end if;
       declare
-         Offset : GInt := Messages_List.Get_Char_Count;
+         Offset : constant GInt := Messages_List.Get_Char_Count;
       begin
          Messages_List.Get_Iter_At_Offset (Stop, Offset);
       end;

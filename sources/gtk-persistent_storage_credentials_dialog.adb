@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_                     Luebeck            --
 --         Credentials_Dialog                      Winter, 2008       --
 --  Implementation                                                    --
---                                Last revision :  19:09 09 Oct 2015  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -478,7 +478,7 @@ package body Gtk.Persistent_Storage_Credentials_Dialog is
          case Run (Dialog) is
             when Gtk_Response_OK =>
                declare
-                  Name : UTF8_String := Dialog.Get_Name;
+                  Name : constant UTF8_String := Dialog.Get_Name;
                begin
                   if Name'Length = 0 then
                      -- Wrong name

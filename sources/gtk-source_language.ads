@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,7 +26,6 @@
 --____________________________________________________________________--
 
 with Interfaces.C.Strings;  use Interfaces.C.Strings;
-with GLib.Object;           use GLib.Object;
 
 with Interfaces.C.Pointers;
 

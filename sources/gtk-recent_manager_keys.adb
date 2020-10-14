@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Keys                     Luebeck            --
 --  Implementation                                 Autumn, 2011       --
 --                                                                    --
---                                Last revision :  19:09 09 Oct 2015  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -50,7 +50,8 @@ package body Gtk.Recent_Manager_Keys is
       for Index in List'Range loop
          if Has_Application (List (Index), Name) then
             declare
-               Key : UTF8_String := Get_Description (List (Index));
+               Key : constant UTF8_String :=
+                     Get_Description (List (Index));
             begin
                if (  Key'Length >= Prefix'Length
                   and then
@@ -95,7 +96,7 @@ package body Gtk.Recent_Manager_Keys is
                 Value      : UTF8_String;
                 Info       : Gtk_Recent_Info
              )  is
-      Pointer : Integer := Key'First + Enumerator.Length;
+      Pointer : constant Integer := Key'First + Enumerator.Length;
       Row     : GInt;
       This    : Gtk_Tree_Iter;
    begin
@@ -135,7 +136,7 @@ package body Gtk.Recent_Manager_Keys is
                Get_URI (List (Index)) = Key
             )
          then
-            return Result : UTF8_String :=
+            return Result : constant UTF8_String :=
                             Get_Display_Name (List (Index)) do
                for Rest in Index..List'Last loop
                   Unref (List (Rest));

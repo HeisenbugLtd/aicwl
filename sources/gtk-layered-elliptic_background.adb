@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Background             Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -724,7 +724,7 @@ package body Gtk.Layered.Elliptic_Background is
              (  Layer  : in out Elliptic_Background_Layer;
                 Factor : GDouble
              )  is
-      Outer : Ellipse_Parameters   := Layer.Outer * Factor;
+      Outer : constant Ellipse_Parameters := Layer.Outer * Factor;
       Inner : Elliptic_Arc_Closure := Layer.Inner;
    begin
       case Inner.Shape is

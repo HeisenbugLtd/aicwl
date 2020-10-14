@@ -120,19 +120,19 @@ project Gtkada_Contributions is
             case Legacy is
                when "Ada2012" =>
                   for Default_Switches ("ada") use
-                     ("-gnato", "-gnatVa", "-gnatf", "-g", "-fstack-check", "-gnat12");
+                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnato", "-gnatVa", "-gnatf", "-g", "-fstack-check", "-gnat12");
                when "Ada2005" =>
                   for Default_Switches ("ada") use
-                     ("-gnato", "-gnatVa", "-gnatf", "-g", "-fstack-check", "-gnat05");
+                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnato", "-gnatVa", "-gnatf", "-g", "-fstack-check", "-gnat05");
             end case;
          when "Release" =>
             case Legacy is
                when "Ada2012" =>
                   for Default_Switches ("ada") use
-                     ("-gnatp", "-gnatVa", "-gnatf", "-O2", "-gnatn", "-gnat12");
+                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnatp", "-gnatVa", "-gnatf", "-O2", "-gnatn", "-gnat12");
                when "Ada2005" =>
                   for Default_Switches ("ada") use
-                     ("-gnatp", "-gnatVa", "-gnatf", "-O2", "-gnatn", "-gnat05");
+                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnatp", "-gnatVa", "-gnatf", "-O2", "-gnatn", "-gnat05");
             end case;
       end case;
    end Compiler;

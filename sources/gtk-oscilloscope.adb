@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:22 02 Mar 2016  --
+--                                Last revision :  19:51 11 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,7 +28,6 @@
 with Ada.Numerics;                use Ada.Numerics;
 with Ada.Exceptions;              use Ada.Exceptions;
 with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
-with Cairo;                       use Cairo;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
 with Cairo.Font_Face;             use Cairo.Font_Face;
 with Cairo.Line_Cap_Property;     use Cairo.Line_Cap_Property;
@@ -39,7 +38,6 @@ with Gdk.Window;                  use Gdk.Window;
 with Glib.Error;                  use Glib.Error;
 with GLib.Messages;               use GLib.Messages;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
-with Glib.Values;                 use Glib.Values;
 with GtkAda.Types;                use GtkAda.Types;
 with Gtk.Dialog;                  use Gtk.Dialog;
 with Gtk.Message_Dialog;          use Gtk.Message_Dialog;
@@ -58,13 +56,11 @@ with Cairo.PDF;
 with Cairo.PNG;
 with Cairo.SVG;
 with Gdk.Device_Manager;
-with Gdk.Types;
-with Gdk.Window;
-with Gtk.Layered.Graph_Paper_Annotation;
 with GLib.Object.Checked_Destroy;
 with Gtk.Widget.Styles.Line_Cap_Property;
 with Interfaces.C.Strings;
-with Strings_Edit.UTF8;
+with Strings_Edit.UTF8.Wildcards.Case_Insensitive;
+with Strings_Edit.Integers.Superscript;
 
 package body Gtk.Oscilloscope is
    use Gtk.Widget.Styles.Line_Cap_Property;
@@ -97,10 +93,36 @@ package body Gtk.Oscilloscope is
         11 => Interfaces.C.Strings.New_String ("position-changed"),
         12 => Interfaces.C.Strings.New_String ("channel-added"),
         13 => Interfaces.C.Strings.New_String ("channel-deleted"),
-        14 => Interfaces.C.Strings.New_String ("snapshot-captured")
+        14 => Interfaces.C.Strings.New_String ("snapshot-captured"),
+        15 => Interfaces.C.Strings.New_String ("extrapolation-changed")
       );
    Signal_IDs : array (Signal_Names'Range) of Signal_ID :=
                    (others => Invalid_Signal_Id);
+
+   function "+" (Value : String_Ptr) return UTF8_String is
+   begin
+      if Value = null then
+         return "";
+      else
+         return Value.all;
+      end if;
+   end "+";
+
+--     procedure Dump_Stack (Head : String; Stack : Items_Stack) is
+--        use Ada.Tags, Ada.Text_IO;
+--        This : Do_Item_Ptr := Stack.Actions;
+--     begin
+--        Put_Line (Head & " ---------------->");
+--        while This /= null loop
+--           if This.First then
+--              Put_Line ("   = " & Expanded_Name (This.all'Tag));
+--           else
+--              Put_Line ("     " & Expanded_Name (This.all'Tag));
+--           end if;
+--           This := This.Next;
+--        end loop;
+--        Put_Line ("<--------------- " & Head);
+--     end Dump_Stack;
 
    procedure Free is
       new Ada.Unchecked_Deallocation (Line_Layer, Line_Layer_Ptr);
@@ -273,7 +295,9 @@ package body Gtk.Oscilloscope is
                Group   : Group_Number;
                Color   : Gdk_Color;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -289,7 +313,8 @@ package body Gtk.Oscilloscope is
       if Group > Widget.Groups_Number then
          raise Constraint_Error with "Wrong group number";
       end if;
-      return Index : Channel_Number := Widget.Channels_Number + 1 do
+      return Index : constant Channel_Number :=
+                     Widget.Channels_Number + 1 do
          declare
             This : Channel_Data renames Widget.Channels (Index);
             Row  : Gtk_Tree_Iter;
@@ -304,6 +329,8 @@ package body Gtk.Oscilloscope is
                   Sweeper   => Widget.Time_Axis (Sweeper).Sweeper,
                   Amplifier => Widget.Groups (Group).Amplifier,
                   Mode      => Mode,
+                  Left      => Left,
+                  Right     => Right,
                   Opacity   => Widget.Opacity,
                   Scaled    => False,
                   Widened   => Widget.Widened
@@ -323,6 +350,8 @@ package body Gtk.Oscilloscope is
             Widget.Channel_Names.Set (Row, 3, True);
             Widget.Channel_Names.Set
                (Row, 4, Interpolation_Mode'Pos (Mode));
+            Widget.Channel_Names.Set (Row, 6, Left);
+            Widget.Channel_Names.Set (Row, 7, Right);
             This.Group := Group;
             if Buffer = null then
                Gtk_New (This.Source, Widget.Buffer_Size);
@@ -343,7 +372,9 @@ package body Gtk.Oscilloscope is
             (  Widget  : not null access Gtk_Oscilloscope_Record;
                Group   : Group_Number;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -352,8 +383,10 @@ package body Gtk.Oscilloscope is
       return
          Add_Channel
          (  Widget  => Widget,
-            Group   => Add_Group (Widget),
+            Group   => Group,
             Mode    => Mode,
+            Left    => Left,
+            Right   => Right,
             Name    => Name,
             Sweeper => Sweeper,
             Buffer  => Buffer,
@@ -369,7 +402,9 @@ package body Gtk.Oscilloscope is
             (  Widget  : not null access Gtk_Oscilloscope_Record;
                Color   : Gdk_Color;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -381,6 +416,8 @@ package body Gtk.Oscilloscope is
             Group   => Add_Group (Widget),
             Color   => Color,
             Mode    => Mode,
+            Left    => Left,
+            Right   => Right,
             Name    => Name,
             Buffer  => Buffer,
             Sweeper => Sweeper
@@ -390,7 +427,9 @@ package body Gtk.Oscilloscope is
    function Add_Channel
             (  Widget  : not null access Gtk_Oscilloscope_Record;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -401,6 +440,8 @@ package body Gtk.Oscilloscope is
          (  Widget  => Widget,
             Group   => Add_Group (Widget),
             Mode    => Mode,
+            Left    => Left,
+            Right   => Right,
             Name    => Name,
             Sweeper => Sweeper,
             Buffer  => Buffer,
@@ -431,7 +472,8 @@ package body Gtk.Oscilloscope is
       if Group > Widget.Groups_Number then
          raise Constraint_Error with "Wrong group number";
       end if;
-      return Index : Channel_Number := Widget.Channels_Number + 1 do
+      return Index : constant Channel_Number :=
+                     Widget.Channels_Number + 1 do
          declare
             This : Channel_Data renames Widget.Channels (Index);
             Row  : Gtk_Tree_Iter;
@@ -474,6 +516,8 @@ package body Gtk.Oscilloscope is
             Widget.Channel_Names.Set (Row, 3, True);
             Widget.Channel_Names.Set
                (Row, 4, Interpolation_Mode'Pos (Left));
+            Widget.Channel_Names.Set (Row, 6, False);
+            Widget.Channel_Names.Set (Row, 7, False);
             case Measured is
                when Refresh_Period =>
                   if Widget.Refresh_Period = null then
@@ -566,8 +610,9 @@ package body Gtk.Oscilloscope is
    end Add_Deviation_Channel;
 
    function Add_Group
-            (  Widget : not null access Gtk_Oscilloscope_Record;
-               Name   : String := ""
+            (  Widget    : not null access Gtk_Oscilloscope_Record;
+               Name      : String := "";
+               Amplifier : Gtk_Waveform_Amplifier := null
             )  return Group_Number is
       use Amplifier_Handlers;
       Row : Gtk_Tree_Iter;
@@ -579,8 +624,13 @@ package body Gtk.Oscilloscope is
                &  " groups"
                );
       end if;
-      return Index : Group_Number := Widget.Groups_Number + 1 do
-         Gtk_New (Widget.Groups (Index).Amplifier);
+      return Index : constant Group_Number :=
+                     Widget.Groups_Number + 1 do
+         if Amplifier = null then
+            Gtk_New (Widget.Groups (Index).Amplifier);
+         else
+            Widget.Groups (Index).Amplifier := Amplifier;
+         end if;
          Connect
          (  Widget.Groups (Index).Amplifier,
             "autoscaling-changed",
@@ -625,7 +675,8 @@ package body Gtk.Oscilloscope is
       elsif Channel > Widget.Channels_Number then
          raise Constraint_Error with "Wrong channel number";
       end if;
-      return Index : Channel_Number := Widget.Channels_Number + 1 do
+      return Index : constant Channel_Number :=
+                     Widget.Channels_Number + 1 do
          declare
             That : Channel_Data renames Widget.Channels (Channel);
             This : Channel_Data renames Widget.Channels (Index);
@@ -641,6 +692,10 @@ package body Gtk.Oscilloscope is
                   Sweeper   => Widget.Time_Axis (Sweeper).Sweeper,
                   Amplifier => Widget.Groups (That.Group).Amplifier,
                   Mode      => That.Waveform.Get_Interpolation_Mode,
+                  Left      => That.Waveform.
+                               Get_Left_Extrapolation_Mode,
+                  Right     => That.Waveform.
+                               Get_Right_Extrapolation_Mode,
                   Opacity   => Widget.Opacity,
                   Scaled    => False,
                   Widened   => Widget.Widened
@@ -664,6 +719,16 @@ package body Gtk.Oscilloscope is
                Interpolation_Mode'Pos
                (  That.Waveform.Get_Interpolation_Mode
             )  );
+            Widget.Channel_Names.Set
+            (  Row,
+               6,
+               That.Waveform.Get_Left_Extrapolation_Mode
+            );
+            Widget.Channel_Names.Set
+            (  Row,
+               7,
+               That.Waveform.Get_Right_Extrapolation_Mode
+            );
             This.Group  := That.Group;
             This.Source := That.Source;
             This.Source.Ref;
@@ -700,7 +765,7 @@ package body Gtk.Oscilloscope is
    procedure Box_Changed
              (  Widget : not null access Gtk_Oscilloscope_Record'Class
              )  is
-      Box : Cairo_Box := Widget.Get_Box;
+      Box : constant Cairo_Box := Widget.Get_Box;
    begin
       Widget.Background.Set
       (  Box        => Box,
@@ -717,6 +782,8 @@ package body Gtk.Oscilloscope is
             (  Box     => Box,
                Line    => This.Get_Line,
                Mode    => This.Get_Interpolation_Mode,
+               Left    => This.Get_Left_Extrapolation_Mode,
+               Right   => This.Get_Right_Extrapolation_Mode,
                Opacity => This.Get_Opacity
             );
          end;
@@ -774,7 +841,7 @@ package body Gtk.Oscilloscope is
                 Point        : Cairo_Tuple
              )  is
       Selected : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
-      Area     : Cairo_Box := Oscilloscope.Get_Box;
+      Area     : constant Cairo_Box := Oscilloscope.Get_Box;
       X, Y     : GDouble;
    begin
       if Point.X <= Area.X1 then
@@ -860,12 +927,11 @@ package body Gtk.Oscilloscope is
                     (  GInt'(Style_Get (Widget, "values-text-overlap"))
                     ),
                  Opacity =>
-                    GDouble
-                    (  GDouble'
-                       (  Style_Get
-                          (  Widget,
-                             "values-text-border-opacity"
-              )     )  )  ) .all;
+                    GDouble'
+                    (  Style_Get
+                       (  Widget,
+                          "values-text-border-opacity"
+              )     )  ) .all;
    begin
       return Layer'Unchecked_Access;
    end Create_Annotation;
@@ -906,12 +972,11 @@ package body Gtk.Oscilloscope is
                      (  GInt'(Style_Get (Widget, "time-text-overlap"))
                      ),
                   Opacity =>
-                     GDouble
-                     (  GDouble'
-                        (  Style_Get
-                           (  Widget,
-                              "time-text-border-opacity"
-               )     )  )  ) .all;
+                     GDouble'
+                     (  Style_Get
+                        (  Widget,
+                           "time-text-border-opacity"
+               )     )  ) .all;
          begin
             return Layer'Unchecked_Access;
          end;
@@ -948,12 +1013,11 @@ package body Gtk.Oscilloscope is
                       (  GInt'(Style_Get (Widget, "time-text-overlap"))
                       ),
                    Opacity =>
-                      GDouble
-                      (  GDouble'
-                         (  Style_Get
-                            (  Widget,
-                               "time-text-border-opacity"
-               )      )  )  ) .all;
+                      GDouble'
+                      (  Style_Get
+                         (  Widget,
+                            "time-text-border-opacity"
+               )      )  ) .all;
          begin
             return Layer'Unchecked_Access;
          end;
@@ -978,6 +1042,9 @@ package body Gtk.Oscilloscope is
             "Wrong channel number" & Channel_Count'Image (Channel);
       end if;
       This := Widget.Channels (Channel);
+      Free (This.Tip_Prefix);
+      Free (This.Tip_X_Suffix);
+      Free (This.Tip_Y_Suffix);
       for Index in Channel..Widget.Channels_Number - 1 loop
          Widget.Channels (Index) := Widget.Channels (Index + 1);
       end loop;
@@ -995,6 +1062,9 @@ package body Gtk.Oscilloscope is
          )     );
          Widget.Fix_Numbers (Channel, Widget.Channels_Number - 1);
       end if;
+      Widget.Channels (Widget.Channels_Number).Tip_Prefix   := null;
+      Widget.Channels (Widget.Channels_Number).Tip_X_Suffix := null;
+      Widget.Channels (Widget.Channels_Number).Tip_Y_Suffix := null;
       Widget.Channels_Number := Widget.Channels_Number - 1;
       Row :=
          Widget.Channel_Names.Nth_Child
@@ -1026,7 +1096,7 @@ package body Gtk.Oscilloscope is
              (  Item         : Do_Auto_Amplifier;
                 First        : in out Boolean;
                 Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                Inverse      : access Do_Item_Ptr := null
+                Inverse      : access Items_Stack := null
              )  is
    begin
       if not Item.Amplifier.Get_Auto_Scaling then
@@ -1039,7 +1109,7 @@ package body Gtk.Oscilloscope is
              (  Item         : Do_Amplifier_Zoom;
                 First        : in out Boolean;
                 Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                Inverse      : access Do_Item_Ptr := null
+                Inverse      : access Items_Stack := null
              )  is
    begin
       if Item.Amplifier.Get_Auto_Scaling then
@@ -1056,7 +1126,7 @@ package body Gtk.Oscilloscope is
              (  Item         : Do_Release_Sweeper;
                 First        : in out Boolean;
                 Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                Inverse      : access Do_Item_Ptr := null
+                Inverse      : access Items_Stack := null
              )  is
    begin
       if Item.Sweeper.Get_Frozen then
@@ -1069,7 +1139,7 @@ package body Gtk.Oscilloscope is
              (  Item         : Do_Sweeper_Zoom;
                 First        : in out Boolean;
                 Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                Inverse      : access Do_Item_Ptr := null
+                Inverse      : access Items_Stack := null
              )  is
    begin
       if Item.Sweeper.Get_Frozen then
@@ -1082,18 +1152,31 @@ package body Gtk.Oscilloscope is
       Item.Sweeper.Set_Time (Item.Time);
    end Do_It;
 
+   procedure Do_It
+             (  Item         : Do_Stub;
+                First        : in out Boolean;
+                Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
+                Inverse      : access Items_Stack := null
+             )  is
+   begin
+      Item.Stack.Stubs := Item.Previous;
+--    Push_Stub (Item.Name, Inverse, First); -- Don't move it!
+   end Do_It;
+
    procedure Erase_Redo_Stack
              (  Widget : not null access Gtk_Oscilloscope_Record
              )  is
    begin
-      Delete (Widget.Redo_Stack);
+      Delete (Widget.Redo_Stack.Actions);
+      Widget.Redo_Stack.Stubs := null;
    end Erase_Redo_Stack;
 
    procedure Erase_Undo_Stack
              (  Widget : not null access Gtk_Oscilloscope_Record
              )  is
    begin
-      Delete (Widget.Undo_Stack);
+      Delete (Widget.Undo_Stack.Actions);
+      Widget.Undo_Stack.Stubs := null;
    end Erase_Undo_Stack;
 
    procedure Finalize (Item : in out Do_Auto_Amplifier) is
@@ -1112,8 +1195,8 @@ package body Gtk.Oscilloscope is
                 Stop   : Channel_Number
              )  is
       Row  : Gtk_Tree_Iter;
-      From : GInt := GInt (Start) - 1;
-      To   : GInt := GInt (Stop)  - 1;
+      From : constant GInt := GInt (Start) - 1;
+      To   : constant GInt := GInt (Stop)  - 1;
    begin
       Row := Widget.Channel_Names.Nth_Child (Null_Iter, From);
       for Index in From..To loop
@@ -1190,11 +1273,13 @@ package body Gtk.Oscilloscope is
    end Feed;
 
    function Get_Amplifier
-            (  Widget    : not null access Gtk_Oscilloscope_Record;
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type
             )  return not null access
                       Gtk_Waveform_Amplifier_Record'Class is
-      Group : Group_Count := Widget.Values_Axis (Amplifier).Group;
+      Group : constant Group_Count :=
+              Widget.Values_Axis (Amplifier).Group;
    begin
       if Group > 0 then
          return Widget.Groups (Group).Amplifier;
@@ -1205,7 +1290,8 @@ package body Gtk.Oscilloscope is
    end Get_Amplifier;
 
    function Get_Amplifier
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Channel : Channel_Number
             )  return not null access
                       Gtk_Waveform_Amplifier_Record'Class is
@@ -1220,7 +1306,8 @@ package body Gtk.Oscilloscope is
    end Get_Amplifier;
 
    function Get_Amplifier
-            (  Widget : not null access Gtk_Oscilloscope_Record;
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record;
                Group  : Group_Number
             )  return not null access
                       Gtk_Waveform_Amplifier_Record'Class is
@@ -1263,10 +1350,12 @@ package body Gtk.Oscilloscope is
    end Get_Auto_Scaling;
 
    function Get_Box
-            (  Widget : not null access Gtk_Oscilloscope_Record
+            (  Widget : not null access constant Gtk_Oscilloscope_Record
             )  return Cairo_Box is
-      Width  : GDouble := GDouble (Widget.Layers.Get_Allocated_Width);
-      Height : GDouble := GDouble (Widget.Layers.Get_Allocated_Height);
+      Width  : constant GDouble :=
+               GDouble (Widget.Layers.Get_Allocated_Width);
+      Height : constant GDouble :=
+               GDouble (Widget.Layers.Get_Allocated_Height);
       X1     : GDouble := Widget.Values_Axis (Left).Offset;
       X2     : GDouble := Width - Widget.Values_Axis (Right).Offset;
       Y1     : GDouble := Widget.Time_Axis (Upper).Offset;
@@ -1339,6 +1428,14 @@ package body Gtk.Oscilloscope is
       return Widget.Default_Face;
    end Get_Default_Face;
 
+   function Get_Enabled_Dropdown_Items
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record
+            )  return Dropdown_Items is
+   begin
+      return Widget.Menu_Enabled;
+   end Get_Enabled_Dropdown_Items;
+
    function Get_From
             (  Widget  : not null access constant
                          Gtk_Oscilloscope_Record;
@@ -1382,7 +1479,8 @@ package body Gtk.Oscilloscope is
                            Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type
             )  return Group_Number is
-      Result : Group_Count := Widget.Values_Axis (Amplifier).Group;
+      Result : constant Group_Count :=
+               Widget.Values_Axis (Amplifier).Group;
    begin
       if Result > 0 then
          return Result;
@@ -1434,6 +1532,21 @@ package body Gtk.Oscilloscope is
             "Wrong channel number" & Channel_Count'Image (Channel);
       end if;
    end Get_Interpolation_Mode;
+
+   function Get_Left_Extrapolation_Mode
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return Boolean is
+   begin
+      if Channel <= Widget.Channels_Number then
+         return Widget.Channels (Channel).Waveform.
+                Get_Left_Extrapolation_Mode;
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Get_Left_Extrapolation_Mode;
 
    function Get_Manual_Sweep
             (  Widget : not null access constant
@@ -1502,6 +1615,37 @@ package body Gtk.Oscilloscope is
       return Widget.Time_Axis (Sweeper).Sweeper.Get_Page_Span;
    end Get_Page_Span;
 
+   function Get_Redo_Stub
+            (  Widget : not null access Gtk_Oscilloscope_Record;
+               Depth  : Positive := 1
+            )  return UTF8_String is
+   begin
+      return Get_Stub (Widget.Redo_Stack, Depth);
+   end Get_Redo_Stub;
+
+   function Get_Release_To_Latest
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record
+            )  return Boolean is
+   begin
+      return Widget.Jump_On_Thaw;
+   end Get_Release_To_Latest;
+
+   function Get_Right_Extrapolation_Mode
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return Boolean is
+   begin
+      if Channel <= Widget.Channels_Number then
+         return Widget.Channels (Channel).Waveform.
+                Get_Right_Extrapolation_Mode;
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Get_Right_Extrapolation_Mode;
+
    function Get_Selection_Mode
             (  Widget : not null access constant Gtk_Oscilloscope_Record
             )  return Selection_Action is
@@ -1529,6 +1673,25 @@ package body Gtk.Oscilloscope is
       return Widget.Format;
    end Get_Snapshot_Format;
 
+   function Get_Stub
+            (  Stack : Items_Stack;
+               Depth : Positive
+            )  return UTF8_String is
+      Count : Natural := Depth;
+      This  : Do_Item_Ptr := Stack.Stubs;
+   begin
+      while This /= null loop
+         if This.all in Do_Stub'Class then
+            if Count = 1 then
+               return Do_Stub'Class (This.all).Name;
+            end if;
+            Count := Count - 1;
+         end if;
+         This := This.Next;
+      end loop;
+      raise End_Error with "No such stub";
+   end Get_Stub;
+
    function Get_Superscript
             (  Widget : not null access constant Gtk_Oscilloscope_Record
             )  return Boolean is
@@ -1537,7 +1700,8 @@ package body Gtk.Oscilloscope is
    end Get_Superscript;
 
    function Get_Sweeper
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type
             )  return not null access
                       Gtk_Waveform_Sweeper_Record'Class is
@@ -1566,7 +1730,8 @@ package body Gtk.Oscilloscope is
    end Get_Sweeper;
 
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type
             )  return Time is
    begin
@@ -1574,15 +1739,16 @@ package body Gtk.Oscilloscope is
    end Get_Time;
 
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                X       : GInt
             )  return Time is
-      Adjustment : Gtk_Waveform_Sweeper :=
-                      Widget.Time_Axis (Sweeper).Sweeper;
-      Box   : Cairo_Box := Widget.Get_Box;
-      Lower : GDouble := GDouble (Get_Value (Adjustment));
-      Page  : GDouble := GDouble (Get_Page_Size (Adjustment));
+      Adjustment : constant Gtk_Waveform_Sweeper :=
+                   Widget.Time_Axis (Sweeper).Sweeper;
+      Box   : constant Cairo_Box := Widget.Get_Box;
+      Lower : constant GDouble := Get_Value (Adjustment);
+      Page  : constant GDouble := Get_Page_Size (Adjustment);
    begin
       if Box.X1 >= GDouble (X) then
          return To_Time (Lower);
@@ -1597,7 +1763,8 @@ package body Gtk.Oscilloscope is
    end Get_Time;
 
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type
             )  return Ada.Calendar.Time is
    begin
@@ -1605,15 +1772,16 @@ package body Gtk.Oscilloscope is
    end Get_Time;
 
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                X       : GInt
             )  return Ada.Calendar.Time is
-      Adjustment : Gtk_Waveform_Sweeper :=
-                      Widget.Time_Axis (Sweeper).Sweeper;
-      Box   : Cairo_Box := Widget.Get_Box;
-      Lower : GDouble := GDouble (Get_Value (Adjustment));
-      Page  : GDouble := GDouble (Get_Page_Size (Adjustment));
+      Adjustment : constant Gtk_Waveform_Sweeper :=
+                   Widget.Time_Axis (Sweeper).Sweeper;
+      Box   : constant Cairo_Box := Widget.Get_Box;
+      Lower : constant GDouble := Get_Value (Adjustment);
+      Page  : constant GDouble := Get_Page_Size (Adjustment);
    begin
       if Box.X1 >= GDouble (X) then
          return To_Time (Lower);
@@ -1752,6 +1920,20 @@ package body Gtk.Oscilloscope is
       return Widget.Show_Time;
    end Get_Time_Tooltip;
 
+   function Get_Time_Tooltip_Suffix
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return UTF8_String is
+   begin
+      if Channel <= Widget.Channels_Number then
+         return +Widget.Channels (Channel).Tip_X_Suffix;
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Get_Time_Tooltip_Suffix;
+
    function Get_To
             (  Widget  : not null access constant
                          Gtk_Oscilloscope_Record;
@@ -1770,23 +1952,46 @@ package body Gtk.Oscilloscope is
       return Widget.Time_Axis (Sweeper).Sweeper.Get_To;
    end Get_To;
 
+   function Get_Tooltip_Annotation
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return UTF8_String is
+   begin
+      if Channel <= Widget.Channels_Number then
+         return +Widget.Channels (Channel).Tip_Prefix;
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Get_Tooltip_Annotation;
+
    function Get_Type return GType is separate;
 
-   function Get_Value
+   function Get_Undo_Stub
             (  Widget : not null access Gtk_Oscilloscope_Record;
+               Depth  : Positive := 1
+            )  return UTF8_String is
+   begin
+      return Get_Stub (Widget.Undo_Stack, Depth);
+   end Get_Undo_Stub;
+
+   function Get_Value
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record;
                Group  : Group_Number;
                Y      : GInt
             )  return GDouble is
    begin
       if Group > Widget.Groups_Number then
-         raise Constraint_Error with "Wrong channel group number";
+         raise Constraint_Error with "Wrong group number";
       else
          declare
-            Adjustment : Gtk_Waveform_Amplifier :=
-                      Widget.Groups (Group).Amplifier;
-            Box   : Cairo_Box := Widget.Get_Box;
-            Value : GDouble := GDouble (Get_Value (Adjustment));
-            Page  : GDouble := GDouble (Get_Page_Size (Adjustment));
+            Adjustment : constant Gtk_Waveform_Amplifier :=
+                         Widget.Groups (Group).Amplifier;
+            Box   : constant Cairo_Box := Widget.Get_Box;
+            Value : constant GDouble := Get_Value (Adjustment);
+            Page  : constant GDouble := Get_Page_Size (Adjustment);
          begin
             if Box.Y1 >= GDouble (Y) then
                return Value + Page;
@@ -1803,11 +2008,13 @@ package body Gtk.Oscilloscope is
    end Get_Value;
 
    function Get_Value
-            (  Widget    : not null access Gtk_Oscilloscope_Record;
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type;
                Y         : GInt
             )  return GDouble is
-      Group : Group_Count := Widget.Values_Axis (Amplifier).Group;
+      Group : constant Group_Count :=
+              Widget.Values_Axis (Amplifier).Group;
    begin
       if Group > 0 then
          return Get_Value (Widget, Group, Y);
@@ -1923,8 +2130,23 @@ package body Gtk.Oscilloscope is
       return Widget.Values_Axis (Amplifier).Stretch;
    end Get_Values_Text_Stretch;
 
+   function Get_Values_Tooltip_Suffix
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return UTF8_String is
+   begin
+      if Channel <= Widget.Channels_Number then
+         return +Widget.Channels (Channel).Tip_Y_Suffix;
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Get_Values_Tooltip_Suffix;
+
    function Get_Waveform
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Channel : Channel_Number
             )  return not null access Waveform_Layer is
    begin
@@ -1936,17 +2158,46 @@ package body Gtk.Oscilloscope is
       end if;
    end Get_Waveform;
 
+   function Get_Annotation_Height
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Sweeper : Sweeper_Type
+            )  return GInt is
+      Data : Time_Axis_Data renames Widget.Time_Axis (Sweeper);
+   begin
+      if Data.On then
+         return GInt (Data.Width);
+      else
+         return 0;
+      end if;
+   end Get_Annotation_Height;
+
+   function Get_Annotation_Width
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
+               Amplifier : Amplifier_Type
+            )  return GInt is
+      Data : Values_Axis_Data renames Widget.Values_Axis (Amplifier);
+   begin
+      if Data.On then
+         return GInt (Data.Width);
+      else
+         return 0;
+      end if;
+   end Get_Annotation_Width;
+
    function Get_X
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                Stamp   : GDouble;
                Crop    : Boolean
             )  return GInt is
-      Adjustment : Gtk_Waveform_Sweeper :=
-                      Widget.Time_Axis (Sweeper).Sweeper;
-      Box   : Cairo_Box := Widget.Get_Box;
-      Lower : GDouble := GDouble (Get_Value (Adjustment));
-      Page  : GDouble := GDouble (Get_Page_Size (Adjustment));
+      Adjustment : constant Gtk_Waveform_Sweeper :=
+                   Widget.Time_Axis (Sweeper).Sweeper;
+      Box   : constant Cairo_Box := Widget.Get_Box;
+      Lower : constant GDouble := Get_Value (Adjustment);
+      Page  : constant GDouble := Get_Page_Size (Adjustment);
    begin
       if Stamp > Lower + Page then
          if Crop then
@@ -1970,7 +2221,8 @@ package body Gtk.Oscilloscope is
    end Get_X;
 
    function Get_X
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                Stamp   : Time;
                Crop    : Boolean := False
@@ -1980,7 +2232,8 @@ package body Gtk.Oscilloscope is
    end Get_X;
 
    function Get_X
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                Stamp   : Ada.Calendar.Time;
                Crop    : Boolean := False
@@ -1990,7 +2243,8 @@ package body Gtk.Oscilloscope is
    end Get_X;
 
    function Get_Y
-            (  Widget : not null access Gtk_Oscilloscope_Record;
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record;
                Group  : Group_Number;
                Value  : GDouble;
                Crop   : Boolean := False
@@ -2000,11 +2254,11 @@ package body Gtk.Oscilloscope is
          raise Constraint_Error with "Wrong channel group number";
       else
          declare
-            Adjustment : Gtk_Waveform_Amplifier :=
-                      Widget.Groups (Group).Amplifier;
-            Box   : Cairo_Box := Widget.Get_Box;
-            Lower : GDouble := GDouble (Get_Value (Adjustment));
-            Page  : GDouble := GDouble (Get_Page_Size (Adjustment));
+            Adjustment : constant Gtk_Waveform_Amplifier :=
+                         Widget.Groups (Group).Amplifier;
+            Box   : constant Cairo_Box := Widget.Get_Box;
+            Lower : constant GDouble := Get_Value (Adjustment);
+            Page  : constant GDouble := Get_Page_Size (Adjustment);
          begin
             if Value < Lower then
                if Crop then
@@ -2032,12 +2286,14 @@ package body Gtk.Oscilloscope is
    end Get_Y;
 
    function Get_Y
-            (  Widget    : not null access Gtk_Oscilloscope_Record;
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type;
                Value     : GDouble;
                Crop      : Boolean := False
             )  return GInt is
-      Group : Group_Count := Widget.Values_Axis (Amplifier).Group;
+      Group : constant Group_Count :=
+              Widget.Values_Axis (Amplifier).Group;
    begin
       if Group > 0 then
          return Get_Y (Widget, Group, Value, Crop);
@@ -2304,7 +2560,7 @@ package body Gtk.Oscilloscope is
          declare
             This  : Values_Axis_Data renames
                     Oscilloscope.Values_Axis (Index);
-            Group : Group_Count := This.Group;
+            Group : constant Group_Count := This.Group;
          begin
             if (  Group > 0
                and then
@@ -2344,14 +2600,14 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Y      : GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
+      Y : constant GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
       Got_It : Boolean;
    begin
       for Index in 1..Oscilloscope.Channels_Number loop
          declare
             Data : Channel_Data renames Oscilloscope.Channels (Index);
          begin
-            Data.Waveform.Get (GDouble (Y), Data.Value_1, Got_It);
+            Data.Waveform.Get (Y, Data.Value_1, Got_It);
             if Got_It then
                Data.Status := Absolute;
             else
@@ -2405,6 +2661,9 @@ package body Gtk.Oscilloscope is
             Oscilloscope.Channels (Index).Source.Unref;
             Oscilloscope.Channels (Index).Source := null;
          end if;
+         Free (Oscilloscope.Channels (Index).Tip_Prefix);
+         Free (Oscilloscope.Channels (Index).Tip_X_Suffix);
+         Free (Oscilloscope.Channels (Index).Tip_Y_Suffix);
       end loop;
       for Index in Oscilloscope.Time_Axis'Range loop
          if Oscilloscope.Time_Axis (Index).Sweeper /= null then
@@ -2422,8 +2681,8 @@ package body Gtk.Oscilloscope is
       end if;
       Free (Oscilloscope.Groups);
       Free (Oscilloscope.Selection);
-      Delete (Oscilloscope.Undo_Stack);
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Erase_Undo_Stack;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.File);
    end On_Destroy;
 
@@ -2431,7 +2690,7 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Y : GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
+      Y : constant GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
    begin
       for Index in 1..Oscilloscope.Channels_Number loop
          declare
@@ -2439,7 +2698,7 @@ package body Gtk.Oscilloscope is
             Got_It : Boolean;
          begin
             if Data.Status /= Undefined then
-               Data.Waveform.Get (GDouble (Y), Data.Value_2, Got_It);
+               Data.Waveform.Get (Y, Data.Value_2, Got_It);
                if Got_It then
                   Data.Status  := Difference;
                else
@@ -2468,21 +2727,39 @@ package body Gtk.Oscilloscope is
              (  Scale     : not null access Gtk_Scale_Record'Class;
                 Arguments : GValue_Array;
                 Result    : in out GValue;
-                Sweeper   : Gtk_Waveform_Sweeper
+                Data      : Time_Axis_Data_Ptr
              )  is
       use type Ada.Calendar.Time;
-      Page  : Duration := Sweeper.Get_Page_Span / 2;
-      Right : Ada.Calendar.Time := Sweeper.Get_Time;
+      Page  : constant Duration := Data.Sweeper.Get_Page_Span / 2;
+      Right : constant Ada.Calendar.Time := Data.Sweeper.Get_Time;
    begin
-      Set_String
-      (  Result,
-         (  Gtk.Layered.Graph_Paper_Annotation.Image (Right - Page)
-         &  " "
-         &  Strings_Edit.UTF8.Image (16#00B1#)
-         &  " "
-         &  Gtk.Layered.Graph_Paper_Annotation.Image (Page)
-         &  "s"
-      )  );
+      if Data.Time_Mode then
+         Set_String
+         (  Result,
+            (  Gtk.Layered.Graph_Paper_Annotation.Image (Right - Page)
+            &  " "
+            &  Strings_Edit.UTF8.Image (16#00B1#)
+            &  " "
+            &  Gtk.Layered.Graph_Paper_Annotation.Image (Page)
+            &  "s"
+         )  );
+      else
+         if Data.Texts /= null then
+            Set_String
+            (  Result,
+               Data.Texts.Image (To_Double (Right - Page))
+            );
+         end if;
+      end if;
+   exception
+      when Error : others =>
+         Log
+         (  GtkAda_Contributions_Domain,
+            Log_Level_Critical,
+            (  "Fault: "
+            &  Exception_Information (Error)
+            &  Where ("On_Format_Time")
+         )  );
    end On_Format_Time;
 
    procedure On_Freezing_Changed
@@ -2512,9 +2789,8 @@ package body Gtk.Oscilloscope is
          (  Sweeper,
             Time'
             (  To_Time
-               (  GDouble
-                  (  Oscilloscope.Time_Axis (Sweeper).Sweeper.Get_Upper
-         )  )  )  );
+               (  Oscilloscope.Time_Axis (Sweeper).Sweeper.Get_Upper
+         )  )  );
       end loop;
    exception
       when Error : others =>
@@ -2592,17 +2868,17 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Y1 : GDouble := Oscilloscope.Selection.Area.Get_Box.Y1;
-      Y2 : GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
+      Y1 : constant GDouble := Oscilloscope.Selection.Area.Get_Box.Y1;
+      Y2 : constant GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
    begin
       for Index in 1..Oscilloscope.Channels_Number loop
          declare
             Data   : Channel_Data renames Oscilloscope.Channels (Index);
             Got_It : Boolean;
          begin
-            Data.Waveform.Get (GDouble (Y1), Data.Value_1, Got_It);
+            Data.Waveform.Get (Y1, Data.Value_1, Got_It);
             if Got_It then
-               Data.Waveform.Get (GDouble (Y2), Data.Value_2, Got_It);
+               Data.Waveform.Get (Y2, Data.Value_2, Got_It);
             end if;
             if Got_It then
                Data.Status := Difference;
@@ -2666,6 +2942,15 @@ package body Gtk.Oscilloscope is
    begin
       for Sweeper in Sweeper_Type'Range loop
          Oscilloscope.Set_Frozen (Sweeper, False);
+         if Oscilloscope.Jump_On_Thaw then
+            Oscilloscope.Set_Time
+            (  Sweeper,
+               Time'
+               (  To_Time
+                  (  Oscilloscope.Time_Axis (Sweeper).Sweeper.
+                     Get_Upper
+            )  )  );
+         end if;
       end loop;
    exception
       when Error : others =>
@@ -2842,16 +3127,17 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Box : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
+      Box : constant Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
    begin
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Restore_State;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.Selection.Area);
       Oscilloscope.Push_Undo;
       for Group in 1..Oscilloscope.Groups_Number loop
          Oscilloscope.Zoom_In
          (  Oscilloscope.Groups (Group).Amplifier,
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y2))),
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y1)))
+            Oscilloscope.Get_Value (Group, GInt (Box.Y2)),
+            Oscilloscope.Get_Value (Group, GInt (Box.Y1))
          );
       end loop;
       for Index in Sweeper_Type'Range loop
@@ -2877,9 +3163,10 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Box : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
+      Box : constant Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
    begin
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Restore_State;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.Selection.Area);
       Oscilloscope.Push_Undo (Time_Zooming);
       for Index in Sweeper_Type'Range loop
@@ -2905,16 +3192,17 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Box : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
+      Box : constant Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
    begin
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Restore_State;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.Selection.Area);
       Oscilloscope.Push_Undo (Values_Zooming);
       for Group in 1..Oscilloscope.Groups_Number loop
          Oscilloscope.Zoom_In
          (  Oscilloscope.Groups (Group).Amplifier,
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y2))),
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y1)))
+            Oscilloscope.Get_Value (Group, GInt (Box.Y2)),
+            Oscilloscope.Get_Value (Group, GInt (Box.Y1))
          );
       end loop;
       Oscilloscope.Selection.Saved := False;
@@ -2933,16 +3221,17 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Box : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
+      Box : constant Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
    begin
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Restore_State;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.Selection.Area);
       Oscilloscope.Push_Undo;
       for Group in 1..Oscilloscope.Groups_Number loop
          Oscilloscope.Zoom_Out
          (  Oscilloscope.Groups (Group).Amplifier,
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y2))),
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y1)))
+            Oscilloscope.Get_Value (Group, GInt (Box.Y2)),
+            Oscilloscope.Get_Value (Group, GInt (Box.Y1))
          );
       end loop;
       for Index in Sweeper_Type'Range loop
@@ -2968,9 +3257,10 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Box : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
+      Box : constant Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
    begin
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Restore_State;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.Selection.Area);
       Oscilloscope.Push_Undo (Time_Zooming);
       for Index in Sweeper_Type'Range loop
@@ -2996,16 +3286,17 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Box : Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
+      Box : constant Cairo_Box := Oscilloscope.Selection.Area.Get_Box;
    begin
-      Delete (Oscilloscope.Redo_Stack);
+      Oscilloscope.Restore_State;
+      Oscilloscope.Erase_Redo_Stack;
       Free (Oscilloscope.Selection.Area);
       Oscilloscope.Push_Undo (Values_Zooming);
       for Group in 1..Oscilloscope.Groups_Number loop
          Oscilloscope.Zoom_Out
          (  Oscilloscope.Groups (Group).Amplifier,
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y2))),
-            GDouble (Oscilloscope.Get_Value (Group, GInt (Box.Y1)))
+            Oscilloscope.Get_Value (Group, GInt (Box.Y2)),
+            Oscilloscope.Get_Value (Group, GInt (Box.Y1))
          );
       end loop;
       Oscilloscope.Selection.Saved := False;
@@ -3020,33 +3311,19 @@ package body Gtk.Oscilloscope is
          )  );
    end On_Zoom_Out_V;
 
-   procedure Pop (List : in out Do_Item_Ptr) is
-      Next : Do_Item_Ptr;
-   begin
-      while List /= null loop
-         if List.First then
-            Next := null;
-         else
-            Next := List.Next;
-         end if;
-         Free (List);
-         List := Next;
-      end loop;
-   end Pop;
-
    procedure Push_Amplifier_Zoom
              (  Amplifier : Gtk_Waveform_Amplifier;
-                List      : access Do_Item_Ptr;
+                List      : access Items_Stack;
                 First     : in out Boolean
              )  is
    begin
       if List /= null then
-         List.all :=
+         List.Actions :=
             new Do_Amplifier_Zoom'
                 (  Ada.Finalization.Limited_Controlled
                 with
                    First     => First,
-                   Next      => List.all,
+                   Next      => List.Actions,
                    Amplifier => Amplifier,
                    Value     => Amplifier.Get_Value,
                    Page_Size => Amplifier.Get_Page_Size
@@ -3058,17 +3335,17 @@ package body Gtk.Oscilloscope is
 
    procedure Push_Auto_Amplifier
              (  Amplifier : Gtk_Waveform_Amplifier;
-                List      : access Do_Item_Ptr;
+                List      : access Items_Stack;
                 First     : in out Boolean
              )  is
    begin
       if List /= null then
-         List.all :=
+         List.Actions :=
             new Do_Auto_Amplifier'
                 (  Ada.Finalization.Limited_Controlled
                 with
                    First     => First,
-                   Next      => List.all,
+                   Next      => List.Actions,
                    Amplifier => Amplifier
                 );
          Amplifier.Ref;
@@ -3078,17 +3355,17 @@ package body Gtk.Oscilloscope is
 
    procedure Push_Release_Sweeper
              (  Sweeper : Gtk_Waveform_Sweeper;
-                List    : access Do_Item_Ptr;
+                List    : access Items_Stack;
                 First   : in out Boolean
              )  is
    begin
       if List /= null then
-         List.all :=
+         List.Actions :=
             new Do_Release_Sweeper'
                 (  Ada.Finalization.Limited_Controlled
                 with
                    First   => First,
-                   Next    => List.all,
+                   Next    => List.Actions,
                    Sweeper => Sweeper
                 );
          Sweeper.Ref;
@@ -3098,17 +3375,17 @@ package body Gtk.Oscilloscope is
 
    procedure Push_Sweeper_Zoom
              (  Sweeper : Gtk_Waveform_Sweeper;
-                List    : access Do_Item_Ptr;
+                List    : access Items_Stack;
                 First   : in out Boolean
              )  is
    begin
       if List /= null then
-         List.all :=
+         List.Actions :=
             new Do_Sweeper_Zoom'
                 (  Ada.Finalization.Limited_Controlled
                 with
                    First   => First,
-                   Next    => List.all,
+                   Next    => List.Actions,
                    Sweeper => Sweeper,
                    Time    => Sweeper.Get_Time,
                    Page    => Sweeper.Get_Page_Span
@@ -3117,6 +3394,47 @@ package body Gtk.Oscilloscope is
          First := False;
       end if;
    end Push_Sweeper_Zoom;
+
+   procedure Push_Stub
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Name   : UTF8_String
+             )  is
+      First : Boolean := True;
+   begin
+      Push_Stub (Name, Widget.Undo_Stack'Access, First);
+   exception
+      when Error : others =>
+         Log
+         (  GtkAda_Contributions_Domain,
+            Log_Level_Critical,
+            (  "Fault: "
+            &  Exception_Information (Error)
+            &  Where ("Push_Stub")
+         )  );
+   end Push_Stub;
+
+   procedure Push_Stub
+             (  Name  : String;
+                List  : access Items_Stack;
+                First : in out Boolean
+             )  is
+   begin
+      if List /= null then
+         List.Actions :=
+            new Do_Stub'
+                (  Ada.Finalization.Limited_Controlled
+                with
+                   First    => First,
+                   Next     => List.Actions,
+                   Stack    => List,
+                   Previous => List.Stubs,
+                   Length   => Name'Length,
+                   Name     => Name
+                );
+         List.Stubs := List.Actions;
+         First := False;
+      end if;
+   end Push_Stub;
 
    procedure Push_Undo
              (  Widget : not null access Gtk_Oscilloscope_Record;
@@ -3136,17 +3454,37 @@ package body Gtk.Oscilloscope is
       end if;
    end Push_Undo;
 
-   procedure Redo (Widget : not null access Gtk_Oscilloscope_Record) is
-      This  : Do_Item_Ptr := Widget.Redo_Stack;
+   procedure Redo
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Till   : UTF8_String := "";
+                Stub   : UTF8_String := ""
+             )  is
+      use Strings_Edit.UTF8.Wildcards.Case_Insensitive;
+      This  : Do_Item_Ptr := Widget.Redo_Stack.Actions;
       First : Boolean := True;
       Done  : Boolean := False;
    begin
+      if Till'Length > 0 and then Stub'Length > 0 then
+         Push_Stub (Stub, Widget.Undo_Stack'Access, First);
+      end if;
       while This /= null and then not Done loop
-         Widget.Redo_Stack := This.Next;
-         Done := This.First;
+         Widget.Redo_Stack.Actions := This.Next;
+         if Till'Length > 0 then
+            if This.all in Do_Stub'Class then
+               Done := Match_Insensitive
+                       (  Do_Stub'Class (This.all).Name,
+                          Till,
+                          True
+                       );
+            else
+               Done := False; -- Never stop
+            end if;
+         else
+            Done := This.First; -- Sequence beginning stop
+         end if;
          This.Do_It (First, Widget.all, Widget.Undo_Stack'Access);
          Free (This);
-         This := Widget.Redo_Stack;
+         This := Widget.Redo_Stack.Actions;
       end loop;
    exception
       when Error : others =>
@@ -3197,8 +3535,8 @@ package body Gtk.Oscilloscope is
              (  Widget     : not null access Gtk_Graphs_Record;
                 Allocation : Gtk_Allocation
              )  is
-      Width  : GDouble := GDouble (Allocation.Width);
-      Height : GDouble := GDouble (Allocation.Height);
+      Width  : constant GDouble := GDouble (Allocation.Width);
+      Height : constant GDouble := GDouble (Allocation.Height);
    begin
       Widget.Set_Aspect_Ratio (Width / Height);
       Box_Changed (Widget.Oscilloscope);
@@ -3208,13 +3546,18 @@ package body Gtk.Oscilloscope is
              (  Widget : not null access Gtk_Oscilloscope_Record
              )  is
       First : Boolean     := True;
-      This  : Do_Item_Ptr := Widget.Undo_Stack;
+      This  : Do_Item_Ptr := Widget.Undo_Stack.Actions;
    begin
       while This /= null loop
-         Widget.Undo_Stack := This.Next;
-         This.Do_It (First, Widget.all);
-         Free (This);
-         This := Widget.Undo_Stack;
+         Widget.Undo_Stack.Actions := This.Next;
+         declare
+            Done : constant Boolean := This.First;
+         begin
+            This.Do_It (First, Widget.all);
+            Free (This);
+            exit when Done;
+         end;
+         This := Widget.Undo_Stack.Actions;
       end loop;
    exception
       when Error : others =>
@@ -3236,8 +3579,8 @@ package body Gtk.Oscilloscope is
       if Widget.Groups /= null and then Group in Widget.Groups'Range
       then
          declare
-            This : Gtk_Waveform_Amplifier :=
-                      Widget.Groups (Group).Amplifier;
+            This : constant Gtk_Waveform_Amplifier :=
+                   Widget.Groups (Group).Amplifier;
          begin
             if This.Get_Auto_Scaling then
                Push_Auto_Amplifier
@@ -3270,8 +3613,8 @@ package body Gtk.Oscilloscope is
                 Sweeper : Sweeper_Type;
                 First   : in out Boolean
              )  is
-      This : Gtk_Waveform_Sweeper :=
-                Widget.Time_Axis (Sweeper).Sweeper;
+      This : constant Gtk_Waveform_Sweeper :=
+             Widget.Time_Axis (Sweeper).Sweeper;
    begin
       if This.Get_Frozen then
          Push_Sweeper_Zoom (This, Widget.Undo_Stack'Access, First);
@@ -3295,7 +3638,7 @@ package body Gtk.Oscilloscope is
                 Auto      : Boolean
              )  is
       This  : Values_Axis_Data renames Widget.Values_Axis (Amplifier);
-      Group : Group_Count := This.Group;
+      Group : constant Group_Count := This.Group;
    begin
       if Group = 0 then
          raise Constraint_Error with
@@ -3326,12 +3669,53 @@ package body Gtk.Oscilloscope is
       Widget.Default_Face := Face;
    end Set_Default_Face;
 
+   procedure Set_Enabled_Dropdown_Items
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Items  : Dropdown_Items
+             )  is
+   begin
+      Widget.Menu_Enabled := Items;
+   end Set_Enabled_Dropdown_Items;
+
+   procedure Set_Extrapolation_Mode
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Left    : Boolean;
+                Right   : Boolean
+             )  is
+      Row : Gtk_Tree_Iter;
+   begin
+      if Channel > Widget.Channels_Number then
+         raise Constraint_Error with "Wrong channel number";
+      else
+         declare
+            Waveform : Waveform_Layer renames
+                       Widget.Channels (Channel).Waveform.all;
+         begin
+            if (  Left /= Waveform.Get_Left_Extrapolation_Mode
+               or else
+                  Right /= Waveform.Get_Right_Extrapolation_Mode
+               )
+            then
+               Waveform.Set_Extrapolation_Mode (Left, Right);
+               Row := Widget.Channel_Names.Nth_Child
+                      (  Null_Iter,
+                         GInt (Channel) - 1
+                      );
+               Widget.Channel_Names.Set (Row, 6, Left);
+               Widget.Channel_Names.Set (Row, 7, Right);
+               Emit (Widget, Signal_IDs (15), GUInt (Channel));
+            end if;
+         end;
+      end if;
+   end Set_Extrapolation_Mode;
+
    procedure Set_Frequency
              (  Widget  : not null access Gtk_Oscilloscope_Record;
                 Sweeper : Sweeper_Type;
                 Frames  : GDouble
              )  is
-      Box : Cairo_Box := Widget.Get_Box;
+      Box : constant Cairo_Box := Widget.Get_Box;
    begin
       Set_Page_Span
       (  Widget,
@@ -3349,33 +3733,61 @@ package body Gtk.Oscilloscope is
    begin
       if Frozen and then not This.No_Scale then
          if This.Scale = null and then not Widget.Selection.Engaged then
+            Gtk_New_HBox (This.Box);
+            Gtk_New (This.Left_Fill);
+            This.Left_Fill.Set_Size_Request
+            (  Width  => Widget.Get_Annotation_Width (Left),
+               Height => 1
+            );
+            This.Box.Pack_Start (This.Left_Fill, False, False);
             Gtk_New_HScale
             (  This.Scale,
                This.Sweeper.all'Unchecked_Access
             );
+            This.Scale.Set_Hexpand (True);
+            This.Scale.Set_Vexpand (False);
+            This.Box.Pack_Start (This.Scale);
+            Gtk_New (This.Right_Fill);
+            This.Right_Fill.Set_Size_Request
+            (  Width  => Widget.Get_Annotation_Width (Right),
+               Height => 1
+            );
+            This.Box.Pack_Start (This.Right_Fill, False, False);
+            case Sweeper is
+               when Upper =>
+                  This.Scale.Set_Value_Pos (Pos_Top);
+                  Widget.Attach_Next_To
+                  (  This.Box,
+                     Widget.Layers,
+                     Pos_Top
+                  );
+               when Lower =>
+                  This.Scale.Set_Value_Pos (Pos_Bottom);
+                  Widget.Attach_Next_To
+                  (  This.Box,
+                     Widget.Layers,
+                     Pos_Bottom
+                  );
+            end case;
+            This.Box.Show;
+            This.Left_Fill.Show;
+            This.Right_Fill.Show;
+            This.Box.Show_All;
             Format_Handlers.Connect
             (  This.Scale,
                "format_value",
                On_Format_Time'Access,
-               This.Sweeper.all'Unchecked_Access
+               This'Unchecked_Access,
+               True
             );
-            case Sweeper is
-               when Upper =>
-                  This.Scale.Set_Hexpand (True);
-                  This.Scale.Set_Vexpand (False);
-                  Widget.Attach (This.Scale, 1, 2, 0, 1);
-               when Lower =>
-                  This.Scale.Set_Hexpand (True);
-                  This.Scale.Set_Vexpand (False);
-                  Widget.Attach (This.Scale, 1, 2, 2, 3);
-                  This.Scale.Set_Value_Pos (Pos_Bottom);
-            end case;
-            This.Scale.Show_All;
          end if;
       else
          if This.Scale /= null then
-            Widget.Remove (This.Scale);
-            This.Scale := null;
+            Widget.Remove (This.Box);
+            This.Scale      := null;
+            This.Box        := null;
+            This.Left_Fill  := null;
+            This.Right_Fill := null;
          end if;
       end if;
       This.Sweeper.Set_Frozen (Frozen);
@@ -3439,8 +3851,12 @@ package body Gtk.Oscilloscope is
             Data.Ticks.Set_Y_Axis (Widget.Groups (Group).Amplifier);
          end if;
          if Data.Scale /= null then
-            Widget.Remove (Data.Scale);
-            Data.Scale := null;
+            Widget.Remove (Data.Box);
+            Data.Scale      := null;
+            Data.Scale      := null;
+            Data.Box        := null;
+            Data.Upper_Fill := null;
+            Data.Lower_Fill := null;
          end if;
          Widget.Update_Amplifier (Amplifier);
          Emit
@@ -3477,7 +3893,7 @@ package body Gtk.Oscilloscope is
             (  Null_Iter,
                GInt (Channel) - 1
             ),
-            4,
+            3,
             Interpolation_Mode'Pos (Mode)
          );
          Emit (Widget, Signal_IDs (10), GUInt (Channel));
@@ -3497,8 +3913,8 @@ package body Gtk.Oscilloscope is
                 Sweeper   : Sweeper_Type;
                 Page_Span : Duration
              )  is
-      Adjustment : Gtk_Waveform_Sweeper :=
-                      Widget.Time_Axis (Sweeper).Sweeper;
+      Adjustment : constant Gtk_Waveform_Sweeper :=
+                   Widget.Time_Axis (Sweeper).Sweeper;
    begin
       if Adjustment.Get_Frozen then
          declare
@@ -3538,6 +3954,14 @@ package body Gtk.Oscilloscope is
          Widget.Channels (Index).Waveform.Set_Preferred_Method (Method);
       end loop;
    end Set_Preferred_Method;
+
+   procedure Set_Release_To_Latest
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Enable : Boolean
+             )  is
+   begin
+      Widget.Jump_On_Thaw := Enable;
+   end Set_Release_To_Latest;
 
    procedure Set_Selection_Mode
              (  Widget : not null access Gtk_Oscilloscope_Record;
@@ -3632,8 +4056,8 @@ package body Gtk.Oscilloscope is
                 Sweeper : Sweeper_Type;
                 Stamp   : Time
              )  is
-      Adjustment : Gtk_Waveform_Sweeper :=
-                      Widget.Time_Axis (Sweeper).Sweeper;
+      Adjustment : constant Gtk_Waveform_Sweeper :=
+                   Widget.Time_Axis (Sweeper).Sweeper;
    begin
       if Adjustment.Get_Frozen then
          declare
@@ -3669,8 +4093,8 @@ package body Gtk.Oscilloscope is
                 Sweeper : Sweeper_Type;
                 Stamp   : Ada.Calendar.Time
              )  is
-      Adjustment : Gtk_Waveform_Sweeper :=
-                      Widget.Time_Axis (Sweeper).Sweeper;
+      Adjustment : constant Gtk_Waveform_Sweeper :=
+                   Widget.Time_Axis (Sweeper).Sweeper;
    begin
       if Adjustment.Get_Frozen then
          declare
@@ -3781,6 +4205,34 @@ package body Gtk.Oscilloscope is
             Data.Offset := GDouble (Data.Width);
             Box_Changed (Widget);
          end if;
+         for Amplifier in Widget.Values_Axis'Range loop
+            case Amplifier is
+               when Left | Right =>
+                  declare
+                     This : Values_Axis_Data renames
+                            Widget.Values_Axis (Amplifier);
+                  begin
+                     if This.Scale /= null then
+                        case Sweeper is
+                           when Upper =>
+                              This.Upper_Fill.Set_Size_Request
+                              (  Width  => 1,
+                                 Height => Widget.Get_Annotation_Height
+                                           (  Sweeper
+                              )            );
+                           when Lower =>
+                              This.Lower_Fill.Set_Size_Request
+                              (  Width  => 1,
+                                 Height => Widget.Get_Annotation_Height
+                                           (  Sweeper
+                              )            );
+                        end case;
+                     end if;
+                  end;
+               when Middle =>
+                  null;
+            end case;
+         end loop;
       end if;
    exception
       when Error : others =>
@@ -3951,6 +4403,36 @@ package body Gtk.Oscilloscope is
       Widget.Show_Time := Visible;
    end Set_Time_Tooltip;
 
+   procedure Set_Time_Tooltip_Suffix
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Suffix  : UTF8_String
+             )  is
+   begin
+      if Channel <= Widget.Channels_Number then
+         Free (Widget.Channels (Channel).Tip_X_Suffix);
+         Widget.Channels (Channel).Tip_X_Suffix := new String'(Suffix);
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Set_Time_Tooltip_Suffix;
+
+   procedure Set_Tooltip_Annotation
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Text    : UTF8_String
+             )  is
+   begin
+      if Channel <= Widget.Channels_Number then
+         Free (Widget.Channels (Channel).Tip_Prefix);
+         Widget.Channels (Channel).Tip_Prefix := new String'(Text);
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Set_Tooltip_Annotation;
+
    procedure Set_Values_Alignment
              (  Widget     : not null access Gtk_Oscilloscope_Record;
                 Amplifier  : Amplifier_Type;
@@ -4085,6 +4567,30 @@ package body Gtk.Oscilloscope is
             Data.Offset := GDouble (Data.Width);
             Box_Changed (Widget);
          end if;
+         for Sweeper in Widget.Time_Axis'Range loop
+            declare
+               This : Time_Axis_Data renames Widget.Time_Axis (Sweeper);
+            begin
+               if This.Scale /= null then
+                  case Amplifier is
+                     when Left =>
+                        This.Left_Fill.Set_Size_Request
+                        (  Height => 1,
+                           Width  => Widget.Get_Annotation_Width
+                                     (  Amplifier
+                        )            );
+                     when Right =>
+                        This.Right_Fill.Set_Size_Request
+                        (  Height => 1,
+                           Width  => Widget.Get_Annotation_Width
+                                     (  Amplifier
+                        )            );
+                     when others =>
+                        null;
+                  end case;
+               end if;
+            end;
+         end loop;
       end if;
    exception
       when Error : others =>
@@ -4216,6 +4722,21 @@ package body Gtk.Oscilloscope is
          )  );
    end Set_Values_Text_Font;
 
+   procedure Set_Values_Tooltip_Suffix
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Suffix  : UTF8_String
+             )  is
+   begin
+      if Channel <= Widget.Channels_Number then
+         Free (Widget.Channels (Channel).Tip_Y_Suffix);
+         Widget.Channels (Channel).Tip_Y_Suffix := new String'(Suffix);
+      else
+         raise Constraint_Error with
+            "Wrong channel number" & Channel_Count'Image (Channel);
+      end if;
+   end Set_Values_Tooltip_Suffix;
+
    procedure Set_Visible
              (  Widget  : not null access Gtk_Oscilloscope_Record;
                 Channel : Channel_Number;
@@ -4243,7 +4764,7 @@ package body Gtk.Oscilloscope is
              (  Widget  : not null access Gtk_Oscilloscope_Record;
                 Sweeper : Sweeper_Type
              )  is
-      Box    : Cairo_Box := Widget.Get_Box;
+      Box    : constant Cairo_Box := Widget.Get_Box;
       Height : GDouble;
       Data   : Time_Axis_Data renames Widget.Time_Axis (Sweeper);
    begin
@@ -4316,10 +4837,9 @@ package body Gtk.Oscilloscope is
                   (  GInt'(Style_Get (Widget, "time-text-overlap"))
                   ),
                Opacity =>
-                  GDouble
-                  (  GDouble'
-                     (  Style_Get (Widget, "time-text-border-opacity")
-            )     )  );
+                  GDouble'
+                  (  Style_Get (Widget, "time-text-border-opacity")
+            )     );
          end;
       end if;
       if Data.Grid or else Data.On then
@@ -4406,7 +4926,7 @@ package body Gtk.Oscilloscope is
              (  Widget    : not null access Gtk_Oscilloscope_Record;
                 Amplifier : Amplifier_Type
              )  is
-      Box   : Cairo_Box := Widget.Get_Box;
+      Box   : constant Cairo_Box := Widget.Get_Box;
       Width : GDouble;
       Data  : Values_Axis_Data renames Widget.Values_Axis (Amplifier);
    begin
@@ -4476,10 +4996,9 @@ package body Gtk.Oscilloscope is
                   (  GInt'(Style_Get (Widget, "values-text-overlap"))
                   ),
                Opacity =>
-                  GDouble
-                  (  GDouble'
-                     (  Style_Get (Widget, "values-text-border-opacity")
-            )     )  );
+                  GDouble'
+                  (  Style_Get (Widget, "values-text-border-opacity")
+            )     );
          end;
       end if;
       if Data.Grid or else Data.On then
@@ -4570,17 +5089,37 @@ package body Gtk.Oscilloscope is
          )  );
    end Style_Changed_Values_Axis;
 
-   procedure Undo (Widget : not null access Gtk_Oscilloscope_Record) is
-      This  : Do_Item_Ptr := Widget.Undo_Stack;
+   procedure Undo
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Till   : UTF8_String := "";
+                Stub   : UTF8_String := ""
+             )  is
+      use Strings_Edit.UTF8.Wildcards.Case_Insensitive;
+      This  : Do_Item_Ptr := Widget.Undo_Stack.Actions;
       First : Boolean := True;
       Done  : Boolean := False;
    begin
+      if Till'Length > 0 and then Stub'Length > 0 then
+         Push_Stub (Stub, Widget.Undo_Stack'Access, First);
+      end if;
       while This /= null and then not Done loop
-         Widget.Undo_Stack := This.Next;
-         Done := This.First;
+         Widget.Undo_Stack.Actions := This.Next;
+         if Till'Length > 0 then
+            if This.all in Do_Stub'Class then
+               Done := Match_Insensitive
+                       (  Do_Stub'Class (This.all).Name,
+                          Till,
+                          True
+                       );
+            else
+               Done := False; -- Never stop
+            end if;
+         else
+            Done := This.First; -- Sequence beginning stop
+         end if;
          This.Do_It (First, Widget.all, Widget.Redo_Stack'Access);
          Free (This);
-         This := Widget.Undo_Stack;
+         This := Widget.Undo_Stack.Actions;
       end loop;
    exception
       when Error : others =>
@@ -4598,7 +5137,7 @@ package body Gtk.Oscilloscope is
                 Amplifier : Amplifier_Type
              )  is
       Data  : Values_Axis_Data renames Widget.Values_Axis (Amplifier);
-      Group : Group_Count := Data.Group;
+      Group : constant Group_Count := Data.Group;
    begin
       if Group > 0 then
          if (  Widget.Groups (Group).Amplifier.Get_Auto_Scaling
@@ -4609,30 +5148,58 @@ package body Gtk.Oscilloscope is
             Set (Data.Settings_Changed);
             Set (Data.Value_Changed);
             if Data.Scale /= null then
-               Widget.Remove (Data.Scale);
-               Data.Scale := null;
+               Widget.Remove (Data.Box);
+               Data.Scale      := null;
+               Data.Scale      := null;
+               Data.Box        := null;
+               Data.Upper_Fill := null;
+               Data.Lower_Fill := null;
             end if;
          else
             if (  Data.Scale = null
                and then
                   not Widget.Selection.Engaged
+               and then
+                  Amplifier /= Middle
                )
             then
+               Gtk_New_VBox (Data.Box);
+               Data.Box.Set_Spacing (0);
+               Gtk_New (Data.Upper_Fill);
+               Data.Box.Pack_Start (Data.Upper_Fill, False, False);
+               Data.Upper_Fill.Set_Size_Request
+               (  Width  => 1,
+                  Height => Widget.Get_Annotation_Height (Upper)
+               );
                Gtk_New_VScale
                (  Data.Scale,
                   Widget.Groups (Group).Amplifier.all'Unchecked_Access
                );
+               Data.Box.Pack_Start (Data.Scale);
+               Data.Scale.Set_Hexpand (False);
+               Data.Scale.Set_Vexpand (True);
+               Data.Scale.Set_Draw_Value (False);
+               Gtk_New (Data.Lower_Fill);
+               Data.Box.Pack_Start (Data.Lower_Fill, False, False);
+               Data.Lower_Fill.Set_Size_Request
+               (  Width  => 1,
+                  Height => Widget.Get_Annotation_Height (Lower)
+               );
                case Amplifier is
                   when Left =>
-                     Data.Scale.Set_Hexpand (False);
-                     Data.Scale.Set_Vexpand (True);
-                     Widget.Attach (Data.Scale, 0, 1, 1, 2);
-                     Data.Scale.Set_Draw_Value (False);
+                     Data.Scale.Set_Value_Pos (Pos_Left);
+                     Widget.Attach_Next_To
+                     (  Data.Box,
+                        Widget.Layers,
+                        Pos_Left
+                     );
                   when Right =>
-                     Data.Scale.Set_Hexpand (False);
-                     Data.Scale.Set_Vexpand (True);
-                     Widget.Attach (Data.Scale, 2, 3, 1, 2);
-                     Data.Scale.Set_Draw_Value (False);
+                     Data.Scale.Set_Value_Pos (Pos_Right);
+                     Widget.Attach_Next_To
+                     (  Data.Box,
+                        Widget.Layers,
+                        Pos_Right
+                     );
                   when others =>
                      null;
                end case;
@@ -4690,7 +5257,7 @@ package body Gtk.Oscilloscope is
          (  Widget,
             Signal_IDs (11),
             Sweeper_Type'Pos (Sweeper),
-            GDouble (To_Double (T1)),
+            To_Double (T1),
             GDouble (T2 - T1)
          );
       end loop;
@@ -4744,13 +5311,14 @@ package body Gtk.Oscilloscope is
                 T1, T2  : Ada.Calendar.Time
              )  is
       use type Ada.Calendar.Time;
-      Page : GDouble := GDouble (Widget.Get_Page_Span (Sweeper));
-      T    : GDouble :=
+      Page : constant GDouble :=
+                GDouble (Widget.Get_Page_Span (Sweeper));
+      T    : constant GDouble :=
                 To_Double
                 (  Ada.Calendar.Time'(Widget.Get_Time (Sweeper))
                 );
-      A    : GDouble := Page / GDouble (T2 - T1);
-      B    : GDouble := T - A * To_Double (T2);
+      A    : constant GDouble := Page / GDouble (T2 - T1);
+      B    : constant GDouble := T - A * To_Double (T2);
    begin
       Widget.Set_Page_Span (Sweeper, Duration (Page * A));
       Widget.Set_Time (Sweeper, Time'(To_Time (A * T + B)));
@@ -4761,10 +5329,10 @@ package body Gtk.Oscilloscope is
                 Amplifier : Gtk_Waveform_Amplifier;
                 V1, V2    : GDouble
              )  is
-      Page  : GDouble := Amplifier.Get_Page_Size;
-      Value : GDouble := Amplifier.Get_Value;
-      A     : GDouble := Page / (V2 - V1);
-      B     : GDouble := Value - A * V2;
+      Page  : constant GDouble := Amplifier.Get_Page_Size;
+      Value : constant GDouble := Amplifier.Get_Value;
+      A     : constant GDouble := Page / (V2 - V1);
+      B     : constant GDouble := Value - A * V2;
    begin
       Amplifier.Set_Page_Size (Page * A);
       Amplifier.Set_Value (A * Value + B);

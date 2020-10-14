@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,15 +30,12 @@ with Ada.Exceptions;            use Ada.Exceptions;
 with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
 with Ada.Numerics;              use Ada.Numerics;
 with Ada.Tags;                  use Ada.Tags;
-with Cairo.Ellipses;            use Cairo.Ellipses;
 with Gdk.Color;                 use Gdk.Color;
 with GLib.Messages;             use GLib.Messages;
 with GLib.Properties;           use GLib.Properties;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
-with GLib.Values;               use GLib.Values;
 with Gtk.Adjustment;            use Gtk.Adjustment;
 with Gtk.Cell_Renderer_Text;    use Gtk.Cell_Renderer_Text;
-with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Frame;                 use Gtk.Frame;
 with Gtk.Missed;                use Gtk.Missed;
 with Gtk.Separator;             use Gtk.Separator;
@@ -47,7 +44,6 @@ with Gtk.Tree_Selection;        use Gtk.Tree_Selection;
 with Gtk.Tree_View_Column;      use Gtk.Tree_View_Column;
 with Strings_Edit.Integers;     use Strings_Edit.Integers;
 
-with Ada.IO_Exceptions;
 with Ada.Unchecked_Deallocation;
 with Cairo.Font_Slant_Property;
 with Cairo.Line_Cap_Property;
@@ -83,6 +79,9 @@ with Pango.Cairo.Fonts.Font_Type_Property;
 with Pango.Enums.Weight_Property;
 
 package body Gtk.Layered_Editor is
+   use Cairo.Ellipses;
+   use GLib.Values;
+   use Gtk.Enums;
    use Insert_Buttons;
    use Layer_Combo;
    use Lift_Buttons;
@@ -135,7 +134,7 @@ package body Gtk.Layered_Editor is
                 )  is
          use Enum_Property;
          use Boxes;
-         Box   : Gtk_Enum := new Gtk_Enum_Record;
+         Box   : constant Gtk_Enum := new Gtk_Enum_Record;
          State : Enum_Property.Enumeration;
          Error : Boolean := False;
       begin
@@ -253,7 +252,7 @@ package body Gtk.Layered_Editor is
       Remove (Widget, Widget.Add);
       if Widget.Rows'Length >= Widget.Length then
          declare
-            New_Rows : Annotation_Array_Ptr :=
+            New_Rows : constant Annotation_Array_Ptr :=
                           new Annotation_Array (1..Widget.Length + 10);
          begin
             New_Rows (Widget.Rows'Range) := Widget.Rows.all;
@@ -699,7 +698,7 @@ package body Gtk.Layered_Editor is
                 No         : Property_Index;
                 Tip        : String
              )  is
-      Edit     : Gtk_UInt_Edit := new Gtk_UInt_Edit_Record;
+      Edit     : constant Gtk_UInt_Edit := new Gtk_UInt_Edit_Record;
       Min, Max : GUInt;
    begin
       Gtk.GEntry.Initialize (Edit);
@@ -792,9 +791,9 @@ package body Gtk.Layered_Editor is
                 Data  : Selection_List_Ptr
              )  is
       Selection : Selection_List renames Data.all;
-      Item      : GInt_Array  := Get_Indices (Path);
-      Layered   : access Gtk_Layered_Record'Class :=
-                         Get (Data.all.Widget.Layered);
+      Item      : constant GInt_Array  := Get_Indices (Path);
+      Layered   : constant access Gtk_Layered_Record'Class :=
+                                  Get (Data.all.Widget.Layered);
    begin
       Selection.Index := Selection.Index + 1;
       Selection.List (Selection.Index) :=
@@ -838,7 +837,7 @@ package body Gtk.Layered_Editor is
    procedure Changed_Markup
              (  Markup : access Gtk_Toggle_Button_Record'Class
              )  is
-      This : Markup_Button :=
+      This : constant Markup_Button :=
                 Markup_Button_Record'Class (Markup.all)'Unchecked_Access;
    begin
       for Layer_No in This.Widget.Selected_Layers'Range loop
@@ -872,7 +871,7 @@ package body Gtk.Layered_Editor is
    end Changed_Markup;
 
    procedure Changed_String (Edit : access Gtk_Edit_Record'Class) is
-      Text  : String := Get_Text (Edit);
+      Text  : constant String := Get_Text (Edit);
       Value : GValue;
    begin
       Init (Value, GType_String);
@@ -968,7 +967,7 @@ package body Gtk.Layered_Editor is
              return Widget.Rows (Row + 1).Edit.Get_Text;
           end if;
       end Get_Text;
-      Deleted : GUInt := GUInt (Button.Index);
+      Deleted : constant GUInt := GUInt (Button.Index);
       Editor  : Gtk_Layered_Editor_Record'Class renames
                 Widget.Editor.all;
    begin
@@ -1123,7 +1122,8 @@ package body Gtk.Layered_Editor is
    function Get
             (  Widget : not null access Gtk_Layered_Editor_Record
             )  return Gtk_Layered is
-      Layered : access Gtk_Layered_Record'Class := Widget.Layered.Get;
+      Layered : constant access Gtk_Layered_Record'Class :=
+                                Widget.Layered.Get;
    begin
       if Layered = null then
          return null;
@@ -1148,7 +1148,7 @@ package body Gtk.Layered_Editor is
       for Index in Common'Range (2) loop
          Common (1, Index) := Positive (Index);
          declare
-            Pattern : Param_Spec :=
+            Pattern : constant Param_Spec :=
                List (1).Get_Property_Specification (Common (1, Index));
          begin
             for Layer in 2..Common'Last (1) loop
@@ -1598,7 +1598,8 @@ package body Gtk.Layered_Editor is
                ) .Get_Position;
          when Graph_Paper_Annotation_Layer =>
             declare
-               Layer : access Gtk.Layered.Graph_Paper_Annotation.
+               Layer : constant access
+                          Gtk.Layered.Graph_Paper_Annotation.
                               Graph_Paper_Annotation_Layer :=
                        Gtk.Layered.Graph_Paper_Annotation.
                           Add_Graph_Paper_Annotation
@@ -1708,7 +1709,8 @@ package body Gtk.Layered_Editor is
                 Params : GValues;
                 Widget : Gtk_Layered_Editor
              )  is
-      Position : Natural := Natural (Get_UInt (Nth (Params, 1)));
+      Position : constant Natural :=
+                 Natural (Get_UInt (Nth (Params, 1)));
       Row      : Gtk_Tree_Iter;
    begin
       Insert
@@ -1740,7 +1742,7 @@ package body Gtk.Layered_Editor is
              )  is
    begin
       declare
-         Position : GUInt := Get_UInt (Nth (Params, 1));
+         Position : constant GUInt := Get_UInt (Nth (Params, 1));
          Row      : Gtk_Tree_Iter :=
                        Nth_Child
                        (  Widget.Store.all'Unchecked_Access,
@@ -1817,7 +1819,7 @@ package body Gtk.Layered_Editor is
          return;
       end if;
       declare -- Moving the selected layers up
-         List : Layer_List := Widget.Selected_Layers.all;
+         List : constant Layer_List := Widget.Selected_Layers.all;
       begin
          for Index in List'Range loop
             if List (Index) /= null then
@@ -1850,7 +1852,7 @@ package body Gtk.Layered_Editor is
          return;
       end if;
       declare -- Moving the selected layers down
-         List : Layer_List := Widget.Selected_Layers.all;
+         List : constant Layer_List := Widget.Selected_Layers.all;
       begin
          for Index in reverse List'Range loop
             if List (Index) /= null then
@@ -1936,7 +1938,7 @@ package body Gtk.Layered_Editor is
          Set_Sensitive (Widget.Aspect_Edit, True);
          Set_Text
          (  Widget.Aspect_Edit,
-            Image (GDouble (Layered.Get_Aspect_Ratio), AbsSmall => -3)
+            Image (Layered.Get_Aspect_Ratio, AbsSmall => -3)
          );
          Set
          (  Widget.Layer_Added,
@@ -1981,8 +1983,10 @@ package body Gtk.Layered_Editor is
              (  Widget : not null access Gtk_Layered_Editor_Record;
                 List   : Layer_List
              )  is
-      Selection : Gtk_Tree_Selection := Widget.View.Get_Selection;
-      Depth     : GInt := GInt (Widget.Layered.Get.Get_Depth);
+      Selection : constant Gtk_Tree_Selection :=
+                  Widget.View.Get_Selection;
+      Depth     : constant GInt :=
+                  GInt (Widget.Layered.Get.Get_Depth);
       New_List  : array (List'Range) of Natural;
    begin
       for Index in List'Range loop
@@ -2147,10 +2151,7 @@ package body Gtk.Layered_Editor is
          Right_Buttons.Gtk_New (Right_Button);
          Pack_Start (Box, Right_Button, False, False);
          Gtk_New (Widget.Move_Step_Button, 0.0, 100.0, 0.01);
-         Set_Value
-         (  Widget.Move_Step_Button,
-            GDouble (Widget.Move_Step)
-         );
+         Set_Value (Widget.Move_Step_Button, Widget.Move_Step);
          Pack_Start (Box, Widget.Move_Step_Button, False, False);
          Up_Buttons.Gtk_New (Up_Button);
          Pack_Start (Box, Up_Button, False, False);
@@ -2164,10 +2165,7 @@ package body Gtk.Layered_Editor is
          Zoom_Out_Buttons.Gtk_New (Zoom_Out_Button);
          Pack_End (Box, Zoom_Out_Button, False, False);
          Gtk_New (Widget.Gain_Step_Button, 1.0, 4.0, 0.01);
-         Set_Value
-         (  Widget.Gain_Step_Button,
-            GDouble (Widget.Gain_Step)
-         );
+         Set_Value (Widget.Gain_Step_Button, Widget.Gain_Step);
          Pack_End (Box, Widget.Gain_Step_Button, False, False);
          Gtk_New_Vseparator (Bar);
          Pack_End (Box, Bar, False, False);
@@ -2246,7 +2244,7 @@ package body Gtk.Layered_Editor is
    begin
       for Property in Properties'Range (2) loop
          declare
-            Specification : Param_Spec :=
+            Specification : constant Param_Spec :=
                Layers (1).Get_Property_Specification
                (  Properties (1, Property)
                );

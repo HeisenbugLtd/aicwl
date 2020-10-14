@@ -3,7 +3,7 @@
 --     Gtk.Main.Router.GNAT_Stack                  Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -166,7 +166,7 @@ package body Gtk.Main.Router.GNAT_Stack is
                 Level   : Log_Level_Flags;
                 Message : UTF8_String
              )  is
-      Head : Log_Filter_Ptr := Filters_List;
+      Head : constant Log_Filter_Ptr := Filters_List;
    begin
       if Head /= null then
          declare

@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Interface                                      Winter, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  10:27 26 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -349,6 +349,8 @@ package Gtk.Layered.Waveform is
 --    Sweeper   - The adjustment of the horizontal axis (sweep axis)
 --    Amplifier - The adjustment of the vertical axis (amplifier)
 --    Mode      - Interpolation mode
+--    Left      - Extrapolation mode to the left
+--    Right     - Extrapolation mode to the right
 --    Opacity   - Filling color opacity
 --    Scaled    - The layer is scaled together with the parent widget
 --    Widened   - The line is widened together with the parent widget
@@ -398,6 +400,8 @@ package Gtk.Layered.Waveform is
                 Sweeper   : access Gtk_Adjustment_Record'Class := null;
                 Amplifier : access Gtk_Adjustment_Record'Class := null;
                 Mode      : Interpolation_Mode := Linear;
+                Left      : Boolean            := False;
+                Right     : Boolean            := False;
                 Opacity   : Fill_Opacity       := 1.0;
                 Scaled    : Boolean            := False;
                 Widened   : Boolean            := False
@@ -411,6 +415,8 @@ package Gtk.Layered.Waveform is
                Sweeper   : access Gtk_Adjustment_Record'Class := null;
                Amplifier : access Gtk_Adjustment_Record'Class := null;
                Mode      : Interpolation_Mode := Linear;
+               Left      : Boolean            := False;
+               Right     : Boolean            := False;
                Opacity   : Fill_Opacity       := 1.0;
                Scaled    : Boolean            := False;
                Widened   : Boolean            := False
@@ -521,6 +527,17 @@ package Gtk.Layered.Waveform is
    function Get_Interpolation_Mode (Layer : Waveform_Layer)
       return Interpolation_Mode;
 --
+-- Get_Left_Extrapolation_Mode -- Waveform extrapolation mode
+--
+--    Layer - The waveform
+--
+-- Returns :
+--
+--    True if extrapolated to the left
+--
+   function Get_Left_Extrapolation_Mode (Layer : Waveform_Layer)
+      return Boolean;
+--
 -- Get_Line -- Waveform line parameters
 --
 --    Layer - The waveform
@@ -592,6 +609,17 @@ package Gtk.Layered.Waveform is
 --
    function Get_Preferred_Method (Layer : Waveform_Layer)
       return Waveform_Drawing_Method;
+--
+-- Get_Right_Extrapolation_Mode -- Waveform extrapolation mode
+--
+--    Layer - The waveform
+--
+-- Returns :
+--
+--    True if extrapolated to the right
+--
+   function Get_Right_Extrapolation_Mode (Layer : Waveform_Layer)
+      return Boolean;
 --
 -- Get_Source -- Get the waveform data source
 --
@@ -685,6 +713,8 @@ package Gtk.Layered.Waveform is
 --    Box     - The waveform's rectangle
 --    Line    - The angle (position) of the lowest value
 --    Mode    - Interpolation mode
+--    Left    - Extrapolation mode to the left
+--    Right   - Extrapolation mode to the right
 --    Opacity - Of the waveform filling
 --
 -- Exceptions :
@@ -696,6 +726,8 @@ package Gtk.Layered.Waveform is
                 Box     : Cairo_Box;
                 Line    : Line_Parameters;
                 Mode    : Interpolation_Mode;
+                Left    : Boolean;
+                Right   : Boolean;
                 Opacity : Fill_Opacity
              );
 --
@@ -717,6 +749,18 @@ package Gtk.Layered.Waveform is
    procedure Set_Color
              (  Layer : in out Waveform_Layer;
                 Color : Gdk_Color
+             );
+--
+-- Set_Extrapolation_Mode -- Set waveform extrapolation mode
+--
+--    Layer - The waveform
+--    Left  - Extrapolation mode to the left
+--    Right - Extrapolation mode to the left
+--
+   procedure Set_Extrapolation_Mode
+             (  Layer : in out Waveform_Layer;
+                Left  : Boolean;
+                Right : Boolean
              );
 --
 -- Set_Interpolation_Mode -- Set waveform interpolation mode
@@ -998,6 +1042,8 @@ private
       Updated   : Boolean  := True;
       Visible   : Boolean  := True;
       Widened   : Boolean  := False;
+      Extrapolate_Left     : Boolean := False;
+      Extrapolate_Right    : Boolean := False;
       Sweeper_Adjustment   : Gtk_Adjustment;
       Amplifier_Adjustment : Gtk_Adjustment;
       Sweeper_Object       : access Waveform_Sweeper'Class;

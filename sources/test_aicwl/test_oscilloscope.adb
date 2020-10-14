@@ -3,7 +3,7 @@
 --  Test oscilloscope                              Luebeck            --
 --                                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  18:50 05 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -130,7 +130,7 @@ begin
       Pane.Pack_Start (Frame);
       Frame.Set_Border_Width (3);
       Frame.Add (Oscilloscope);
-      Frame.Set_Size_Request (300, 200);
+      Frame.Set_Size_Request (300, 210);
 
       Gtk_New (Panels, 4, 3, False);
       Panels.Set_Col_Spacings (3);

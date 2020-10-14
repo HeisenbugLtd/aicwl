@@ -3,7 +3,7 @@
 --     GLib.Object.Weak_References                 Luebeck            --
 --  Implementation                                 Spring, 2007       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -87,7 +87,7 @@ package body GLib.Object.Weak_References is
              (  Data                 : System.Address;
                 Where_The_Object_Was : System.Address
              )  is
-      Ptr : Object_Pointer := To_Pointer (Data);
+      Ptr : constant Object_Pointer := To_Pointer (Data);
    begin
       if Ptr /= null then
          Ptr.Object := null;

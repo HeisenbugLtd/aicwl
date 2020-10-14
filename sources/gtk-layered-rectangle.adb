@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -344,10 +344,10 @@ package body Gtk.Layered.Rectangle is
             case Layer_Property'Val (Property - 1) is
                when Property_X =>
                   Init (Value, GType_Double);
-                  Set_Double (Value, GDouble (Layer.Box.X1));
+                  Set_Double (Value, Layer.Box.X1);
                when Property_Y =>
                   Init (Value, GType_Double);
-                  Set_Double (Value, GDouble (Layer.Box.Y1));
+                  Set_Double (Value, Layer.Box.Y1);
                when Property_Width =>
                   Init (Value, GType_Double);
                   Set_Double
@@ -367,7 +367,7 @@ package body Gtk.Layered.Rectangle is
                   Set_Double (Value, GDouble (Layer.Opacity));
                when Property_Line_Width =>
                   Init (Value, GType_Double);
-                  Set_Double (Value, GDouble (Layer.Width));
+                  Set_Double (Value, Layer.Width);
                when Property_Scaled =>
                   Init (Value, GType_Boolean);
                   Set_Boolean (Value, Layer.Scaled);
@@ -481,18 +481,18 @@ package body Gtk.Layered.Rectangle is
          case Layer_Property'Val (Property - 1) is
             when Property_X =>
                Layer.Box.X2 := Layer.Box.X2 - Layer.Box.X1;
-               Layer.Box.X1 := GDouble (Get_Double (Value));
+               Layer.Box.X1 := Get_Double (Value);
                Layer.Box.X2 := Layer.Box.X2 + Layer.Box.X1;
             when Property_Y =>
                Layer.Box.Y2 := Layer.Box.Y2 - Layer.Box.Y1;
-               Layer.Box.Y1 := GDouble (Get_Double (Value));
+               Layer.Box.Y1 := Get_Double (Value);
                Layer.Box.Y2 := Layer.Box.Y2 + Layer.Box.Y1;
             when Property_Width =>
                Layer.Box.X2 :=
-                  Layer.Box.X1 + GDouble (Get_Double (Value));
+                  Layer.Box.X1 + Get_Double (Value);
             when Property_Height =>
                Layer.Box.Y2 :=
-                  Layer.Box.Y1 + gDouble (Get_Double (Value));
+                  Layer.Box.Y1 + Get_Double (Value);
             when Property_Color =>
                Layer.Color := Get_Value (Value);
             when Property_Opacity =>

@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -299,6 +299,72 @@ package body Gtk.Layered.Stream_IO is
       Value_3 := 0 /= (Value and 4);
       Value_4 := 0 /= (Value and 8);
       Value_5 := 0 /= (Value and 16);
+   end Restore;
+
+   procedure Restore
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : out Boolean;
+                Value_2 : out Boolean;
+                Value_3 : out Boolean;
+                Value_4 : out Boolean;
+                Value_5 : out Boolean;
+                Value_6 : out Boolean
+             )  is
+      Value : GUInt16;
+   begin
+      Restore (Stream, Value);
+      Value_1 := 0 /= (Value and 1);
+      Value_2 := 0 /= (Value and 2);
+      Value_3 := 0 /= (Value and 4);
+      Value_4 := 0 /= (Value and 8);
+      Value_5 := 0 /= (Value and 16);
+      Value_6 := 0 /= (Value and 32);
+   end Restore;
+
+   procedure Restore
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : out Boolean;
+                Value_2 : out Boolean;
+                Value_3 : out Boolean;
+                Value_4 : out Boolean;
+                Value_5 : out Boolean;
+                Value_6 : out Boolean;
+                Value_7 : out Boolean
+             )  is
+      Value : GUInt16;
+   begin
+      Restore (Stream, Value);
+      Value_1 := 0 /= (Value and 1);
+      Value_2 := 0 /= (Value and 2);
+      Value_3 := 0 /= (Value and 4);
+      Value_4 := 0 /= (Value and 8);
+      Value_5 := 0 /= (Value and 16);
+      Value_6 := 0 /= (Value and 32);
+      Value_7 := 0 /= (Value and 64);
+   end Restore;
+
+   procedure Restore
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : out Boolean;
+                Value_2 : out Boolean;
+                Value_3 : out Boolean;
+                Value_4 : out Boolean;
+                Value_5 : out Boolean;
+                Value_6 : out Boolean;
+                Value_7 : out Boolean;
+                Value_8 : out Boolean
+             )  is
+      Value : GUInt16;
+   begin
+      Restore (Stream, Value);
+      Value_1 := 0 /= (Value and 1);
+      Value_2 := 0 /= (Value and 2);
+      Value_3 := 0 /= (Value and 4);
+      Value_4 := 0 /= (Value and 8);
+      Value_5 := 0 /= (Value and 16);
+      Value_6 := 0 /= (Value and 32);
+      Value_7 := 0 /= (Value and 64);
+      Value_8 := 0 /= (Value and 128);
    end Restore;
 
    procedure Restore
@@ -628,11 +694,11 @@ package body Gtk.Layered.Stream_IO is
                 Adjustment : Gtk_Adjustment
              )  is
    begin
-      Store (Stream, GDouble (Get_Value (Adjustment)));
-      Store (Stream, GDouble (Get_Lower (Adjustment)));
-      Store (Stream, GDouble (Get_Upper (Adjustment)));
-      Store (Stream, GDouble (Get_Step_Increment (Adjustment)));
-      Store (Stream, GDouble (Get_Page_Increment (Adjustment)));
+      Store (Stream, Get_Value (Adjustment));
+      Store (Stream, Get_Lower (Adjustment));
+      Store (Stream, Get_Upper (Adjustment));
+      Store (Stream, Get_Step_Increment (Adjustment));
+      Store (Stream, Get_Page_Increment (Adjustment));
    end Store;
 
    procedure Store
@@ -739,6 +805,114 @@ package body Gtk.Layered.Stream_IO is
       end if;
       if Value_5 then
          Value := Value or 16;
+      end if;
+      Store (Stream, Value);
+   end Store;
+
+   procedure Store
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : Boolean;
+                Value_2 : Boolean;
+                Value_3 : Boolean;
+                Value_4 : Boolean;
+                Value_5 : Boolean;
+                Value_6 : Boolean
+             )  is
+      Value : GUInt16 := 0;
+   begin
+      if Value_1 then
+         Value := Value or 1;
+      end if;
+      if Value_2 then
+         Value := Value or 2;
+      end if;
+      if Value_3 then
+         Value := Value or 4;
+      end if;
+      if Value_4 then
+         Value := Value or 8;
+      end if;
+      if Value_5 then
+         Value := Value or 16;
+      end if;
+      if Value_6 then
+         Value := Value or 32;
+      end if;
+      Store (Stream, Value);
+   end Store;
+
+   procedure Store
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : Boolean;
+                Value_2 : Boolean;
+                Value_3 : Boolean;
+                Value_4 : Boolean;
+                Value_5 : Boolean;
+                Value_6 : Boolean;
+                Value_7 : Boolean
+             )  is
+      Value : GUInt16 := 0;
+   begin
+      if Value_1 then
+         Value := Value or 1;
+      end if;
+      if Value_2 then
+         Value := Value or 2;
+      end if;
+      if Value_3 then
+         Value := Value or 4;
+      end if;
+      if Value_4 then
+         Value := Value or 8;
+      end if;
+      if Value_5 then
+         Value := Value or 16;
+      end if;
+      if Value_6 then
+         Value := Value or 32;
+      end if;
+      if Value_7 then
+         Value := Value or 64;
+      end if;
+      Store (Stream, Value);
+   end Store;
+
+   procedure Store
+             (  Stream  : in out Root_Stream_Type'Class;
+                Value_1 : Boolean;
+                Value_2 : Boolean;
+                Value_3 : Boolean;
+                Value_4 : Boolean;
+                Value_5 : Boolean;
+                Value_6 : Boolean;
+                Value_7 : Boolean;
+                Value_8 : Boolean
+             )  is
+      Value : GUInt16 := 0;
+   begin
+      if Value_1 then
+         Value := Value or 1;
+      end if;
+      if Value_2 then
+         Value := Value or 2;
+      end if;
+      if Value_3 then
+         Value := Value or 4;
+      end if;
+      if Value_4 then
+         Value := Value or 8;
+      end if;
+      if Value_5 then
+         Value := Value or 16;
+      end if;
+      if Value_6 then
+         Value := Value or 32;
+      end if;
+      if Value_7 then
+         Value := Value or 64;
+      end if;
+      if Value_8 then
+         Value := Value or 128;
       end if;
       Store (Stream, Value);
    end Store;

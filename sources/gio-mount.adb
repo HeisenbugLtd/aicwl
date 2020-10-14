@@ -2,7 +2,7 @@
 --  package GIO.Mount               Copyright (c)  Dmitry A. Kazakov  --
 --  Implementation                                 Summer, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -75,7 +75,7 @@ package body GIO.Mount is
          return "";
       else
          declare
-            Result : UTF8_String := Value (Ptr);
+            Result : constant UTF8_String := Value (Ptr);
          begin
             Free (Ptr);
             return Result;
@@ -95,7 +95,7 @@ package body GIO.Mount is
    function Get_Root
             (  Mount : not null access GMount_Record
             )  return UTF8_String is
-      File : Address := Get_Root (Get_Object (Mount));
+      File : constant Address := Get_Root (Get_Object (Mount));
    begin
       if File = Null_Address then
          return "";
@@ -110,7 +110,7 @@ package body GIO.Mount is
                return "";
             else
                 declare
-                   Result : UTF8_String := Value (Ptr);
+                   Result : constant UTF8_String := Value (Ptr);
                 begin
                    Unref (File);
                    Free (Ptr);
@@ -132,7 +132,7 @@ package body GIO.Mount is
          return "";
       else
          declare
-            Result : UTF8_String := Value (Ptr);
+            Result : constant UTF8_String := Value (Ptr);
          begin
             Free (Ptr);
             return Result;

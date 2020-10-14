@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper                     Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1046,10 +1046,14 @@ package body Gtk.Layered.Graph_Paper is
              (  Layer  : in out Graph_Paper_Layer;
                 Factor : GDouble
              )  is
-      Center_X    : GDouble := (Layer.Box.X1 + Layer.Box.X2) * 0.5;
-      Center_Y    : GDouble := (Layer.Box.Y1 + Layer.Box.Y2) * 0.5;
-      Half_Width  : GDouble := (Layer.Box.X2 - Layer.Box.X1) * 0.5;
-      Half_Height : GDouble := (Layer.Box.Y2 - Layer.Box.Y1) * 0.5;
+      Center_X    : constant GDouble :=
+                       (Layer.Box.X1 + Layer.Box.X2) * 0.5;
+      Center_Y    : constant GDouble :=
+                       (Layer.Box.Y1 + Layer.Box.Y2) * 0.5;
+      Half_Width  : constant GDouble :=
+                       (Layer.Box.X2 - Layer.Box.X1) * 0.5;
+      Half_Height : constant GDouble :=
+                       (Layer.Box.Y2 - Layer.Box.Y1) * 0.5;
    begin
       Set
       (  Layer         => Layer,
@@ -1107,7 +1111,7 @@ package body Gtk.Layered.Graph_Paper is
          case Layer_Property'Val (Property - 1) is
             when Property_X1 =>
                declare
-                  New_Value : GDouble := Get_Double (Value);
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if New_Value >= Layer.Box.X2 then
                      Layer.Box.X2 := New_Value + 1.0;
@@ -1117,7 +1121,7 @@ package body Gtk.Layered.Graph_Paper is
                end;
             when Property_X2 =>
                declare
-                  New_Value : GDouble := Get_Double (Value);
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if Layer.Box.X1 > New_Value then
                      Layer.Box.X1 := New_Value - 1.0;
@@ -1127,7 +1131,7 @@ package body Gtk.Layered.Graph_Paper is
                end;
             when Property_Y1 =>
                declare
-                  New_Value : GDouble := Get_Double (Value);
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if New_Value >= Layer.Box.Y2 then
                      Layer.Box.Y2 := New_Value + 1.0;
@@ -1137,7 +1141,7 @@ package body Gtk.Layered.Graph_Paper is
                end;
             when Property_Y2 =>
                declare
-                  New_Value : GDouble := Get_Double (Value);
+                  New_Value : constant GDouble := Get_Double (Value);
                begin
                   if Layer.Box.Y1 >= New_Value then
                      Layer.Box.Y1 := New_Value - 1.0;
@@ -1173,7 +1177,7 @@ package body Gtk.Layered.Graph_Paper is
                Layer.Changed := True;
             when Property_X_Tick_Length =>
                declare
-                  Tick_Length : GUInt := Get_UInt (Value);
+                  Tick_Length : constant GUInt := Get_UInt (Value);
                begin
                   if Tick_Length < 1 then
                      Layer.X_Tick_Length := 1;
@@ -1185,7 +1189,7 @@ package body Gtk.Layered.Graph_Paper is
                end;
             when Property_Y_Tick_Length =>
                declare
-                  Tick_Length : GUInt := Get_UInt (Value);
+                  Tick_Length : constant GUInt := Get_UInt (Value);
                begin
                   if Tick_Length < 1 then
                      Layer.Y_Tick_Length := 1;

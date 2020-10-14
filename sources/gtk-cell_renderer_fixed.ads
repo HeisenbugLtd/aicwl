@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer_Fixed                     Luebeck            --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -42,7 +42,6 @@ with Gtk.Widget;                use Gtk.Widget;
 with Pango.Layout;              use Pango.Layout;
 
 with Gtk.Cell_Renderer.Abstract_Renderer;
-with Gdk.Event;
 
 package Gtk.Cell_Renderer_Fixed is
    pragma Elaborate_Body (Gtk.Cell_Renderer_Fixed);

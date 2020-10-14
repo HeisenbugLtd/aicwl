@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.Sweeper                Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -92,14 +92,14 @@ package body Gtk.Layered.Waveform.Sweeper is
             (  Sweeper : not null access Gtk_Waveform_Sweeper_Record
             )  return Time is
    begin
-      return To_Time (GDouble (Get_Lower (Sweeper)));
+      return To_Time (Get_Lower (Sweeper));
    end Get_From;
 
    function Get_From
             (  Sweeper : not null access Gtk_Waveform_Sweeper_Record
             )  return Ada.Calendar.Time is
    begin
-      return To_Time (GDouble (Get_Lower (Sweeper)));
+      return To_Time (Get_Lower (Sweeper));
    end Get_From;
 
    function Get_Offset
@@ -140,14 +140,14 @@ package body Gtk.Layered.Waveform.Sweeper is
             (  Sweeper : not null access Gtk_Waveform_Sweeper_Record
             )  return Time is
    begin
-      return To_Time (GDouble (Sweeper.Get_Upper));
+      return To_Time (Sweeper.Get_Upper);
    end Get_To;
 
    function Get_To
             (  Sweeper : not null access Gtk_Waveform_Sweeper_Record
             )  return Ada.Calendar.Time is
    begin
-      return To_Time (GDouble (Sweeper.Get_Upper));
+      return To_Time (Sweeper.Get_Upper);
    end Get_To;
 
    function Get_Type return GType is
@@ -201,7 +201,7 @@ package body Gtk.Layered.Waveform.Sweeper is
       );
       if Freezing_Changed_ID = Invalid_Signal_Id then
          declare
-            Widget_Type : GType := Get_Type (Sweeper);
+            Widget_Type : constant GType := Get_Type (Sweeper);
          begin
             Freezing_Changed_ID :=
                Lookup (Widget_Type, "freezing-changed");

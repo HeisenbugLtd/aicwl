@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        On_Button_Press                          Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  15:58 22 Jan 2012  --
+--                                Last revision :  19:51 11 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,6 +31,9 @@ separate (Gtk.Oscilloscope)
                Event        : Gdk_Event;
                Oscilloscope : Gtk_Oscilloscope
             )  return Boolean is
+   procedure Free is new
+      Ada.Unchecked_Deallocation (Gtk_Menu_Record'Class, Gtk_Menu);
+
    use Menu_Handlers;
    Menu : Gtk_Menu;
    Item : Gtk_Image_Menu_Item;
@@ -52,187 +55,249 @@ separate (Gtk.Oscilloscope)
 begin
    case Get_Button (Event) is
       when 1 =>
-         if Oscilloscope.Selection.Area = null then
-            Oscilloscope.Selection.Engaged := True;
-            declare
-               Box   : Cairo_Box := Oscilloscope.Get_Box;
-               Point : Cairo_Tuple :=
+         if Oscilloscope.Selection_Mode /= None then
+            if Oscilloscope.Selection.Area = null then
+               Oscilloscope.Selection.Engaged := True;
+               declare
+                  Box   : constant Cairo_Box := Oscilloscope.Get_Box;
+                  Point : constant Cairo_Tuple :=
                           Oscilloscope.Mouse_Event (Event, False);
-            begin
-               if Point.X in Box.X1..Box.X2 and then
-                  Point.Y in Box.Y1..Box.Y2
-               then
-                  Oscilloscope.Selection.Area :=
-                     Add_Rectangle
-                     (  Under => Oscilloscope.Layers,
-                        Box   => (  X1 => Point.X,
-                                    X2 => Point.X,
-                                    Y1 => Point.Y,
-                                    Y2 => Point.Y
-                                 ),
-                        Line_Width => 1.0,
-                        Opacity    => 0.0,
-                        Color      => Style_Get
-                                      (  Oscilloscope,
-                                         "selection-color",
-                                         Selection_Color
-                     )                ) .all'Unchecked_Access;
-                  Oscilloscope.Selection.Right := True;
-                  Oscilloscope.Selection.Below := True;
-                  Save;
-               end if;
-            end;
-            Oscilloscope.Selection.Engaged := False;
-         else
-            Oscilloscope.Change_Selection
-            (  Oscilloscope.Mouse_Event (Event, False)
-            );
+               begin
+                  if Point.X in Box.X1..Box.X2 and then
+                     Point.Y in Box.Y1..Box.Y2
+                  then
+                     Oscilloscope.Selection.Area :=
+                        Add_Rectangle
+                        (  Under => Oscilloscope.Layers,
+                           Box   => (  X1 => Point.X,
+                                       X2 => Point.X,
+                                       Y1 => Point.Y,
+                                       Y2 => Point.Y
+                                    ),
+                           Line_Width => 1.0,
+                           Opacity    => 0.0,
+                           Color      => Style_Get
+                                         (  Oscilloscope,
+                                            "selection-color",
+                                            Selection_Color
+                        )                ) .all'Unchecked_Access;
+                     Oscilloscope.Selection.Right := True;
+                     Oscilloscope.Selection.Below := True;
+                     Save;
+                  end if;
+               end;
+               Oscilloscope.Selection.Engaged := False;
+            else
+               Oscilloscope.Change_Selection
+               (  Oscilloscope.Mouse_Event (Event, False)
+               );
+            end if;
          end if;
       when 3 =>
-         Gtk_New (Menu);
-         if Oscilloscope.Manual_Sweep then
-            for Sweeper in Oscilloscope.Time_Axis'Range loop
-               if Oscilloscope.Get_Frozen (Sweeper) then
-                  -- Add release button
-                  Gtk_New
-                  (  Item,
-                     Style_Get (Oscilloscope, "menu-release")
-                  );
-                  Gtk_New (Icon, Stock_Media_Play, Icon_Size_Menu);
-                  Set_Image (Item, Icon);
-                  Append (Menu, Item);
-                  Connect
-                  (  Item,
-                     "activate",
-                     On_Release'Access,
-                     Oscilloscope
-                  );
-                  exit;
-               end if;
-            end loop;
-            for Sweeper in Oscilloscope.Time_Axis'Range loop
-               if not Oscilloscope.Get_Frozen (Sweeper) then
-                  -- Add hold button
-                  Gtk_New
-                  (  Item,
-                     Style_Get (Oscilloscope, "menu-pause")
-                  );
-                  Gtk_New (Icon, Stock_Media_Pause, Icon_Size_Menu);
-                  Set_Image (Item, Icon);
-                  Append (Menu, Item);
-                  Connect
-                  (  Item,
-                     "activate",
-                     On_Pause'Access,
-                     Oscilloscope
-                  );
-                  exit;
-               end if;
-            end loop;
-         end if;
-         -- Add latest
-         Gtk_New
-         (  Item,
-            Style_Get (Oscilloscope, "menu-latest")
-         );
-         Gtk_New (Icon, Stock_Media_Forward, Icon_Size_Menu);
-         Set_Image (Item, Icon);
-         Append (Menu, Item);
-         Connect
-         (  Item,
-            "activate",
-            On_Latest'Access,
-            Oscilloscope
-         );
-         -- Add undo
-         if Oscilloscope.Undo_Stack /= null then
-            Gtk_New
-            (  Item,
-               Style_Get (Oscilloscope, "menu-undo")
-            );
-            Gtk_New (Icon, Stock_Undo, Icon_Size_Menu);
-            Set_Image (Item, Icon);
-            Append (Menu, Item);
-            Connect
-            (  Item,
-               "activate",
-               On_Undo'Access,
-               Oscilloscope
-            );
-         end if;
-         -- Add redo
-         if Oscilloscope.Redo_Stack /= null then
-            Gtk_New
-            (  Item,
-               Style_Get (Oscilloscope, "menu-redo")
-            );
-            Gtk_New (Icon, Stock_Redo, Icon_Size_Menu);
-            Set_Image (Item, Icon);
-            Append (Menu, Item);
-            Connect
-            (  Item,
-               "activate",
-               On_Redo'Access,
-               Oscilloscope
-            );
-         end if;
-         -- Add toggle grid
-         Gtk_New
-         (  Item,
-            Style_Get (Oscilloscope, "menu-toggle-grid")
-         );
-         Gtk_New (Icon, Stock_Index, Icon_Size_Menu);
-         Set_Image (Item, Icon);
-         Append (Menu, Item);
-         Connect
-         (  Item,
-            "activate",
-            On_Toggle_Grid'Access,
-            Oscilloscope
-         );
-         -- Add toggle interpolation
-         Gtk_New
-         (  Item,
-            Style_Get (Oscilloscope, "menu-toggle-interpolation")
-         );
-         Gtk_New (Icon, Stock_Italic, Icon_Size_Menu);
-         Set_Image (Item, Icon);
-         Append (Menu, Item);
-         Connect
-         (  Item,
-            "activate",
-            On_Toggle_Interpolation'Access,
-            Oscilloscope
-         );
-         if (  Oscilloscope.Format /= No_Snapshot
-            and then
-               Oscilloscope.File /= null
-            and then
-               Oscilloscope.File'Length > 0
-            )
-         then -- Add snapshot button
-            Gtk_New
-            (  Item,
-               (  Style_Get (Oscilloscope, "menu-snapshot")
-               &  " to "
-               &  Oscilloscope.File.all
-            )  );
-            Gtk_New (Icon, Stock_Save, Icon_Size_Menu);
-            Set_Image (Item, Icon);
-            Append (Menu, Item);
-            Connect
-            (  Item,
-               "activate",
-               On_Snapshot'Access,
-               Oscilloscope
-            );
-         end if;
-         Show_All (Menu);
-         Popup
-         (  Menu,
-            Button => Gdk.Event.Get_Button (Event),
-            Activate_Time => Gdk.Event.Get_Time (Event)
-         );
+         declare
+            Have_Menu : Boolean := False;
+         begin
+            Gtk_New (Menu);
+            if (  Oscilloscope.Manual_Sweep
+               and then
+                  0 /= (Oscilloscope.Menu_Enabled and Hold_Release_Item)
+               )
+            then
+               for Sweeper in Oscilloscope.Time_Axis'Range loop
+                  if Oscilloscope.Get_Frozen (Sweeper) then
+                     -- Add release button
+                     Gtk_New
+                     (  Item,
+                        Style_Get (Oscilloscope, "menu-release")
+                     );
+                     Gtk_New (Icon, Stock_Media_Play, Icon_Size_Menu);
+                     Set_Image (Item, Icon);
+                     Append (Menu, Item);
+                     Connect
+                     (  Item,
+                        "activate",
+                        On_Release'Access,
+                        Oscilloscope
+                     );
+                     Have_Menu := True;
+                     exit;
+                  end if;
+               end loop;
+               for Sweeper in Oscilloscope.Time_Axis'Range loop
+                  if not Oscilloscope.Get_Frozen (Sweeper) then
+                     -- Add hold button
+                     Gtk_New
+                     (  Item,
+                        Style_Get (Oscilloscope, "menu-pause")
+                     );
+                     Gtk_New (Icon, Stock_Media_Pause, Icon_Size_Menu);
+                     Set_Image (Item, Icon);
+                     Append (Menu, Item);
+                     Connect
+                     (  Item,
+                        "activate",
+                        On_Pause'Access,
+                        Oscilloscope
+                     );
+                     Have_Menu := True;
+                     exit;
+                  end if;
+               end loop;
+            end if;
+            -- Add latest
+            if 0 /= (Oscilloscope.Menu_Enabled and Latest_Data_Item)
+            then
+               declare
+                  Have_Time : Boolean := False;
+               begin
+                  for Sweeper in Sweeper_Type'Range loop
+                     declare
+                        Data : Time_Axis_Data renames
+                               Oscilloscope.Time_Axis (Sweeper);
+                     begin
+                        if Data.On and then Data.Time_Mode then
+                           Have_Time := True;
+                           exit;
+                        end if;
+                     end;
+                  end loop;
+                  if Have_Time then
+                     Gtk_New
+                     (  Item,
+                        Style_Get (Oscilloscope, "menu-latest")
+                     );
+                     Gtk_New
+                     (  Icon,
+                        Stock_Media_Forward,
+                        Icon_Size_Menu
+                     );
+                     Set_Image (Item, Icon);
+                     Append (Menu, Item);
+                     Connect
+                     (  Item,
+                        "activate",
+                        On_Latest'Access,
+                        Oscilloscope
+                     );
+                     Have_Menu := True;
+                  end if;
+               end;
+            end if;
+            -- Add undo
+            if (  Oscilloscope.Undo_Stack.Actions /= null
+               and then
+                  0 /= (Oscilloscope.Menu_Enabled and Undo_Redo_Item)
+               )
+            then
+               Gtk_New
+               (  Item,
+                  Style_Get (Oscilloscope, "menu-undo")
+               );
+               Gtk_New (Icon, Stock_Undo, Icon_Size_Menu);
+               Set_Image (Item, Icon);
+               Append (Menu, Item);
+               Connect
+               (  Item,
+                  "activate",
+                  On_Undo'Access,
+                  Oscilloscope
+               );
+               Have_Menu := True;
+            end if;
+            -- Add redo
+            if (  Oscilloscope.Redo_Stack.Actions /= null
+               and then
+                  0 /= (Oscilloscope.Menu_Enabled and Undo_Redo_Item)
+               )
+            then
+               Gtk_New
+               (  Item,
+                  Style_Get (Oscilloscope, "menu-redo")
+               );
+               Gtk_New (Icon, Stock_Redo, Icon_Size_Menu);
+               Set_Image (Item, Icon);
+               Append (Menu, Item);
+               Connect
+               (  Item,
+                  "activate",
+                  On_Redo'Access,
+                  Oscilloscope
+               );
+               Have_Menu := True;
+            end if;
+            -- Add toggle grid
+            if 0 /= (Oscilloscope.Menu_Enabled and Grid_Item) then
+               Gtk_New
+               (  Item,
+                  Style_Get (Oscilloscope, "menu-toggle-grid")
+               );
+               Gtk_New (Icon, Stock_Index, Icon_Size_Menu);
+               Set_Image (Item, Icon);
+               Append (Menu, Item);
+               Connect
+               (  Item,
+                  "activate",
+                  On_Toggle_Grid'Access,
+                  Oscilloscope
+               );
+               Have_Menu := True;
+            end if;
+            -- Add toggle interpolation
+            if 0 /= (Oscilloscope.Menu_Enabled and Interpolation_Item)
+            then
+               Gtk_New
+               (  Item,
+                  Style_Get (Oscilloscope, "menu-toggle-interpolation")
+               );
+               Gtk_New (Icon, Stock_Italic, Icon_Size_Menu);
+               Set_Image (Item, Icon);
+               Append (Menu, Item);
+               Connect
+               (  Item,
+                  "activate",
+                  On_Toggle_Interpolation'Access,
+                  Oscilloscope
+               );
+               Have_Menu := True;
+            end if;
+            if (  Oscilloscope.Format /= No_Snapshot
+               and then
+                  0 /= (Oscilloscope.Menu_Enabled and Snapshot_Item)
+               and then
+                  Oscilloscope.File /= null
+               and then
+                  Oscilloscope.File'Length > 0
+               )
+            then -- Add snapshot button
+               Gtk_New
+               (  Item,
+                  (  Style_Get (Oscilloscope, "menu-snapshot")
+                  &  " to "
+                  &  Oscilloscope.File.all
+               )  );
+               Gtk_New (Icon, Stock_Save, Icon_Size_Menu);
+               Set_Image (Item, Icon);
+               Append (Menu, Item);
+               Connect
+               (  Item,
+                  "activate",
+                  On_Snapshot'Access,
+                  Oscilloscope
+               );
+               Have_Menu := True;
+            end if;
+            if Have_Menu then
+               Show_All (Menu);
+               Popup
+               (  Menu,
+                  Button => Gdk.Event.Get_Button (Event),
+                  Activate_Time => Gdk.Event.Get_Time (Event)
+               );
+            else
+               Menu.Destroy;
+               Free (Menu);
+            end if;
+         end;
       when others =>
          null;
    end case;

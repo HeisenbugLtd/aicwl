@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -100,8 +100,9 @@ package body Pango.Cairo.Fonts is
                Context : Cairo_Context;
                Text    : UTF8_String
             )  return Pango_Layout is
-      Description : Pango_Font_Description := Handle.Ptr.Description;
-      Layout      : Pango_Layout := Create_Layout (Context);
+      Description : constant Pango_Font_Description :=
+                    Handle.Ptr.Description;
+      Layout : constant Pango_Layout := Create_Layout (Context);
    begin
       Layout.Set_Font_Description (Description);
       Layout.Set_Markup (Text);
@@ -146,8 +147,9 @@ package body Pango.Cairo.Fonts is
                Context : Cairo_Context;
                Text    : UTF8_String
             )  return Pango_Layout is
-      Description : Pango_Font_Description := Handle.Ptr.Description;
-      Layout      : Pango_Layout := Create_Layout (Context);
+      Description : constant Pango_Font_Description :=
+                    Handle.Ptr.Description;
+      Layout : constant Pango_Layout := Create_Layout (Context);
    begin
       Layout.Set_Font_Description (Description);
       Layout.Set_Text (Text);
@@ -270,7 +272,7 @@ package body Pango.Cairo.Fonts is
             end;
          when Pango_Font =>
             declare
-               Layout  : Pango_Layout :=
+               Layout  : constant Pango_Layout :=
                          Create_Markup_Layout
                          (  Font.Pango_Handle,
                             Context,
@@ -378,7 +380,7 @@ package body Pango.Cairo.Fonts is
             end;
          when Pango_Font =>
             declare
-               Layout : Pango_Layout :=
+               Layout : constant Pango_Layout :=
                         Create_Text_Layout
                         (  Font.Pango_Handle,
                            Context,
@@ -740,7 +742,7 @@ package body Pango.Cairo.Fonts is
             end;
          when Pango_Font =>
             declare
-               Layout : Pango_Layout :=
+               Layout : constant Pango_Layout :=
                         Create_Markup_Layout
                         (  Font.Pango_Handle,
                            Context,
@@ -767,7 +769,7 @@ package body Pango.Cairo.Fonts is
             Show_Text (Context, Text);
          when Pango_Font =>
             declare
-               Layout : Pango_Layout :=
+               Layout : constant Pango_Layout :=
                         Create_Text_Layout
                         (  Font.Pango_Handle,
                            Context,
@@ -809,7 +811,8 @@ package body Pango.Cairo.Fonts is
       then
          return Text;
       else
-         return Value : String := Interfaces.C.Strings.Value (Result) do
+         return Value : constant String :=
+                        Interfaces.C.Strings.Value (Result) do
             G_Free (Result);
          end return;
       end if;

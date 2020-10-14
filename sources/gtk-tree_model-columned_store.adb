@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Columned_Store               Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -242,7 +242,7 @@ package body Gtk.Tree_Model.Columned_Store is
                Path   : Gtk_Tree_Path;
                Column : Positive
             )  return Gtk_Tree_Path is
-      Row : Gtk_Tree_Iter :=
+      Row : constant Gtk_Tree_Iter :=
                From_Columned (Model, Get_Iter (Model, Path), Column);
    begin
       if Row = Null_Iter then
@@ -533,8 +533,8 @@ package body Gtk.Tree_Model.Columned_Store is
          );
       else
          declare
-            Minors : GInt := Get_N_Columns (Model.Reference);
-            Row    : Gtk_Tree_Iter :=
+            Minors : constant GInt := Get_N_Columns (Model.Reference);
+            Row    : constant Gtk_Tree_Iter :=
                         From_Columned
                         (  Model,
                            Iter,
@@ -627,7 +627,8 @@ package body Gtk.Tree_Model.Columned_Store is
          return False;
       end if;
       declare
-         Path   : Gtk_Tree_Path := Get_Path (Model.Reference, Iter);
+         Path   : constant Gtk_Tree_Path :=
+                  Get_Path (Model.Reference, Iter);
          Result : constant Boolean := Is_Ancestor (Model.Path, Path);
       begin
          Path_Free (Path);
@@ -652,7 +653,8 @@ package body Gtk.Tree_Model.Columned_Store is
          return False;
       end if;
       declare
-         Path   : Gtk_Tree_Path := Get_Path (Model.Reference, Iter);
+         Path   : constant Gtk_Tree_Path :=
+                  Get_Path (Model.Reference, Iter);
          Result : constant Boolean := Is_Descendant (Model.Path, Path);
       begin
          Path_Free (Path);
@@ -708,7 +710,8 @@ package body Gtk.Tree_Model.Columned_Store is
                 Params     : GValues;
                 Model      : Gtk_Columned_Store
              )  is
-      Path : Gtk_Tree_Path := Convert (Get_Address (Nth (Params, 1)));
+      Path : constant Gtk_Tree_Path :=
+             Convert (Get_Address (Nth (Params, 1)));
       Row  : GInt := Get_Position (Model, Path);
    begin
       if Row >= 0 then
@@ -1147,7 +1150,7 @@ package body Gtk.Tree_Model.Columned_Store is
                 Iter   : in out Gtk_Tree_Iter;
                 Column : out Positive
              )  is
-      Path : Gtk_Tree_Path := Get_Path (Model.Reference, Iter);
+      Path : constant Gtk_Tree_Path := Get_Path (Model.Reference, Iter);
       Row  : GInt;
       Col  : GInt;
    begin

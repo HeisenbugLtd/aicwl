@@ -3,7 +3,7 @@
 --     GLib.Values.Handle                          Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  11:15 17 Oct 2010  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -60,7 +60,7 @@ package body GLib.Values.Handle is
    end Free_Handle;
 
    function Get_Handle (Value : GValue) return Handle_Type is
-      Ptr : Object_Type_Ptr := Get_Ptr (Value);
+      Ptr : constant Object_Type_Ptr := Get_Ptr (Value);
    begin
       return Ref (Ptr);
    end Get_Handle;

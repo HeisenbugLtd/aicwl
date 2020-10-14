@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Channels_Panel             Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  19:09 09 Oct 2015  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -455,8 +455,9 @@ package body Gtk.Oscilloscope.Channels_Panel is
                 Values : GValues;
                 Panel  : Gtk_Oscilloscope_Channels_Panel
              )  is
-      List : Gtk_List_Store := Panel.Oscilloscope.Get_Channel_List;
-      Row  : Gtk_Tree_Iter :=
+      List : constant Gtk_List_Store :=
+                Panel.Oscilloscope.Get_Channel_List;
+      Row  : constant Gtk_Tree_Iter :=
                 Get_Iter_From_String
                 (  List,
                    Get_String (Nth (Values, 1))
@@ -547,8 +548,9 @@ package body Gtk.Oscilloscope.Channels_Panel is
                 Values : GValues;
                 Panel  : Gtk_Oscilloscope_Channels_Panel
              )  is
-      List : Gtk_List_Store := Panel.Oscilloscope.Get_Channel_List;
-      Row  : Gtk_Tree_Iter :=
+      List : constant Gtk_List_Store :=
+                Panel.Oscilloscope.Get_Channel_List;
+      Row  : constant Gtk_Tree_Iter :=
                 Get_Iter_From_String
                 (  List,
                    Get_String (Nth (Values, 1))

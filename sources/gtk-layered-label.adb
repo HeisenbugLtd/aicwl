@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  22:46 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -92,7 +92,7 @@ package body Gtk.Layered.Label is
                    Text   : UTF8_String;
                    Markup : Boolean
                 )  is
-         Ptr : String_Ptr := new UTF8_String'(Text);
+         Ptr : constant String_Ptr := new UTF8_String'(Text);
       begin
          Free (Layer.Text);
          Layer.Text    := Ptr;
@@ -209,10 +209,10 @@ package body Gtk.Layered.Label is
                 Context : Cairo_Context;
                 Area    : Gdk_Rectangle
              )  is
-      Size    : constant GDouble := Layer.Widget.Get_Size;
-      Text    : UTF8_String      := Text_Mutex.Get_Text (Layer);
-      Gain    : GDouble          := 1.0;
-      State   : Context_State    := Save (Context);
+      Size    : constant GDouble     := Layer.Widget.Get_Size;
+      Text    : constant UTF8_String := Text_Mutex.Get_Text (Layer);
+      Gain    : GDouble              := 1.0;
+      State   : Context_State        := Save (Context);
       X, Y    : aliased GDouble;
       Extents : Cairo_Text_Extents;
    begin
@@ -760,7 +760,7 @@ package body Gtk.Layered.Label is
              (  Layer  : in out Label_Layer;
                 Factor : GDouble
              )  is
-      Height : GDouble := Layer.Height * Factor;
+      Height : constant GDouble := Layer.Height * Factor;
    begin
       if Height <= 0.0 then
          raise Constraint_Error with "Non-positive height";

@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  19:51 11 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -40,6 +40,8 @@ with Gdk.Event;                     use Gdk.Event;
 with Gdk.Rectangle;                 use Gdk.Rectangle;
 with GLib.Values;                   use GLib.Values;
 with Gtk.Adjustment;                use Gtk.Adjustment;
+with Gtk.Box;                       use Gtk.Box;
+with Gtk.Fixed;                     use Gtk.Fixed;
 with Gtk.Grid;                      use Gtk.Grid;
 with Gtk.Handlers.References;       use Gtk.Handlers.References;
 with Gtk.Image_Menu_Item;           use Gtk.Image_Menu_Item;
@@ -87,6 +89,16 @@ package Gtk.Oscilloscope is
            User_Action,
            None
         );
+--
+-- Popup menu items -- Shown on right mouse click
+--
+   type Dropdown_Items is mod 2**6;
+   Grid_Item          : constant Dropdown_Items := 2**0;
+   Hold_Release_Item  : constant Dropdown_Items := 2**1;
+   Interpolation_Item : constant Dropdown_Items := 2**2;
+   Latest_Data_Item   : constant Dropdown_Items := 2**3;
+   Snapshot_Item      : constant Dropdown_Items := 2**4;
+   Undo_Redo_Item     : constant Dropdown_Items := 2**5;
 --
 -- Class_Name - Of the widget
 --
@@ -139,6 +151,8 @@ package Gtk.Oscilloscope is
 --  [ Group ] - The group the new channel will belong
 --  [ Color ] - The waveform color
 --    Mode    - Interpolation mode
+--    Left    - Extrapolate to the left
+--    Right   - Extrapolate to the right
 --    Name    - The waveform name
 --    Sweeper - The sweeper type
 --    Buffer  - The buffer to use for the channel (created if null)
@@ -160,7 +174,9 @@ package Gtk.Oscilloscope is
                Group   : Group_Number;
                Color   : Gdk_Color;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -169,7 +185,9 @@ package Gtk.Oscilloscope is
             (  Widget  : not null access Gtk_Oscilloscope_Record;
                Group   : Group_Number;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -178,7 +196,9 @@ package Gtk.Oscilloscope is
             (  Widget  : not null access Gtk_Oscilloscope_Record;
                Color   : Gdk_Color;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -186,7 +206,9 @@ package Gtk.Oscilloscope is
    function Add_Channel
             (  Widget  : not null access Gtk_Oscilloscope_Record;
                Mode    : Interpolation_Mode := Linear;
-               Name    : String := "";
+               Left    : Boolean := False;
+               Right   : Boolean := False;
+               Name    : String  := "";
                Sweeper : Sweeper_Type := Lower;
                Buffer  : access
                   Gtk_Wavefrom_Ring_Data_Buffer_Record'Class := null
@@ -252,8 +274,9 @@ package Gtk.Oscilloscope is
 --
 -- Add_Group -- Create a new channel group
 --
---    Widget - The oscilloscope
---    Name   - The group name
+--    Widget    - The oscilloscope
+--    Name      - The group name
+--    Amplifier - Used with this group, created new if null
 --
 -- Channels  are  grouped  by  the amplifiers they share. The groups are
 -- referenced by their numbers.
@@ -267,8 +290,9 @@ package Gtk.Oscilloscope is
 --    Constraint_Error - Too many groups
 --
    function Add_Group
-            (  Widget : not null access Gtk_Oscilloscope_Record;
-               Name   : String := ""
+            (  Widget    : not null access Gtk_Oscilloscope_Record;
+               Name      : String := "";
+               Amplifier : Gtk_Waveform_Amplifier := null
             )  return Group_Number;
 --
 -- Add_Shadow_Channel -- Create a new shadow channel
@@ -433,17 +457,20 @@ package Gtk.Oscilloscope is
 --                       wrong group
 --
    function Get_Amplifier
-            (  Widget    : not null access Gtk_Oscilloscope_Record;
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type
             )  return not null access
                       Gtk_Waveform_Amplifier_Record'Class;
    function Get_Amplifier
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Channel : Channel_Number
             )  return not null access
                       Gtk_Waveform_Amplifier_Record'Class;
    function Get_Amplifier
-            (  Widget : not null access Gtk_Oscilloscope_Record;
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record;
                Group  : Group_Number
             )  return not null access
                       Gtk_Waveform_Amplifier_Record'Class;
@@ -481,7 +508,7 @@ package Gtk.Oscilloscope is
 --    The box containing the waveforms (relatively to the widget)
 --
    function Get_Box
-            (  Widget : not null access Gtk_Oscilloscope_Record
+            (  Widget : not null access constant Gtk_Oscilloscope_Record
             )  return Cairo_Box;
 --
 -- Get_Buffer -- Get the waveform buffer
@@ -560,6 +587,19 @@ package Gtk.Oscilloscope is
             (  Widget : not null access constant
                         Gtk_Oscilloscope_Record
             )  return Pango_Cairo_Font;
+--
+-- Get_Enabled_Dropdown_Items -- Get currently enabled menu items
+--
+--    Widget - The oscilloscope
+--
+-- Returns :
+--
+--    The items
+--
+   function Get_Enabled_Dropdown_Items
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record
+            )  return Dropdown_Items;
 --
 -- Get_From -- Get the first time time of the sweeper
 --
@@ -678,6 +718,25 @@ package Gtk.Oscilloscope is
                Channel : Channel_Number
             )  return Interpolation_Mode;
 --
+-- Get_Left_Extrapolation_Mode -- Get extrapolation mode to the left
+--
+--    Widget  - The oscilloscope
+--    Channel - The channel number
+--
+-- Returns :
+--
+--    True if extrapolated to the left
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   function Get_Left_Extrapolation_Mode
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return Boolean;
+--
 -- Get_Manual_Sweep -- Allow user to togle sweepers
 --
 --    Widget - The oscilloscope
@@ -759,6 +818,56 @@ package Gtk.Oscilloscope is
                Sweeper : Sweeper_Type
             )  return Duration;
 --
+-- Get_Redo_Stub -- Get the topmost stub of the redo stack
+--
+--    Widget - The oscilloscope
+--    Depth  - The stub depth, 1 is the topmost stub
+--
+-- Returns :
+--
+--    The stub name
+--
+-- Exceptions :
+--
+--    End_Error - There is no such stub
+--
+   function Get_Redo_Stub
+            (  Widget : not null access Gtk_Oscilloscope_Record;
+               Depth  : Positive := 1
+            )  return UTF8_String;
+--
+-- Get_Release_To_Latest -- Get sweeper release behavior
+--
+--    Widget - The oscilloscope
+--
+-- Returns :
+--
+--    True if sweeper when released by user jumps to latest time
+--
+   function Get_Release_To_Latest
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record
+            )  return Boolean;
+--
+-- Get_Right_Extrapolation_Mode -- Get extrapolation mode to the right
+--
+--    Widget  - The oscilloscope
+--    Channel - The channel number
+--
+-- Returns :
+--
+--    True if extrapolated to the right
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   function Get_Right_Extrapolation_Mode
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return Boolean;
+--
 -- Get_Selection_Mode -- What to do on selection
 --
 --    Widget - The oscilloscope
@@ -819,7 +928,8 @@ package Gtk.Oscilloscope is
 --    The sweeper
 --
    function Get_Sweeper
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type
             )  return not null access Gtk_Waveform_Sweeper_Record'Class;
 --
@@ -854,20 +964,24 @@ package Gtk.Oscilloscope is
 --    The time corresponding to the end (right margin) of the page
 --
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type
             )  return Time;
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                X       : GInt
             )  return Time;
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type
             )  return Ada.Calendar.Time;
    function Get_Time
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                X       : GInt
             )  return Ada.Calendar.Time;
@@ -1070,6 +1184,25 @@ package Gtk.Oscilloscope is
                Sweeper : Sweeper_Type
             )  return Vertical_Alignment;
 --
+-- Get_Time_Tooltip_Suffix -- Get the suffix of the value in the tooltip
+--
+--    Widget  - The oscilloscope
+--    Channel - Associated with the indicated value
+--
+-- Returns :
+--
+--    The suffix text
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   function Get_Time_Tooltip_Suffix
+            (  Widget   : not null access constant
+                          Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return UTF8_String;
+--
 -- Get_Time_Tooltip -- Get tooltip time visibility status
 --
 --    Widget - The oscilloscope
@@ -1105,6 +1238,25 @@ package Gtk.Oscilloscope is
                Sweeper : Sweeper_Type
             )  return Ada.Calendar.Time;
 --
+-- Get_Tooltip_Annotation -- Get the annotation tooltip text
+--
+--    Widget  - The oscilloscope
+--    Channel - Associated with the indicated value
+--
+-- Returns :
+--
+--    The text introducing the channel appearance in the tooltip
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   function Get_Tooltip_Annotation
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return UTF8_String;
+--
 -- Get_Type -- The type of the widget
 --
 -- Returns :
@@ -1112,6 +1264,25 @@ package Gtk.Oscilloscope is
 --    The GTK type of the widget
 --
    function Get_Type return GType;
+--
+-- Get_Undo_Stub -- Get the topmost stub of the undo stack
+--
+--    Widget - The oscilloscope
+--    Depth  - The stub depth, 1 is the topmost stub
+--
+-- Returns :
+--
+--    The stub name
+--
+-- Exceptions :
+--
+--    End_Error - There is no such stub
+--
+--
+   function Get_Undo_Stub
+            (  Widget : not null access Gtk_Oscilloscope_Record;
+               Depth  : Positive := 1
+            )  return UTF8_String;
 --
 -- Get_Value -- Get value at the vertical axis
 --
@@ -1128,12 +1299,14 @@ package Gtk.Oscilloscope is
 --    Constraint_Error - No group assigned or wrong group
 --
    function Get_Value
-            (  Widget    : not null access Gtk_Oscilloscope_Record;
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type;
                Y         : GInt
             )  return GDouble;
    function Get_Value
-            (  Widget : not null access Gtk_Oscilloscope_Record;
+            (  Widget : not null access constant
+                        Gtk_Oscilloscope_Record;
                Group  : Group_Number;
                Y      : GInt
             )  return GDouble;
@@ -1306,6 +1479,25 @@ package Gtk.Oscilloscope is
                Amplifier : Amplifier_Type
             )  return GDouble;
 --
+-- Get_Values_Tooltip_Suffix -- Get the suffix of the value
+--
+--    Widget  - The oscilloscope
+--    Channel - Associated with the indicated value
+--
+-- Returns :
+--
+--    The suffix text
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   function Get_Values_Tooltip_Suffix
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Channel : Channel_Number
+            )  return UTF8_String;
+--
 -- Get_Waveform -- Get the waveform of a channel
 --
 --    Widget  - The oscilloscope
@@ -1320,7 +1512,8 @@ package Gtk.Oscilloscope is
 --    Constraint_Error - Wrong channel number
 --
    function Get_Waveform
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Channel : Channel_Number
             )  return not null access Waveform_Layer;
 --
@@ -1340,13 +1533,15 @@ package Gtk.Oscilloscope is
 --    Layout_Error - Not in the waveform box
 --
    function Get_X
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                Stamp   : Time;
                Crop    : Boolean := False
             )  return GInt;
    function Get_X
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                Stamp   : Ada.Calendar.Time;
                Crop    : Boolean := False
@@ -1369,13 +1564,15 @@ package Gtk.Oscilloscope is
 --    Layout_Error     - Not in the waveform box
 --
    function Get_Y
-            (  Widget    : not null access Gtk_Oscilloscope_Record;
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
                Amplifier : Amplifier_Type;
                Value     : GDouble;
                Crop      : Boolean := False
             )  return GInt;
    function Get_Y
-            (  Widget : not null access Gtk_Oscilloscope_Record;
+            (  Widget : not null access constant
+                         Gtk_Oscilloscope_Record;
                Group  : Group_Number;
                Value  : GDouble;
                Crop   : Boolean := False
@@ -1511,6 +1708,20 @@ package Gtk.Oscilloscope is
                 Selected : Cairo_Box
              )  is null;
 --
+-- Push_Stub -- Push stack stub
+--
+--    Widget - The oscilloscope
+--    Name   - Of the stub
+--
+-- The procedure  pushes  a stub  with  the name  Name onto the the undo
+-- stack.  All actions  after the stub can be reverted  using  a pattern
+-- that matches Name as the parameter Till in Undo.
+--
+   procedure Push_Stub
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Name   : UTF8_String
+             );
+--
 -- Push_Undo -- Push zooming state onto the undo stack
 --
 --    Widget - The oscilloscope
@@ -1527,12 +1738,22 @@ package Gtk.Oscilloscope is
 -- Redo -- Repeat zooming change
 --
 --    Widget - The oscilloscope
+--    Till   - Wildcard pattern
+--    Stub   - The name of the new stub or empty string
 --
--- The  procedure repeats one  reverted user action of zooming stored on
--- the top of the redo stack.  The top of  the redo stack is popped. The
--- information to revert this action is pushed onto the undo stack.
+-- When Till is empty the procedure repeats one  reverted user action of
+-- zooming  stored on  the top of the redo stack.  The top  of the  redo
+-- stack is popped. The information to revert this action is pushed onto
+-- the undo  stack.  When Till is not empty  the procedure  reverts  all
+-- actions until  a stub  action with the  name matched by the  wildcard
+-- pattern contained by Till. Additionally when Stub is not empty a stub
+-- is put onto the undo stack before the operation.
 --
-   procedure Redo (Widget : not null access Gtk_Oscilloscope_Record);
+   procedure Redo
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Till   : UTF8_String := "";
+                Stub   : UTF8_String := ""
+             );
 --
 -- Set_Auto_Scaling -- Set auto scaling mode
 --
@@ -1566,6 +1787,34 @@ package Gtk.Oscilloscope is
    procedure Set_Default_Face
              (  Widget : not null access Gtk_Oscilloscope_Record;
                 Face   : Pango_Cairo_Font
+             );
+--
+-- Set_Enabled_Dropdown_Items -- Set enabled menu items
+--
+--    Widget - The oscilloscope
+--    Items  - Enabled
+--
+   procedure Set_Enabled_Dropdown_Items
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Items  : Dropdown_Items
+             );
+--
+-- Set_Extrapolation_Mode -- Channel interpolation mode
+--
+--    Widget  - The oscilloscope
+--    Channel - The channel number
+--    Left    - Extrapolate to the left
+--    Right   - Extrapolate to the right
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   procedure Set_Extrapolation_Mode
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Left    : Boolean;
+                Right   : Boolean
              );
 --
 -- Set_Frequency -- Set the sweeping frequency
@@ -1642,7 +1891,7 @@ package Gtk.Oscilloscope is
                 Mode    : Interpolation_Mode
              );
 --
--- Set_Manual_Sweep -- Allow user to togle sweepers
+-- Set_Manual_Sweep -- Allow user to toggle sweepers
 --
 --    Widget - The oscilloscope
 --    Enable - True if user is allowed to freeze/release sweepers
@@ -1678,6 +1927,16 @@ package Gtk.Oscilloscope is
    procedure Set_Preferred_Method
              (  Widget : not null access Gtk_Oscilloscope_Record;
                 Method : Waveform_Drawing_Method
+             );
+--
+-- Set_Release_To_Latest -- Allow user to toggle sweepers
+--
+--    Widget - The oscilloscope
+--    Enable - If sweepers when released by user jump to latest time
+--
+   procedure Set_Release_To_Latest
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Enable : Boolean
              );
 --
 -- Set_Selection_Mode -- Define what to do on selection
@@ -1753,7 +2012,7 @@ package Gtk.Oscilloscope is
                 As_Time : Boolean := True
              );
 --
--- Set_Time_Axis_Height -- Get horizontal axis width
+-- Set_Time_Axis_Height -- Get vertical size of the axis
 --
 --    Widget  - The oscilloscope
 --    Sweeper - The sweeper type
@@ -1842,6 +2101,38 @@ package Gtk.Oscilloscope is
    procedure Set_Time_Tooltip
              (  Widget  : not null access Gtk_Oscilloscope_Record;
                 Visible : Boolean
+             );
+--
+-- Set_Time_Tooltip_Suffix -- Set the suffix of the value in the tooltip
+--
+--    Widget  - The oscilloscope
+--    Channel - Associated with the indicated value
+--    Suffix  - The text to set
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   procedure Set_Time_Tooltip_Suffix
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Suffix  : UTF8_String
+             );
+--
+-- Set_Tooltip_Annotation -- Set the tooltip annotation
+--
+--    Widget  - The oscilloscope
+--    Channel - Associated with the indicated value
+--    Text    - The text introducing the channel in the tooltip
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   procedure Set_Tooltip_Annotation
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Text    : UTF8_String
              );
 --
 -- Set_Values_Axis_Alignment -- Get vertical axis alignment
@@ -1943,6 +2234,22 @@ package Gtk.Oscilloscope is
                 Angle     : GDouble   := 0.0
              );
 --
+-- Set_Values_Tooltip_Suffix -- Set the suffix of the value
+--
+--    Widget  - The oscilloscope
+--    Channel - Associated with the indicated value
+--    Suffix  - The text to set
+--
+-- Exceptions :
+--
+--    Constraint_Error - Wrong channel number
+--
+   procedure Set_Values_Tooltip_Suffix
+             (  Widget  : not null access Gtk_Oscilloscope_Record;
+                Channel : Channel_Number;
+                Suffix  : UTF8_String
+             );
+--
 -- Set_Visible -- Set channel visibility status
 --
 --    Widget  - The oscilloscope
@@ -1962,14 +2269,22 @@ package Gtk.Oscilloscope is
 -- Undo -- Revert zooming change
 --
 --    Widget - The oscilloscope
+--    Till   - Wildcard pattern
+--    Stub   - The name of the new stub or empty
 --
--- The  procedure reverts  one user action  caused  a change  of zooming
--- stored on the top  of the  undo stack.  The top of  the undo stack is
--- popped. The information to revert this action is pushed onto the redo
--- stack.
+-- When Till is empty the  procedure reverts  one user action  caused  a
+-- change  of zooming stored on the top  of the  undo stack.  The top of
+-- the undo stack  is popped.  The information  to revert this action is
+-- pushed onto the redo  stack.  When  Till is not empty  the  procedure
+-- reverts all actions until a stub  action with the name matched by the
+-- wildcard  pattern contained by Till.  Additionally  when Stub  is not
+-- empty a stub is put onto the redo stack before the operation.
 --
-   procedure Undo (Widget : not null access Gtk_Oscilloscope_Record);
-
+   procedure Undo
+             (  Widget : not null access Gtk_Oscilloscope_Record;
+                Till   : UTF8_String := "";
+                Stub   : UTF8_String := ""
+             );
 private
    pragma Inline (Feed);
    pragma Inline (Get_Amplifier);
@@ -2013,12 +2328,15 @@ private
    type Channel_Value is (Undefined, Absolute, Difference);
    type Waveform_Layer_Ptr is access all Waveform_Layer;
    type Channel_Data is record
-      Waveform : Waveform_Layer_Ptr;
-      Source   : Gtk_Wavefrom_Ring_Data_Buffer;
-      Status   : Channel_Value := Undefined;
-      Group    : Group_Number;
-      Value_1  : Y_Axis;
-      Value_2  : Y_Axis;
+      Waveform     : Waveform_Layer_Ptr;
+      Source       : Gtk_Wavefrom_Ring_Data_Buffer;
+      Status       : Channel_Value := Undefined;
+      Group        : Group_Number;
+      Tip_Prefix   : String_Ptr;
+      Tip_X_Suffix : String_Ptr;
+      Tip_Y_Suffix : String_Ptr;
+      Value_1      : Y_Axis;
+      Value_2      : Y_Axis;
    end record;
    type Channel_List is
       array (Channel_Number range <>) of aliased Channel_Data;
@@ -2038,28 +2356,33 @@ private
                  Graph_Paper_Annotation_Layer'Class;
 
    type Time_Axis_Data is record
-      On        : Boolean := False;
-      Grid      : Boolean := False;
-      No_Scale  : Boolean := False;
-      Width_Set : Boolean := False;
-      Time_Mode : Boolean := True;
-      Sweeper   : Gtk_Waveform_Sweeper;
-      Face      : Pango_Cairo_Font;
-      Color     : Gdk_Color := RGB (0.0, 0.0, 0.0);
-      Angle     : GDouble   := 0.0;
-      Height    : GDouble   := 9.0;
-      Stretch   : GDouble   := 1.0;
-      Offset    : GDouble   := 0.0;
-      Width     : GUInt     := 24;
-      Channels  : Natural   := 0;
-      Justify_X : Alignment := Center;
-      Justify_Y : Vertical_Alignment := Center;
-      Line      : Line_Layer_Ptr;
-      Ticks     : Graph_Paper_Layer_Ptr;
-      Scale     : Gtk_HScale;
-      Texts     : Graph_Paper_Annotation_Layer_Ptr;
+      On         : Boolean := False;
+      Grid       : Boolean := False;
+      No_Scale   : Boolean := False;
+      Width_Set  : Boolean := False;
+      Time_Mode  : Boolean := True;
+      Sweeper    : Gtk_Waveform_Sweeper;
+      Face       : Pango_Cairo_Font;
+      Color      : Gdk_Color := RGB (0.0, 0.0, 0.0);
+      Angle      : GDouble   := 0.0;
+      Height     : GDouble   := 9.0;
+      Stretch    : GDouble   := 1.0;
+      Offset     : GDouble   := 0.0;
+      Width      : GUInt     := 24;
+      Channels   : Natural   := 0;
+      Justify_X  : Alignment := Center;
+      Justify_Y  : Vertical_Alignment := Center;
+      Line       : Line_Layer_Ptr;
+      Ticks      : Graph_Paper_Layer_Ptr;
+      Box        : Gtk_HBox;
+      Left_Fill  : Gtk_Fixed;
+      Right_Fill : Gtk_Fixed;
+      Scale      : Gtk_HScale;
+      Texts      : Graph_Paper_Annotation_Layer_Ptr;
    end record;
-   type Sweeper_List is array (Sweeper_Type) of Time_Axis_Data;
+   type Time_Axis_Data_Ptr is access all Time_Axis_Data;
+
+   type Sweeper_List is array (Sweeper_Type) of aliased Time_Axis_Data;
 
    type Values_Axis_Data is record
       On        : Boolean := False;
@@ -2080,6 +2403,9 @@ private
       Ticks     : Graph_Paper_Layer_Ptr;
       Texts     : Graph_Paper_Annotation_Layer_Ptr;
       Scale            : Gtk_VScale;
+      Box              : Gtk_VBox;
+      Upper_Fill       : Gtk_Fixed;
+      Lower_Fill       : Gtk_Fixed;
       Settings_Changed : Handler_Reference;
       Value_Changed    : Handler_Reference;
    end record;
@@ -2087,6 +2413,14 @@ private
 
    type Do_Item;
    type Do_Item_Ptr is access Do_Item'Class;
+   type Items_Stack is record
+      Actions : Do_Item_Ptr;
+      Stubs   : Do_Item_Ptr;
+   end record;
+   function Get_Stub
+            (  Stack : Items_Stack;
+               Depth : Positive
+            )  return UTF8_String;
 
    type Selection_State (Size : Group_Number) is record
       Area    : Rectangle_Layer_Ptr;
@@ -2123,18 +2457,17 @@ private
 -- Do_It -- Undo zooming
 --
 --    Item         - The undo item
---    Inverse      - The opposite list head
 --    First        - True if first in the sequence
 --    Oscilloscope - The oscilloscope
+--    Inverse      - The opposite list head
 --
    procedure Do_It
              (  Item         : Do_Item;
                 First        : in out Boolean;
                 Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                Inverse      : access Do_Item_Ptr := null
+                Inverse      : access Items_Stack := null
              )  is abstract;
    procedure Delete (List : in out Do_Item_Ptr);
-   procedure Pop (List : in out Do_Item_Ptr);
 --
 -- Do_Auto_Amplifier -- Set auto scaling mode
 --
@@ -2143,7 +2476,7 @@ private
    end record;
    procedure Push_Auto_Amplifier
              (  Amplifier : Gtk_Waveform_Amplifier;
-                List      : access Do_Item_Ptr;
+                List      : access Items_Stack;
                 First     : in out Boolean
              );
    overriding
@@ -2151,7 +2484,7 @@ private
                 (  Item         : Do_Auto_Amplifier;
                    First        : in out Boolean;
                    Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                   Inverse      : access Do_Item_Ptr := null
+                   Inverse      : access Items_Stack := null
                 );
    overriding
       procedure Finalize (Item : in out Do_Auto_Amplifier);
@@ -2164,7 +2497,7 @@ private
    end record;
    procedure Push_Amplifier_Zoom
              (  Amplifier : Gtk_Waveform_Amplifier;
-                List      : access Do_Item_Ptr;
+                List      : access Items_Stack;
                 First     : in out Boolean
              );
    overriding
@@ -2172,7 +2505,7 @@ private
                 (  Item         : Do_Amplifier_Zoom;
                    First        : in out Boolean;
                    Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                   Inverse      : access Do_Item_Ptr := null
+                   Inverse      : access Items_Stack := null
                 );
 --
 -- Do_Release_Sweeper -- Set release mode
@@ -2182,7 +2515,7 @@ private
    end record;
    procedure Push_Release_Sweeper
              (  Sweeper : Gtk_Waveform_Sweeper;
-                List    : access Do_Item_Ptr;
+                List    : access Items_Stack;
                 First   : in out Boolean
              );
    overriding
@@ -2190,7 +2523,7 @@ private
                 (  Item         : Do_Release_Sweeper;
                    First        : in out Boolean;
                    Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                   Inverse      : access Do_Item_Ptr := null
+                   Inverse      : access Items_Stack := null
                 );
    overriding
       procedure Finalize (Item : in out Do_Release_Sweeper);
@@ -2203,7 +2536,7 @@ private
    end record;
    procedure Push_Sweeper_Zoom
              (  Sweeper : Gtk_Waveform_Sweeper;
-                List    : access Do_Item_Ptr;
+                List    : access Items_Stack;
                 First   : in out Boolean
              );
    overriding
@@ -2211,7 +2544,27 @@ private
                 (  Item         : Do_Sweeper_Zoom;
                    First        : in out Boolean;
                    Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
-                   Inverse      : access Do_Item_Ptr := null
+                   Inverse      : access Items_Stack := null
+                );
+--
+-- Do_Stub -- Undo stack stub
+--
+   type Do_Stub (Length : Natural) is new Do_Item with record
+      Stack    : not null access Items_Stack;
+      Previous : Do_Item_Ptr;
+      Name     : String (1..Length);
+   end record;
+   procedure Push_Stub
+             (  Name  : String;
+                List  : access Items_Stack;
+                First : in out Boolean
+             );
+   overriding
+      procedure Do_It
+                (  Item         : Do_Stub;
+                   First        : in out Boolean;
+                   Oscilloscope : in out Gtk_Oscilloscope_Record'Class;
+                   Inverse      : access Items_Stack := null
                 );
 
    type Gtk_Oscilloscope_Record (Size : Channel_Number) is
@@ -2219,8 +2572,9 @@ private
    record
       Refresh_Engine : Layered_Refresh_Engine_Ptr;
       Background     : access Rectangle_Layer;
-      Proximity      : GDouble := 15.0;
+      Proximity      : GDouble          := 15.0;
       Selection_Mode : Selection_Action := Interactive;
+      Menu_Enabled   : Dropdown_Items   := Dropdown_Items'Last;
          -- Components
       Layers : not null access Gtk_Graphs_Record :=
                new Gtk_Graphs_Record;
@@ -2230,11 +2584,12 @@ private
          -- Shared properties of waveforms
       Buffer_Size   : Positive       := 1024 * 40;
       Line_Cap      : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
-      Width         : GDouble         := 1.0;
+      Width         : GDouble        := 1.0;
       Opacity       : Fill_Opacity   := 0.0;
       Widened       : Boolean        := False;
       Show_Time     : Boolean        := True;
       Manual_Sweep  : Boolean        := False;
+      Jump_On_Thaw  : Boolean        := False;
       Superscript   : Boolean        := True;
          -- List stores
       Channel_Names : Gtk_List_Store;
@@ -2252,8 +2607,8 @@ private
       Selection       : Selection_State_Ptr;
       Tip_Text        : String (1..2048);
          -- Undo/Redo stacks
-      Undo_Stack  : aliased Do_Item_Ptr;
-      Redo_Stack  : aliased Do_Item_Ptr;
+      Undo_Stack  : aliased Items_Stack;
+      Redo_Stack  : aliased Items_Stack;
          -- Grid parameters
       Major_Color : Gdk_Color := RGB (0.0, 0.0, 0.0);
       Minor_Color : Gdk_Color := RGB (0.5, 0.5, 0.5);
@@ -2267,8 +2622,20 @@ private
                 Start  : Channel_Number;
                 Stop   : Channel_Number
              );
+   function Get_Annotation_Height
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
+               Sweeper : Sweeper_Type
+            )  return GInt;
+   function Get_Annotation_Width
+            (  Widget    : not null access constant
+                           Gtk_Oscilloscope_Record;
+               Amplifier : Amplifier_Type
+            )  return GInt;
+
    function Get_X
-            (  Widget  : not null access Gtk_Oscilloscope_Record;
+            (  Widget  : not null access constant
+                         Gtk_Oscilloscope_Record;
                Sweeper : Sweeper_Type;
                Stamp   : GDouble;
                Crop    : Boolean
@@ -2317,7 +2684,7 @@ private
              (  Scale     : not null access Gtk_Scale_Record'Class;
                 Arguments : GValue_Array;
                 Result    : in out GValue;
-                Sweeper   : Gtk_Waveform_Sweeper
+                Data      : Time_Axis_Data_Ptr
              );
    procedure On_Freezing_Changed
              (  Sweeper      : access Gtk_Waveform_Sweeper_Record'Class;
@@ -2474,12 +2841,11 @@ private
    package Format_Handlers is
       new Gtk.Handlers.Generic_Callback
           (  Gtk_Scale_Record,
-             Gtk_Waveform_Sweeper
+             Time_Axis_Data_Ptr
           );
    package Sweeper_Handlers is
       new Gtk.Handlers.User_Callback
           (  Gtk_Waveform_Sweeper_Record,
              Gtk_Oscilloscope
           );
-
 end Gtk.Oscilloscope;

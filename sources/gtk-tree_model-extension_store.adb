@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Extension_Store              Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -63,7 +63,8 @@ package body Gtk.Tree_Model.Extension_Store is
          return Null_Iter;
       else
          declare
-            Path   : Gtk_Tree_Path := Model.Columns.Get_Path (Iter);
+            Path   : constant Gtk_Tree_Path :=
+                     Model.Columns.Get_Path (Iter);
             Result : Gtk_Tree_Iter;
          begin
             if Path = Null_Gtk_Tree_Path then
@@ -282,7 +283,8 @@ package body Gtk.Tree_Model.Extension_Store is
          )  );
       elsif Column < Model.Offset then
          declare
-            Row : Gtk_Tree_Iter := From_Extension (Model, Iter);
+            Row : constant Gtk_Tree_Iter :=
+                  From_Extension (Model, Iter);
          begin
             if Row = Null_Iter then
                Log
@@ -433,7 +435,8 @@ package body Gtk.Tree_Model.Extension_Store is
                 Params     : GValues;
                 Model      : Gtk_Extension_Store
              )  is
-      Path : Gtk_Tree_Path := Convert (Get_Address (Nth (Params, 1)));
+      Path : constant Gtk_Tree_Path :=
+             Convert (Get_Address (Nth (Params, 1)));
       Row  : Gtk_Tree_Iter;
    begin
       if Path /= Null_Gtk_Tree_Path and then Get_Depth (Path) > 0 then
@@ -464,7 +467,8 @@ package body Gtk.Tree_Model.Extension_Store is
                 Params    : GValues;
                 Model     : Gtk_Extension_Store
              )  is
-      Path : Gtk_Tree_Path := Convert (Get_Address (Nth (Params, 1)));
+      Path : constant Gtk_Tree_Path :=
+             Convert (Get_Address (Nth (Params, 1)));
       Row  : Gtk_Tree_Iter;
    begin
       if Path /= Null_Gtk_Tree_Path and then Get_Depth (Path) > 0 then
@@ -496,7 +500,8 @@ package body Gtk.Tree_Model.Extension_Store is
                 Params     : GValues;
                 Model      : Gtk_Extension_Store
              )  is
-      Path : Gtk_Tree_Path := Convert (Get_Address (Nth (Params, 1)));
+      Path : constant Gtk_Tree_Path :=
+             Convert (Get_Address (Nth (Params, 1)));
    begin
       Row_Has_Child_Toggled
       (  To_Interface (Model),
@@ -524,13 +529,14 @@ package body Gtk.Tree_Model.Extension_Store is
                 Params     : GValues;
                 Model      : Gtk_Extension_Store
              )  is
-      Path : Gtk_Tree_Path := Convert (Get_Address  (Nth (Params, 1)));
+      Path : constant Gtk_Tree_Path :=
+                Convert (Get_Address  (Nth (Params, 1)));
       No   : constant GInt :=
                 GInt'Max
                 (  0,
                    Get_Row_No (To_Interface (Model.Columns), Path)
                 );
-      This : Gtk_Tree_Path := Copy (Path);
+      This : constant Gtk_Tree_Path := Copy (Path);
       Row  : Gtk_Tree_Iter;
    begin
       if Up (This) and then Get_Depth (This) > 0 then
@@ -568,7 +574,7 @@ package body Gtk.Tree_Model.Extension_Store is
                 Model      : Gtk_Extension_Store
              )  is
       use Address_To_GInt_Array;
-      Path    : Gtk_Tree_Path :=
+      Path    : constant Gtk_Tree_Path :=
                    Convert (Get_Address (Nth (Params, 1)));
       Indices : GInt_Array renames
                    To_Pointer (Get_Address (Nth (Params, 3))).all;
@@ -693,7 +699,8 @@ package body Gtk.Tree_Model.Extension_Store is
          return Null_Iter;
       else
          declare
-            Path   : Gtk_Tree_Path := Get_Path (Model.Reference, Iter);
+            Path   : constant Gtk_Tree_Path :=
+                     Get_Path (Model.Reference, Iter);
             Result : Gtk_Tree_Iter := Null_Iter;
          begin
             if Path /= Null_Gtk_Tree_Path then

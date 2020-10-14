@@ -3,7 +3,7 @@
 --     Gtk.Directory_Browser                       Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  22:45 07 Apr 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -32,19 +32,18 @@ with GIO.Volume_Monitor;         use GIO.Volume_Monitor;
 with GLib.Error;                 use GLib.Error;
 with Glib.Messages;              use Glib.Messages;
 with Gtk.Enums;                  use Gtk.Enums;
-with Gtk.Missed;                 use Gtk.Missed;
 with Gtk.Scrolled_Window;        use Gtk.Scrolled_Window;
 with Gtk.Stock;                  use Gtk.Stock;
 with Gtk.Tree_View;              use Gtk.Tree_View;
-with Gtk.Widget;                 use Gtk.Widget;
 with Strings_Edit.UTF8;          use Strings_Edit.UTF8;
 with Strings_Edit.UTF8.Mapping;  use Strings_Edit.UTF8.Mapping;
 
-with Ada.IO_Exceptions;
 with Ada.Unchecked_Deallocation;
 with GLib.Object.Checked_Destroy;
 
 package body Gtk.Directory_Browser is
+   use Gtk.Missed;
+   use Gtk.Widget;
 
    Unreadable : constant String := "emblem-unreadable";
 
@@ -104,8 +103,8 @@ package body Gtk.Directory_Browser is
             end if;
          when Insensitive =>
             declare
-               A_Name  : UTF8_String := UTF8_String (A.Name);
-               B_Name  : UTF8_String := UTF8_String (B.Name);
+               A_Name  : constant UTF8_String := UTF8_String (A.Name);
+               B_Name  : constant UTF8_String := UTF8_String (B.Name);
                A_Code  : UTF8_Code_Point;
                B_Code  : UTF8_Code_Point;
                A_Index : Integer := A.Name'First;
@@ -253,7 +252,7 @@ package body Gtk.Directory_Browser is
                        Gtk_Directory_Record'Class
                        (  Get_Cache (Widget).all
                        ) .Data.Ptr.Roots;
-            Index : Natural := Locate (Roots, String (Kind));
+            Index : constant Natural := Locate (Roots, String (Kind));
          begin
             if Index = 0 or else GetTag (Roots, Index) = null then
                return
@@ -351,7 +350,7 @@ package body Gtk.Directory_Browser is
                        Gtk_Directory_Record'Class
                        (  Get_Cache (Widget).all
                        ) .Data.Ptr.Roots;
-            Index : Natural := Locate (Roots, String (Kind));
+            Index : constant Natural := Locate (Roots, String (Kind));
          begin
             if Index = 0 or else GetTag (Roots, Index) = null then
                return Item_Name (Kind);
@@ -491,7 +490,7 @@ package body Gtk.Directory_Browser is
       --
       declare
          use Mount_List;
-         Monitor : GVolume_Monitor := Get;
+         Monitor : constant GVolume_Monitor := Get;
          Mounts  : Glist := Get_Mounts (Monitor);
          Item    : Glist := First (Mounts);
          Mount   : GMount;
@@ -500,7 +499,7 @@ package body Gtk.Directory_Browser is
             Mount := Get_Data (Item);
             if Mount /= null then
                declare
-                  Path : UTF8_String := Get_Root (Mount);
+                  Path : constant UTF8_String := Get_Root (Mount);
                begin
                   if Get_Root (Path) = Path then
                      begin
@@ -652,12 +651,12 @@ package body Gtk.Directory_Browser is
    begin
       if Get_Name (Cache, Old_Path) /= New_Name then
          declare
-            New_Path : Item_Path :=
-               Get_Path
-               (  Cache,
-                  Get_Directory (Cache, Old_Path),
-                  New_Name
-               );
+            New_Path : constant Item_Path :=
+                       Get_Path
+                       (  Cache,
+                          Get_Directory (Cache, Old_Path),
+                          New_Name
+                       );
          begin
             Rename (String (Old_Path), String (New_Path));
          exception
@@ -767,7 +766,7 @@ package body Gtk.Directory_Browser is
                declare
                   Name   : constant UTF8_String :=
                               GetName (This.Roots, This.Current_Root);
-                  Result : Directory_Item :=
+                  Result : constant Directory_Item :=
                            (  Directory   => True,
                               Policy      => This.Policy,
                               Name_Length => Name'Length,
@@ -793,7 +792,8 @@ package body Gtk.Directory_Browser is
       begin
          loop
             declare
-               Name   : UTF8_String := Dir_Read_Name (This.Search);
+               Name   : constant UTF8_String :=
+                        Dir_Read_Name (This.Search);
                Status : GFileTest;
             begin
                if Name = "." or else Name = ".." then
@@ -806,7 +806,7 @@ package body Gtk.Directory_Browser is
                   end if;
                else
                   declare
-                     Path : UTF8_String :=
+                     Path : constant UTF8_String :=
                             Build_Filename
                             (  This.Folder (1..This.Length),
                                Name
@@ -971,7 +971,7 @@ package body Gtk.Directory_Browser is
             This.Mode := Directory;
          else
             declare
-               Message : String := Get_Message (Error);
+               Message : constant String := Get_Message (Error);
             begin
                Error_Free (Error);
                raise Data_Error with Message;
