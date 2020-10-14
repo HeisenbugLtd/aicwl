@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  23:16 14 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -121,6 +121,7 @@ package body Gtk.Main.Router is
    protected Gateway is
       procedure Abort_Service (Error : Exception_Occurrence);
       procedure Complete_Service;
+      function Get_State return Gateway_State;
       entry Initiate_Service (Data : out Request_Data_Ptr);
       entry Request_Service
             (  Data        : in out Request_Data'Class;
@@ -182,6 +183,11 @@ package body Gtk.Main.Router is
             State := Idle;
          end if;
       end Complete_Service;
+
+      function Get_State return Gateway_State is
+      begin
+         return State;
+      end Get_State;
 
       entry Initiate_Service
             (  Data : out Request_Data_Ptr
@@ -390,15 +396,17 @@ package body Gtk.Main.Router is
             return Standard.True;
          end Connect_Callback;
 
-         ID : G_Source_Id;
+         ID    : G_Source_Id;
+         Close : Gtk_Button;
       begin
-         Add_Button_From_Stock
-         (  Dialog   => Dialog,
-            Response => Gtk_Response_Close,
-            Icon     => Stock_Close,
-            Label    => "_Close",
-            Tip      => "Stop connecting"
-         );
+         Close := Add_Button_From_Stock
+                  (  Dialog   => Dialog,
+                     Response => Gtk_Response_Close,
+                     Icon     => Stock_Close,
+                     Label    => "_Close",
+                     Tip      => "Stop connecting"
+                  );
+         Close.Set_Can_Default (Standard.True);
          Dialog.Show_All;
          ID := Timers.Timeout_Add
                (  Interval => 50,
@@ -480,6 +488,9 @@ package body Gtk.Main.Router is
    procedure Request (Data : in out Request_Data'Class) is
    begin
       if Main = Current_Task then
+         if Gateway.Get_State = Quitted then
+            raise Quit_Error;
+         end if;
          if not Recursion then
             begin
                Recursion := Standard.True;
@@ -928,6 +939,7 @@ package body Gtk.Main.Router is
                   Label    => "_Next",
                   Tip      => "Run to the next message"
                );
+            Step_Button.Set_Can_Default (Standard.True);
             Run_Button :=
                Add_Button_From_Stock
                (  Dialog   => Trace_Dialog,

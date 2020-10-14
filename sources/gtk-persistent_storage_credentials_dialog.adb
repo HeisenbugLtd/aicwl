@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_                     Luebeck            --
 --         Credentials_Dialog                      Winter, 2008       --
 --  Implementation                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -464,6 +464,7 @@ package body Gtk.Persistent_Storage_Credentials_Dialog is
             Icon     => Stock_OK,
             Label    => "_OK"
          );
+      Dialog.OK_Button.Set_Can_Default (True);
       Style_Updated (Dialog);
    end Initialize;
 

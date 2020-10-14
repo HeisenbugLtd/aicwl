@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Keys                     Luebeck            --
 --  Implementation                                 Autumn, 2011       --
 --                                                                    --
---                                Last revision :  19:30 31 Jul 2015  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -132,10 +132,11 @@ package body Gtk.Recent_Manager_Keys is
       for Index in List'Range loop
          if (  Has_Application (List (Index), Name)
             and then
-               Get_Description (List (Index)) = Key
+               Get_URI (List (Index)) = Key
             )
          then
-            return Result : UTF8_String := Get_URI (List (Index)) do
+            return Result : UTF8_String :=
+                            Get_Display_Name (List (Index)) do
                for Rest in Index..List'Last loop
                   Unref (List (Rest));
                end loop;
@@ -189,9 +190,9 @@ package body Gtk.Recent_Manager_Keys is
    begin
       if Add_Full
          (  Manager      => Manager,
-            URI          => Value,
-            Display_Name => "",
-            Description  => Key
+            URI          => Key,
+            Display_Name => Value,
+            Description  => "stored value for " & Key
          )
       then
          null;

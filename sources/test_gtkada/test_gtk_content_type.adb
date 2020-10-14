@@ -3,7 +3,7 @@
 --     Test_Gtk_Content_Type                       Luebeck            --
 --  Test for renderer                              Summer, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -96,10 +96,10 @@ begin
                Value   : GValue;
             begin
                Append (Files, Row);
-               Set (Files, Row, 0, Name);
-               Set (Files, Row, 1, Get_MIME_Type (Content));
-               Set (Files, Row, 2, Get_Description (Content));
-               Set (Files, Row, 3, Content);
+               Gtk.Missed.Set (Files, Row, 0, Name);
+               Gtk.Missed.Set (Files, Row, 1, Get_MIME_Type (Content));
+               Gtk.Missed.Set (Files, Row, 2, Get_Description (Content));
+               Gtk.Missed.Set (Files, Row, 3, Content);
                Init (Value, GType_Icon);
                Set_Object (Value, Icon);
                Set_Value (Files, Row, 4, Value);

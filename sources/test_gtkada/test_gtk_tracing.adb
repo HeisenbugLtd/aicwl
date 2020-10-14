@@ -3,7 +3,7 @@
 --  Test for Gtk.Main.Router                       Luebeck            --
 --                                                 Spring, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -86,6 +86,14 @@ procedure Test_Gtk_Tracing is
          Gtk.Main.Router.GNAT_Stack.Trace (Error);
    end Trace_Exception;
 
+   procedure Trace_Log
+             (  Widget : access Gtk_Widget_Record'Class
+             )  is
+      use GLib.Messages;
+   begin
+      Log ("GtkAda+", Log_Level_Message, "Test message");
+   end Trace_Log;
+
    task Spammer is
       entry Start;
    end Spammer;
@@ -124,6 +132,10 @@ begin
    Gtk.Main.Init;
    Gtk.Window.Gtk_New (Window);
    Gtk.Main.Router.Init (Window); -- This must be called once
+   Gtk.Main.Router.GNAT_Stack.Set_Log_Trace
+   (  "GtkAda+",
+      GLib.Messages.Log_Level_Flags'Last
+   );
 --     Gtk.Main.Router.GNAT_Stack.Set_Log_Trace
 --     (  "Gdk",
 --        Glib.Messages.Log_Level_Warning
@@ -144,6 +156,10 @@ begin
 
    Gtk_New (Button, "Trace exception");
    Button.On_Clicked (+Trace_Exception'Access);
+   Pack_Start (Box, Button);
+
+   Gtk_New (Button, "Trace log messages");
+   Button.On_Clicked (+Trace_Log'Access);
    Pack_Start (Box, Button);
 
    Gtk_New (Button, "Trace flood");

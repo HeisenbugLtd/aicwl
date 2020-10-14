@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Channels_Panel             Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,6 +26,7 @@
 --____________________________________________________________________--
 
 with Ada.Exceptions;              use Ada.Exceptions;
+with Gdk.RGBA;                    use Gdk.RGBA;
 with GLib.Messages;               use GLib.Messages;
 with GLib.Properties;             use GLib.Properties;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
@@ -484,18 +485,18 @@ package body Gtk.Oscilloscope.Channels_Panel is
                 Panel  : Gtk_Oscilloscope_Channels_Panel
              )  is
       Channel : Channel_Number;
-      Color   : Gdk_Color;
+      Color   : Gdk_RGBA;
    begin
       Channel := Channel_Number (Get_Int (Model, Iter, 1));
-      Color   := Panel.Oscilloscope.Get_Color (Channel);
+      Color   := To_RGBA (Panel.Oscilloscope.Get_Color (Channel));
       Set_Property
       (  Cell,
-         Property_Gdk_Color (GLib.Build ("cell_background_gdk")),
+         Cell_Background_RGBA_Property,
          Color
       );
       Set_Property
       (  Cell,
-         Property_Gdk_Color (GLib.Build ("foreground-gdk")),
+         Foreground_RGBA_Property,
          Color
       );
       Set_Property

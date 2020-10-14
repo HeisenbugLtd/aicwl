@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Sweeper_Panel              Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  21:30 08 Aug 2015  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -123,11 +123,13 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
              (  Widget       : out Gtk_Oscilloscope_Sweeper_Panel;
                 Oscilloscope : not null access
                                Gtk_Oscilloscope_Record'Class;
-                Sweeper      : Sweeper_Type := Lower
+                Sweeper      : Sweeper_Type := Lower;
+                Show_Buttons : Boolean      := True;
+                Flat         : Boolean      := False
              )  is
    begin
       Widget := new Gtk_Oscilloscope_Sweeper_Panel_Record;
-      Initialize (Widget, Oscilloscope, Sweeper);
+      Initialize (Widget, Oscilloscope, Sweeper, Show_Buttons, Flat);
    exception
       when others =>
          GLib.Object.Checked_Destroy (Widget);
@@ -140,12 +142,28 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
                           Gtk_Oscilloscope_Sweeper_Panel_Record'Class;
                 Oscilloscope : not null access
                                Gtk_Oscilloscope_Record'Class;
-                Sweeper      : Sweeper_Type
+                Sweeper      : Sweeper_Type;
+                Show_Buttons : Boolean;
+                Flat         : Boolean
              )  is
+      Row    : GUInt := 0;
+      Column : GUInt := 0;
    begin
       Widget.Sweeper := Sweeper;
       G_New (Widget, Get_Type);
-      Gtk_Table_Record (Widget.all).Initialize (5, 6, False);
+      if Show_Buttons then
+         if Flat then
+            Gtk_Table_Record (Widget.all).Initialize (30, 1, False);
+         else
+            Gtk_Table_Record (Widget.all).Initialize (5, 6, False);
+         end if;
+      else
+         if Flat then
+            Gtk_Table_Record (Widget.all).Initialize (12, 1, False);
+         else
+            Gtk_Table_Record (Widget.all).Initialize (2, 6, False);
+         end if;
+      end if;
       Widget.Set_Col_Spacings (3);
       Widget.Set_Row_Spacings (3);
       Widget.Oscilloscope := Oscilloscope.all'Unchecked_Access;
@@ -238,11 +256,15 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       -- Row 2 ---------------------------------------------------------
          -- Page left
       Offset_Page_Left_Buttons.Gtk_New (Widget.Offset_Page_Left);
+      if Flat then
+         Column := 6;
+         Row    := 1;
+      end if;
       Attach
       (  Widget,
          Widget.Offset_Page_Left,
-         0, 1,
-         1, 2,
+         0 + Column, 1 + Column,
+         1 - Row,    2 - Row,
          XOptions => Shrink,
          YOptions => Shrink
       );
@@ -257,8 +279,8 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       Attach
       (  Widget,
          Widget.Offset_Left,
-         1, 2,
-         1, 2,
+         1 + Column, 2 + Column,
+         1 - Row,    2 - Row,
          XOptions => Shrink,
          YOptions => Shrink
       );
@@ -283,8 +305,8 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       Attach
       (  Widget,
          Widget.Offset_Edit,
-         2, 3,
-         1, 2,
+         2 + Column, 3 + Column,
+         1 - Row,    2 - Row,
          YOptions => Shrink
       );
       Connect
@@ -297,8 +319,8 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       Attach
       (  Widget,
          Widget.Offset_Unit,
-         3, 4,
-         1, 2,
+         3 + Column, 4 + Column,
+         1 - Row,    2 - Row,
          XOptions => Gtk.Enums.Fill,
          YOptions => Shrink
       );
@@ -307,8 +329,8 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       Attach
       (  Widget,
          Widget.Offset_Right,
-         4, 5,
-         1, 2,
+         4 + Column, 5 + Column,
+         1 - Row,    2 - Row,
          XOptions => Shrink,
          YOptions => Shrink
       );
@@ -323,8 +345,8 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       Attach
       (  Widget,
          Widget.Offset_Page_Right,
-         5, 6,
-         1, 2,
+         5 + Column, 6 + Column,
+         1 - Row,    2 - Row,
          XOptions => Shrink,
          YOptions => Shrink
       );
@@ -334,56 +356,66 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
          On_Click_Page_Right'Access,
          Widget.all'Unchecked_Access
       );
-      -- Row 3 ---------------------------------------------------------
-         -- Axis
-      Gtk_New (Widget.Axis_Button, "show axis");
-      Widget.Axis_Button.Set_Active
-      (  Oscilloscope.Get_Time_Axis (Sweeper)
-      );
-      Attach
-      (  Widget,
-         Widget.Axis_Button,
-         0, 6,
-         2, 3,
-         YOptions => Shrink
-      );
-      Connect
-      (  Widget.Axis_Button,
-         "toggled",
-         On_Toggled_Axis'Access,
-         Widget.all'Unchecked_Access
-      );
-      -- Row 4 ---------------------------------------------------------
-         -- Grid
-      Gtk_New (Widget.Grid_Button, "show graph paper");
-      Widget.Grid_Button.Set_Active
-      (  Oscilloscope.Get_Time_Grid (Sweeper)
-      );
-      Attach
-      (  Widget,
-         Widget.Grid_Button,
-         0, 6,
-         3, 4,
-         YOptions => Shrink
-      );
-      -- Row 5 ---------------------------------------------------------
-         -- Grid
-      Gtk_New (Widget.Time_Stamp, "");
-      Widget.Time_Stamp.Set_Justify (Justify_Left);
-      Attach
-      (  Widget,
-         Widget.Time_Stamp,
-         0, 6,
-         4, 5,
-         YOptions => Shrink
-      );
-
-      Connect
-      (  Widget.Grid_Button,
-         "toggled",
-         On_Toggled_Grid'Access,
-         Widget.all'Unchecked_Access
-      );
+      if Show_Buttons then
+         -- Row 3 ------------------------------------------------------
+         if Flat then
+            Column := Column + 6;
+            Row    := Row    + 1;
+         end if;
+         Gtk_New (Widget.Axis_Button, "show axis");
+         Widget.Axis_Button.Set_Active
+         (  Oscilloscope.Get_Time_Axis (Sweeper)
+         );
+         Attach
+         (  Widget,
+            Widget.Axis_Button,
+            0 + Column, 6 + Column,
+            2 - Row,    3 - Row,
+            YOptions => Shrink
+         );
+         Connect
+         (  Widget.Axis_Button,
+            "toggled",
+            On_Toggled_Axis'Access,
+            Widget.all'Unchecked_Access
+         );
+         -- Row 4 ------------------------------------------------------
+         if Flat then
+            Column := Column + 6;
+            Row    := Row    + 1;
+         end if;
+         Gtk_New (Widget.Grid_Button, "show graph paper");
+         Widget.Grid_Button.Set_Active
+         (  Oscilloscope.Get_Time_Grid (Sweeper)
+         );
+         Attach
+         (  Widget,
+            Widget.Grid_Button,
+            0 + Column, 6 + Column,
+            3 - Row,    4 - Row,
+            YOptions => Shrink
+         );
+         Connect
+         (  Widget.Grid_Button,
+            "toggled",
+            On_Toggled_Grid'Access,
+            Widget.all'Unchecked_Access
+         );
+         -- Row 5 ------------------------------------------------------
+         if Flat then
+            Column := Column + 6;
+            Row    := Row    + 1;
+         end if;
+         Gtk_New (Widget.Time_Stamp, "");
+         Widget.Time_Stamp.Set_Justify (Justify_Left);
+         Attach
+         (  Widget,
+            Widget.Time_Stamp,
+            0 + Column, 6 + Column,
+            4 - Row,    5 - Row,
+            YOptions => Shrink
+         );
+      end if;
       On_Frozen_Changed
       (  Oscilloscope,
          Sweeper_Type'Pos (Sweeper),
@@ -954,12 +986,14 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       end Image_Span;
    begin
       if Sweeper = Sweeper_Type'Pos (Panel.Sweeper) then
-         Panel.Time_Stamp.Set_Markup
-         (  "<i>t</i><sub>2</sub>="
-         &  Image (To_Time (GDouble (Stamp)))
-         &  "   <i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>="
-         &  Image_Span (Diff)
-         );
+         if Panel.Time_Stamp /= null then
+            Panel.Time_Stamp.Set_Markup
+            (  "<i>t</i><sub>2</sub>="
+            &  Image (To_Time (GDouble (Stamp)))
+            &  "   <i>t</i><sub>2</sub>-<i>t</i><sub>1</sub>="
+            &  Image_Span (Diff)
+            );
+         end if;
       end if;
    exception
       when Constraint_Error =>
@@ -979,8 +1013,14 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
                 Panel  : Gtk_Oscilloscope_Sweeper_Panel
              )  is
    begin
-      Panel.Axis_Button.Set_Label (Style_Get (Panel, "show-axis"));
-      Panel.Axis_Button.Set_Label (Style_Get (Panel, "show-axis"));
+      if Panel.Axis_Button /= null then
+         Panel.Axis_Button.Set_Label (Style_Get (Panel, "show-axis"));
+      end if;
+      if Panel.Grid_Button /= null then
+         Panel.Grid_Button.Set_Label
+         (  Style_Get (Panel, "show-graph-paper")
+         );
+      end if;
       Panel.Page_Edit.Set_Tooltip_Text (Style_Get (Panel, "page-tip"));
       Panel.Offset_Edit.Set_Tooltip_Text
       (  Style_Get (Panel, "offset-tip")

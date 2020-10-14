@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>ADA INDUSTRIAL CONTROL WIDGET LIBRARY</b></font><BIG><br>
-<EM>version 3.11</EM></BIG><br>
+<EM>version 3.12</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -92,12 +92,12 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">
-		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_11.tgz">aicwl_3_11.tgz</a> (<b>tar</b> +
+		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_12.tgz">aicwl_3_12.tgz</a> (<b>tar</b> +
 		<b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td>&nbsp;</td>
 		<td align="center">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_11.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_12.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td align="center">&nbsp;</td>
 	</tr>
 	</table>
@@ -12268,11 +12268,18 @@ oscilloscope widget:</p>
 Oscilloscope</b> : <font color="#0000FF">not null access</font> 
 Gtk_Oscilloscope_Record'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Sweeper</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Sweeper_Type := Lower<br>
+Sweeper</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Sweeper_Type := Lower;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Show_Buttons</b> : Boolean := True;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Flat</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: Boolean := False<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure creates a new widget. The parameter <b>Oscilloscope</b> is the 
 oscilloscope widget. <b>
-Sweeper</b> indicates the time axis the panel will control. </p>
+Sweeper</b> indicates the time axis the panel will control. When <b>Show_Buttons</b> 
+is <font color="#800000"><i>false</i></font> then buttons controlling the 
+visibility of axis and graph paper are not shown. When <b>Flat</b> is <i>
+<font color="#800000">true</font></i> the panel is in a single row.</p>
 <blockquote>
 <p><tt><font color="#0000FF">procedure</font> Initialize<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
@@ -12283,7 +12290,11 @@ Gtk_Oscilloscope_Sweeper_Panel_Record'Class;<br>
 Oscilloscope</b> : <font color="#0000FF">not null access</font> 
 Gtk_Oscilloscope_Record'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Sweeper</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Sweeper_Type<br>
+Sweeper</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Sweeper_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Show_Buttons</b> : Boolean;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Flat</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: Boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure must be called from the Initialize of the derived type in 
 order to initialize the parent. </p>
@@ -14163,6 +14174,22 @@ these packages add the following line to <i>/etc/apt/sources.list</i>:</p>
       src="index.gif" alt="[TOC]" width="29" height="29"><IMG src="next.gif" alt="[Next]" width="29" height="29"></a></p>
 <H2>15.
 <a name="changes_log"></a>Changes log</H2>
+<P>
+<i>
+The following versions were tested with the compilers:</i>
+<ul>
+  <li>
+<i>GNAT GPL 2015 (20150428-49)</i></li>
+	<li><i>GNAT 5.2</i></li>
+  </ul>
+<P>
+<i>and the GtkAda versions:</i><ul>
+	<li><i>GtkAda 3.8.3</i></li>
+	</ul>
+<p>Changes (18 October 2015) to the version 3.11:</p>
+<ul>
+  <li>Adapted to GNAT 5</li>
+</ul>
 <P>
 <i>
 The following versions were tested with the compilers:</i>

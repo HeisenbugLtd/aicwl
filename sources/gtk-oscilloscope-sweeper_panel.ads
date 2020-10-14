@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Sweeper_Panel              Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  19:09 09 Oct 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -62,12 +62,16 @@ package Gtk.Oscilloscope.Sweeper_Panel is
 --    Widget       - The result
 --    Oscilloscope - The oscilloscope
 --    Sweeper      - The sweeper to use the panel with
+--    Show_Buttons - Show buttons controlling graphpaper and axis
+--    Flat         - Show all elements in one row
 --
    procedure Gtk_New
              (  Widget       : out Gtk_Oscilloscope_Sweeper_Panel;
                 Oscilloscope : not null access
                                Gtk_Oscilloscope_Record'Class;
-                Sweeper      : Sweeper_Type := Lower
+                Sweeper      : Sweeper_Type := Lower;
+                Show_Buttons : Boolean      := True;
+                Flat         : Boolean      := False
              );
 --
 -- Initialize -- The widget initialization
@@ -75,13 +79,17 @@ package Gtk.Oscilloscope.Sweeper_Panel is
 --    Widget       - The widget to initialize
 --    Oscilloscope - The oscilloscope
 --    Sweeper      - The sweeper to use the panel with
+--    Show_Buttons - Show buttons controlling graphpaper and axis
+--    Flat         - Show all elements in one row
 --
    procedure Initialize
              (  Widget  : not null access
                           Gtk_Oscilloscope_Sweeper_Panel_Record'Class;
                 Oscilloscope : not null access
                                Gtk_Oscilloscope_Record'Class;
-                Sweeper      : Sweeper_Type
+                Sweeper      : Sweeper_Type;
+                Show_Buttons : Boolean;
+                Flat         : Boolean
              );
 private
    package Forward_Buttons is
