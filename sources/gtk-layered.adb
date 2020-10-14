@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  09:08 05 Mar 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -34,9 +34,12 @@ with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Object;               use GLib.Object;
 with GtkAda.Types;              use GtkAda.Types;
 with Interfaces.C.Strings;      use Interfaces.C;
+with Strings_Edit.Integers;     use Strings_Edit.Integers;
+with System.Storage_Elements;   use System.Storage_Elements;
 
+with Cairo.Region;
 with GLib.Object.Checked_Destroy;
-with System.Storage_Elements;
+with Gtk.Main;
 
 package body Gtk.Layered is
 
@@ -229,9 +232,13 @@ package body Gtk.Layered is
                Context : Cairo_Context
             )  return Boolean is
    begin
-      -- Put_Line ("+++ " & Expanded_Name (Widget.all'Tag) & Integer_Address'Image (To_Integer (Widget.all'Address)));
+      -- Put_Line
+      -- (  "+++ "
+      -- &  Expanded_Name (Widget.all'Tag)
+      -- &  Integer_Address'Image (To_Integer (Widget.all'Address))
+      -- );
       Refresh (Widget, Context);
-      -- Put_Line ("--- " & Expanded_Name (Widget.all'Tag));
+       -- Put_Line ("--- " & Expanded_Name (Widget.all'Tag));
       return True;
    exception
       when Error : others =>
@@ -636,6 +643,78 @@ package body Gtk.Layered is
       Height : GDouble;
    begin
       Widget.Get_Allocation (Area);
+--        declare
+--           use Cairo.Region;
+--           use Gdk.Event;
+--           use Gdk.Rectangle;
+--           use Gtk.Main;
+--           Event : Gdk_Event_Record renames Get_Current_Event.all;
+--        begin
+--           if Event.Any.The_Type = Expose then
+--              declare
+--                 Exposed : constant Gdk_Rectangle := Event.Expose.Area;
+--                 Region  : Cairo_Rectangle_Int;
+--              begin
+--                 Get_Extents (Event.Expose.Region, Region);
+--                 Put_Line
+--                 (  "Draw on expose "
+--                 &  Image (Integer (Exposed.X))
+--                 &  ".."
+--                 &  Image (Integer (Exposed.X + Exposed.Width - 1))
+--                 &  " x "
+--                 &  Image (Integer (Exposed.Y))
+--                 &  ".."
+--                 &  Image (Integer (Exposed.Y + Exposed.Height - 1))
+--                 &  " count "
+--                 &  Image (Integer (Event.Expose.Count))
+--                 &  " explicit "
+--                 &  Boolean'Image (Event.Expose.Send_Event /= 0)
+--                 &  " "
+--                 &  Ada.Tags.Expanded_Name
+--                    (  Gtk_Layered_Record'Class (Widget.all)'Tag
+--                    )
+--                 &  " at "
+--                 &  Image (Widget.all'Address)
+--                 );
+--                 Put_Line
+--                 (  "Widget area    "
+--                 &  Image (Integer (Area.X))
+--                 &  ".."
+--                 &  Image (Integer (Area.X + Area.Width - 1))
+--                 &  " x "
+--                 &  Image (Integer (Area.Y))
+--                 &  ".."
+--                 &  Image (Integer (Area.Y + Area.Height - 1))
+--                 );
+--                 Put_Line
+--                 (  "Region         "
+--                 &  Image (Integer (Region.X))
+--                 &  ".."
+--                 &  Image (Integer (Region.X + Region.Width - 1))
+--                 &  " x "
+--                 &  Image (Integer (Region.Y))
+--                 &  ".."
+--                 &  Image (Integer (Region.Y + Region.Height - 1))
+--                 );
+--                 if (  Exposed.X >= Area.X + Area.Width
+--                    or else
+--                       Exposed.X + Exposed.Width <= Area.X
+--                    or else
+--                       Exposed.Y >= Area.Y + Area.Height
+--                    or else
+--                       Exposed.Y + Exposed.Height <= Area.Y
+--                    )
+--                 then
+--                    Put_Line ("   outside");
+--                 end if;
+--              end;
+--           else
+--              Put_Line
+--              (  "Refresh on "
+--              &  Gdk_Event_Type'Image (Event.Any.The_Type)
+--              );
+--           end if;
+--        end;
       Width  := GDouble (Area.Width);
       Height := GDouble (Area.Height);
       Widget.Center := (X => Width * 0.5, Y => Height * 0.5);
@@ -678,9 +757,9 @@ package body Gtk.Layered is
             if This /= Bottom and then This.Is_Caching then
                This.Store (Context);
             else
-            -- Put_Line("   +" & Expanded_Name (This'Tag));
+               -- Put_Line("   +" & Expanded_Name (This'Tag));
                This.Draw (Context, Area);
-            -- Put_Line("   -" & Expanded_Name (This'Tag));
+               -- Put_Line("   -" & Expanded_Name (This'Tag));
             end if;
             This := This.Next;
          end loop;
@@ -887,13 +966,10 @@ package body Gtk.Layered is
    File    : File_Type;
    Figures : constant String := "0123456789ABCDEF";
 
-   use System;
-   use System.Storage_Elements;
-
-   procedure Put (File : File_Type; Where : Address) is
+   function Image (Location : Address) return String is
       Buffer  : String (1..20);
       Pointer : Integer := Buffer'Last;
-      Value   : Integer_Address := To_Integer (Where);
+      Value   : Integer_Address := To_Integer (Location);
    begin
       loop
          Buffer (Pointer) := Figures (Natural (Value mod 16) + 1);
@@ -901,7 +977,12 @@ package body Gtk.Layered is
          Value := Value / 16;
          exit when Value = 0;
       end loop;
-      Put (File, Buffer (Pointer + 1..Buffer'Last));
+      return Buffer (Pointer + 1..Buffer'Last);
+   end Image;
+
+   procedure Put (File : File_Type; Where : Address) is
+   begin
+      Put (File, Image (Where));
    end Put;
 
    procedure Trace (Data : System.Address; Text : String) is

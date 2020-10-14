@@ -3,7 +3,7 @@
 --     Gtk.Abstract_Browser                        Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1775,6 +1775,17 @@ package body Gtk.Abstract_Browser is
 
    function Get_Cache_Model_Type return Gtk_Type is
       use Interfaces.C.Strings;
+
+      function Lookup (Index : Interfaces.C.size_t) return Signal_ID is
+      begin
+         return Lookup
+                (  Cache_Model_Type,
+                   GLib.Signal_Name
+                   (  String'
+                      (  Value
+                         (  Abstract_Directory_Signal_Names (Index)
+                )  )  )  );
+      end Lookup;
    begin
       if Cache_Model_Type = GType_Invalid then
          Cache_Model_Type :=
@@ -1783,48 +1794,16 @@ package body Gtk.Abstract_Browser is
                Abstract_Directory_Signal_Names,
                Abstract_Directory_Signal_Parameters
             );
-         Read_Error_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (0))
-            );
-         Rewind_Error_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (1))
-            );
-         Refreshed_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (2))
-            );
-         Progress_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (3))
-            );
-         Inserted_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (4))
-            );
-         Renamed_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (5))
-            );
-         Deleting_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (6))
-            );
-         Deleted_ID :=
-            Lookup
-            (  Cache_Model_Type,
-               Value (Abstract_Directory_Signal_Names (7))
-            );
+         Read_Error_ID   := Lookup (0);
+         Rewind_Error_ID := Lookup (1);
+         Refreshed_ID    := Lookup (2);
+         Progress_ID     := Lookup (3);
+         Inserted_ID     := Lookup (4);
+         Renamed_ID      := Lookup (5);
+         Deleting_ID     := Lookup (6);
+         Deleted_ID      := Lookup (7);
       end if;
-     return Cache_Model_Type; -- Registering the GTK+ type
+      return Cache_Model_Type; -- Registering the GTK+ type
    exception
       when Error : others =>
          Log

@@ -3,7 +3,7 @@
 --     Test_Gtk_Source_View                        Luebeck            --
 --  Test for Gtk.Source_View                       Summer, 2009       --
 --                                                                    --
---                                Last revision :  09:08 27 Jun 2015  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -73,12 +73,12 @@ begin
 
    declare
       use Interfaces.C.Strings;
-      Dirs : Chars_Ptr_Array := Get_Default.Get_Search_Path;
+      Dirs : constant Chars_Ptr_Array := Get_Default.Get_Search_Path;
    begin
       Put_Line ("Language search paths:");
       for Index in Dirs'Range loop
          declare
-            Path : String := Value (Dirs (Index));
+            Path : constant String := Value (Dirs (Index));
          begin
             Windows := (  Windows
                        or else
@@ -92,8 +92,8 @@ begin
    end;
    declare
       use Interfaces.C.Strings;
-      Language : Gtk_Source_Language :=
-                 Get_Language (Get_Default, "ada");
+      Language : constant Gtk_Source_Language :=
+                          Get_Language (Get_Default, "ada");
    begin
       Put_Line ("Language Ada info:");
       Put_Line ("         Name:" & Language.Get_Name);
@@ -128,11 +128,7 @@ begin
       end;
       Put_Line ("--------------");
    end;
-   if Windows then     --** This is bug under Windows GTK 3.8.2
-      Gtk_New (Buffer);
-   else
-      Gtk_New (Buffer, Get_Language (Get_Default, "ada"));
-   end if;
+   Gtk_New (Buffer, Get_Language (Get_Default, "ada"));
    Gtk_New (View, Buffer);
    Unref (Buffer);
    Add (Scroll, View);

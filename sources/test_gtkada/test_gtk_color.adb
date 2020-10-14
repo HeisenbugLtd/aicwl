@@ -3,7 +3,7 @@
 --  Test for Gdk.Color.IHLS                        Luebeck            --
 --                                                 Winter, 2007       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  09:44 08 Oct 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -110,42 +110,54 @@ begin
    Attach (Grid, Selection, 0, 1, 0, 6);
    
    Gtk_New (Label, "IHLS Hue:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 1, 2, 0, 1);
    Gtk_New (Label, "Saturation:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 1, 2, 1, 2);
    Gtk_New (Label, "Luminance:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 1, 2, 2, 3);
    Gtk_New (Label, "Red:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 1, 2, 3, 4);
    Gtk_New (Label, "Green:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 1, 2, 4, 5);
    Gtk_New (Label, "Blue:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 1, 2, 5, 6);
 
    Gtk_New (Hue);
-   Set_Alignment (Hue, 0.0, 0.5);
-   Attach (Grid, Hue,        2, 3, 0, 1);
+   Hue.Set_Halign (Align_Start);
+   Hue.Set_Valign (Align_Center);
+   Attach (Grid, Hue, 2, 3, 0, 1);
    Gtk_New (Saturation);
-   Set_Alignment (Saturation, 0.0, 0.5);
+   Saturation.Set_Halign (Align_Start);
+   Saturation.Set_Valign (Align_Center);
    Attach (Grid, Saturation, 2, 3, 1, 2);
    Gtk_New (Luminance);
-   Set_Alignment (Luminance, 0.0, 0.5);
+   Luminance.Set_Halign (Align_Start);
+   Luminance.Set_Valign (Align_Center);
    Attach (Grid, Luminance,  2, 3, 2, 3);
    Gtk_New (R);
-   Set_Alignment (R, 0.0, 0.5);
-   Attach (Grid, R,          2, 3, 3, 4);
+   R.Set_Halign (Align_Start);
+   R.Set_Valign (Align_Center);
+   Attach (Grid, R, 2, 3, 3, 4);
    Gtk_New (G);
-   Set_Alignment (G, 0.0, 0.5);
-   Attach (Grid, G,          2, 3, 4, 5);
+   G.Set_Halign (Align_Start);
+   G.Set_Valign (Align_Center);
+   Attach (Grid, G, 2, 3, 4, 5);
    Gtk_New (B);
-   Set_Alignment (B, 0.0, 0.5);
-   Attach (Grid, B,          2, 3, 5, 6);
+   B.Set_Halign (Align_Start);
+   B.Set_Valign (Align_Center);
+   Attach (Grid, B, 2, 3, 5, 6);
 
    Set_Col_Spacings (Grid, 5);
 

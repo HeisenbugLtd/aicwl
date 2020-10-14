@@ -3,7 +3,7 @@
 --     Gtk.Layered.Refresh_Engine                  Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  09:08 05 Mar 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

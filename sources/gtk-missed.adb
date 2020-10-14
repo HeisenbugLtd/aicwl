@@ -1757,26 +1757,21 @@ package body Gtk.Missed is
          declare
             Icon    : Gdk_Pixbuf;
             Default : constant Gtk_Icon_Theme := Get_Default;
-            Info    : Gtk_Icon_Info;
          begin
             if Default /= null then
-               Info := Default.Lookup_Icon
+               Icon := Default.Load_Icon
                        (  Name,
                           Width,
-                          Icon_Lookup_Use_Builtin
+                          Icon_Lookup_Use_Builtin,
+                          null
                        );
-               if Info /= null then
-                  Icon := Load_Icon (Info);
-                  Info.Unref;
-                  if Icon /= null then
-                     Set_Property
-                     (  Cell,
-                        Property_Object'(Build ("pixbuf")),
-                        Icon
-                     );
-                     Icon.Unref;
-                     return;
-                  end if;
+               if Icon /= null then
+                  Set_Property
+                  (  Cell,
+                     Property_Object'(Build ("pixbuf")),
+                     Icon
+                  );
+                  return;
                end if;
             end if;
          end;

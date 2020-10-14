@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  09:44 08 Oct 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -471,7 +471,8 @@ package body Gtk.Layered_Editor is
    begin
       Gtk_New (This.Label);
       This.Label.Set_Text (Image (Integer (Row)));
-      This.Label.Set_Alignment (1.0, 0.5);
+      This.Label.Set_Halign (Align_End);
+      This.Label.Set_Valign (Align_Center);
       Widget.Attach
       (  This.Label,
          0, 1,
@@ -2255,7 +2256,8 @@ package body Gtk.Layered_Editor is
             end if;
             if Name /= "Annotation text markups" then
                Gtk_New (Label, Name);
-               Set_Alignment (Label, 1.0, 0.5);
+               Label.Set_Halign (Align_End);
+               Label.Set_Valign (Align_Center);
                Label.Set_Tooltip_Text (Description (Specification));
                Attach
                (  Widget.Properties,

@@ -9,6 +9,7 @@
 ./cairo-line_cap_property.ads
 ./cairo-transformations.adb
 ./cairo-transformations.ads
+./centos-logo.jpg
 ./debian-logo.jpg
 ./digital_layer.png
 ./download.jpg
@@ -242,6 +243,7 @@
 ./test_aicwl/test_oscilloscope_stack.adb
 ./test_aicwl/test_oscilloscope_stack.gpr
 ./text_transformation_mode.png
+./ubuntu-logo.jpg
 ./waveform-annotation-text.png
 ./waveform-downscaling.png
 ./waveform-graph-paper.png

@@ -3,7 +3,7 @@
 --  Test                                           Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  09:44 08 Oct 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -264,7 +264,7 @@ procedure Test_AICWL is
       use Ada.Streams.Stream_IO;
       use Gtk.File_Chooser_Dialog;
       Dialog : Gtk_File_Chooser_Dialog;
-      Action : Gtk_File_Chooser_Action := Action_Open;
+      Action : constant Gtk_File_Chooser_Action := Action_Open;
    begin
       Editor.Get.Erase;
       Gtk_New (Dialog, "Select file to load", Window, Action);
@@ -300,7 +300,7 @@ procedure Test_AICWL is
       use Ada.Streams.Stream_IO;
       use Gtk.File_Chooser_Dialog;
       Dialog : Gtk_File_Chooser_Dialog;
-      Action : Gtk_File_Chooser_Action := Action_Save;
+      Action : constant Gtk_File_Chooser_Action := Action_Save;
    begin
       Gtk_New (Dialog, "Select file to save", Window, Action);
       Add_Button_From_Stock
@@ -688,8 +688,8 @@ procedure Test_AICWL is
       );
 
       declare
-         Center : Cairo_Tuple := (200.0, 550.0);
-         Size   : GDouble      := 150.0;
+         Center : constant Cairo_Tuple := (200.0, 550.0);
+         Size   : constant GDouble      := 150.0;
       begin
          Add_Elliptic_Background
          (  Under => Widget,
@@ -836,8 +836,8 @@ procedure Test_AICWL is
       end;
 
       declare
-         Center : Cairo_Tuple := (550.0, 550.0);
-         Size   : GDouble      := 350.0;
+         Center : constant Cairo_Tuple := (550.0, 550.0);
+         Size   : constant GDouble     := 350.0;
          Color  : Gdk_Color;
          Height : constant GDouble := Size / 5.0;
          Length : constant GDouble := 1.3 * Pi / 2.0;
@@ -1532,8 +1532,8 @@ procedure Test_AICWL is
    function Test_21 return Gtk_Widget is
       Widget  : Gtk_Layered;
       Angle   : GDouble;
-      Center  : Cairo_Tuple := (400.0, 300.0);
-      Ellipse : Ellipse_Parameters :=
+      Center  : constant Cairo_Tuple := (400.0, 300.0);
+      Ellipse : constant Ellipse_Parameters :=
                    (Center, 1.0 / 190.0, 160.0, Pi / 7.0);
    begin
       Gtk_New (Widget);
@@ -1800,8 +1800,8 @@ procedure Test_AICWL is
    function Test_35 return Gtk_Widget is
       Widget  : Gtk_Layered;
       Angle   : GDouble;
-      Center  : Cairo_Tuple := (400.0, 300.0);
-      Ellipse : Ellipse_Parameters :=
+      Center  : constant Cairo_Tuple := (400.0, 300.0);
+      Ellipse : constant Ellipse_Parameters :=
                    (Center, 1.0 / 190.0, 160.0, Pi / 7.0);
    begin
       Gtk_New (Widget);
@@ -1933,10 +1933,10 @@ procedure Test_AICWL is
 
    procedure Freeze (Toggle : access Gtk_Toggle_Button_Record'Class) is
       use Gtk.Layered.Waveform.Sweeper;
-      Sweeper : Gtk_Waveform_Sweeper :=
-                Gtk_Waveform_Sweeper_Record'Class
-                (  Wave.Get_Sweeper.all
-                ) 'Unchecked_Access;
+      Sweeper : constant Gtk_Waveform_Sweeper :=
+                         Gtk_Waveform_Sweeper_Record'Class
+                         (  Wave.Get_Sweeper.all
+                         ) 'Unchecked_Access;
    begin
       Set_Frozen (Sweeper, Toggle.Get_Active);
       Set_Text (Offset_Edit, Image (Float (Sweeper.Get_Offset)));
@@ -1956,10 +1956,10 @@ procedure Test_AICWL is
 
    procedure Set_Offset (Edit : Gtk_Editable) is
       use Gtk.Layered.Waveform.Sweeper;
-      Sweeper : Gtk_Waveform_Sweeper :=
-                Gtk_Waveform_Sweeper_Record'Class
-                (  Wave.Get_Sweeper.all
-                ) 'Unchecked_Access;
+      Sweeper : constant Gtk_Waveform_Sweeper :=
+                         Gtk_Waveform_Sweeper_Record'Class
+                         (  Wave.Get_Sweeper.all
+                         ) 'Unchecked_Access;
       Offset  : Float;
    begin
       Offset := Value (Get_Text (-Edit));
@@ -2099,7 +2099,9 @@ procedure Test_AICWL is
       Set_Row_Spacings (Table, 3);
          -- Row 1
       Gtk_New (Label, "Refresh rate");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 0, 1, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Edit);
@@ -2115,7 +2117,9 @@ procedure Test_AICWL is
       Toggle.On_Toggled (+Freeze'Access);
          -- Row 2
       Gtk_New (Label, "Width");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 1, 2, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Edit);
@@ -2132,7 +2136,9 @@ procedure Test_AICWL is
       Toggle.On_Toggled (+Set_Linear'Access);
          -- Row 3
       Gtk_New (Label, "Offset");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 2, 3, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Offset_Edit);
@@ -2149,7 +2155,9 @@ procedure Test_AICWL is
       Toggle.On_Toggled (+Set_Autoscale'Access);
          -- Row 4
       Gtk_New (Label, "Opacity");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 3, 4, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Edit);
@@ -2461,7 +2469,9 @@ procedure Test_AICWL is
       Set_Row_Spacings (Table, 3);
          -- Row 1
       Gtk_New (Label, "Refresh rate");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 0, 1, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Edit);
@@ -2477,7 +2487,9 @@ procedure Test_AICWL is
       Toggle.On_Toggled (+Freeze'Access);
          -- Row 2
       Gtk_New (Label, "Width");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 1, 2, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Edit);
@@ -2494,7 +2506,9 @@ procedure Test_AICWL is
       Toggle.On_Toggled (+Set_Linear'Access);
          -- Row 3
       Gtk_New (Label, "Offset");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 2, 3, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Offset_Edit);
@@ -2511,7 +2525,9 @@ procedure Test_AICWL is
       Toggle.On_Toggled (+Set_Autoscale'Access);
          -- Row 4
       Gtk_New (Label, "Opacity");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
+--    Set_Alignment (Label, 1.0, 0.5);
       Table.Attach (Label, 0, 1, 3, 4, XOptions => Gtk.Enums.Fill);
 
       Gtk_New (Edit);

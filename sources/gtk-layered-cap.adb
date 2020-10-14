@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  07:54 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,7 +31,7 @@ with GLib.Properties.Creation;    use GLib.Properties.Creation;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
 
 with Ada.Unchecked_Deallocation;
-
+with ada.Text_IO;
 package body Gtk.Layered.Cap is
    type Cap_Ptr is access all Cap_Layer;
 
@@ -51,16 +51,16 @@ package body Gtk.Layered.Cap is
    procedure Add_Cap
              (  Under  : not null access Layer_Location'Class;
                 Center : Cairo_Tuple := (0.0, 0.0);
-                Radius : GDouble      := 1.0;
+                Radius : GDouble     := 1.0;
                 From   : Gdk_Color   := RGB (1.0, 1.0, 1.0);
                 To     : Gdk_Color   := RGB (0.5, 0.5, 0.5);
                 Border_Width         : GDouble     := 0.0;
                 Border_Depth         : GDouble     := 1.0;
-                Border_Color  : Border_Color_Type := Default_Color;
-                Border_Shadow : Gtk_Shadow_Type   := Shadow_Out;
-                Deepened      : Boolean           := False;
-                Scaled        : Boolean           := False;
-                Widened       : Boolean           := False
+                Border_Color  : Border_Color_Type  := Default_Color;
+                Border_Shadow : Gtk_Shadow_Type    := Shadow_Out;
+                Deepened      : Boolean            := False;
+                Scaled        : Boolean            := False;
+                Widened       : Boolean            := False
              )  is
       Ptr   : Cap_Ptr := new Cap_Layer;
       Layer : Cap_Layer renames Ptr.all;
@@ -188,15 +188,16 @@ package body Gtk.Layered.Cap is
                 Area    : Gdk_Rectangle
              )  is
       Box     : constant Cairo_Box := Get_Path_Extents (Context);
-      Radius  : constant GDouble := 0.5 *(Box.X2 - Box.X1);
+      Radius  : constant GDouble   := 0.5 * (Box.X2 - Box.X1);
       Matrix  : aliased Cairo_Matrix;
    begin
+      Get_Matrix (Context, Matrix'Access);
       Matrix.Xx := Radius;
-      Matrix.Xy := 0.0;
-      Matrix.X0 := 0.5 * (Box.X1 + Box.X2);
-      Matrix.Yx := 0.0;
+--      Matrix.Xy := 0.0;
+      Matrix.X0 := Matrix.X0 + 0.5 * (Box.X1 + Box.X2);
+--      Matrix.Yx := 0.0;
       Matrix.Yy := Radius;
-      Matrix.Y0 := 0.5 * (Box.Y1 + Box.Y2);
+      Matrix.Y0 := Matrix.Y0 + 0.5 * (Box.Y1 + Box.Y2);
       Set_Matrix (Context, Matrix'Access);
       Set_Source (Context, Layer.Pattern);
       Mask (Context, Layer.Mask);

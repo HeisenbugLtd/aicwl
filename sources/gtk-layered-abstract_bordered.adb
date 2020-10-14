@@ -3,7 +3,7 @@
 --     Gtk.Layered.Abstract_Bordered               Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  07:54 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -249,10 +249,14 @@ package body Gtk.Layered.Abstract_Bordered is
       else
          Border_Width := Layer.Border_Width;
       end if;
-      if Layer.Deepened then
-         Shadow_Depth := Layer.Border_Depth * Layer.Widget.Size;
+      if Border_Width > 0.0 then
+         if Layer.Deepened then
+            Shadow_Depth := Layer.Border_Depth * Layer.Widget.Size;
+         else
+            Shadow_Depth := Layer.Border_Depth;
+         end if;
       else
-         Shadow_Depth := Layer.Border_Depth;
+         Shadow_Depth := 0.0;
       end if;
       declare
          State : Context_State := Save (Context);

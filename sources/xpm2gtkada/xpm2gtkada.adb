@@ -3,7 +3,7 @@
 --     XPM to GtkAda converter                     Luebeck            --
 --                                                 Summer, 2006       --
 --  Implementation                                                    --
---                                Last revision :  10:06 22 Nov 2014  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -279,7 +279,7 @@ procedure XPM2GtkAda is
       Create (Output, Out_File, Header.Name & "-image.adb");
       Put_Line (Output, "function " & Header.Name & ".Image");
       Put_Line (Output, "   return Gtk_Image is");
-      Put_Line (Output, "   Pic    : Gdk_Pixbuf := Get_Pixbuf;");
+      Put_Line (Output, "   Pic : constant Gdk_Pixbuf := Get_Pixbuf;");
       Put_Line (Output, "   Result : Gtk_Image;");
       Put_Line (Output, "begin");
       Put_Line (Output, "   Gtk_New (Result, Pic);");

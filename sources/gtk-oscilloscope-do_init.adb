@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        Do_Init                                  Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  07:54 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -36,6 +36,7 @@ separate (Gtk.Oscilloscope)
                 Buffer_Size    : Positive
              )  is
    use Sweeper_Handlers;
+   use Interfaces.C.Strings;
 begin
    G_New (Widget, Get_Type);
    Gtk.Grid.Initialize (Widget);
@@ -47,8 +48,9 @@ begin
             Signal_IDs (Index) :=
                Lookup
                (  Widget_Type,
-                  Interfaces.C.Strings.Value (Signal_Names (Index))
-               );
+                  GLib.Signal_Name
+                  (  String'(Value (Signal_Names (Index)))
+               )  );
             if Signal_IDs (Index) = Invalid_Signal_Id then
                raise Program_Error
                   with

@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_                     Luebeck            --
 --         Credentials_Dialog                      Winter, 2008       --
 --  Implementation                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  09:44 08 Oct 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -91,7 +91,8 @@ package body Gtk.Persistent_Storage_Credentials_Dialog is
          Frame.Set_Border_Width (Style_Get (Dialog, "row-spacing"));
          Gtk_New (Dialog.Error_Label, Text);
          Frame.Add (Dialog.Error_Label);
-         Dialog.Error_Label.Set_Alignment (0.0, 0.5);
+         Dialog.Error_Label.Set_Halign (Align_Center);
+         Dialog.Error_Label.Set_Valign (Align_Center);
          Dialog.Error_Label.Set_Justify (Justify_Left);
          Set_Property
          (  Dialog.Error_Label,
@@ -405,15 +406,18 @@ package body Gtk.Persistent_Storage_Credentials_Dialog is
       Gtk_New (Dialog.Name_Label, "");
       Dialog.Grid.Attach (Dialog.Name_Label, 0, 1, 0, 1, Fill, 0);
       Dialog.Name_Label.Set_Justify (Justify_Right);
-      Dialog.Name_Label.Set_Alignment (1.0, 0.5);
+      Dialog.Name_Label.Set_Halign (Align_End);
+      Dialog.Name_Label.Set_Valign (Align_Center);
       Gtk_New (Dialog.User_Label, "");
       Dialog.Grid.Attach (Dialog.User_Label, 0, 1, 1, 2, Fill, 0);
       Dialog.User_Label.Set_Justify (Justify_Right);
-      Dialog.User_Label.Set_Alignment (1.0, 0.5);
+      Dialog.User_Label.Set_Halign (Align_End);
+      Dialog.User_Label.Set_Valign (Align_Center);
       Gtk_New (Dialog.Password_Label, "");
       Dialog.Grid.Attach (Dialog.Password_Label, 0, 1, 2, 3, Fill, 0);
       Dialog.Password_Label.Set_Justify (Justify_Right);
-      Dialog.Password_Label.Set_Alignment (1.0, 0.5);
+      Dialog.Password_Label.Set_Halign (Align_End);
+      Dialog.Password_Label.Set_Valign (Align_Center);
 
       Gtk_New (Dialog.Name_Entry);
       Set_Sensitive (Dialog.Name_Entry, False);

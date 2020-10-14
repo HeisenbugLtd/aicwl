@@ -1,3 +1,4 @@
+./centos-logo.jpg
 ./components-gnade-gtk.gpr
 ./components-gtk.gpr
 ./components-odbc-gtk.gpr
@@ -165,6 +166,7 @@
 ./test_gtkada/test_gtk_tasking.adb
 ./test_gtkada/test_gtk_tracing.adb
 ./trace_dropdown_menu.gif
+./ubuntu-logo.jpg
 ./xpm2gtkada/readme_gtkada.txt
 ./xpm2gtkada/xpm2gtkada.adb
 ./xpm2gtkada/xpm2gtkada.gpr

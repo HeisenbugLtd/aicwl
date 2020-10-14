@@ -3,7 +3,7 @@
 --     Test_Gtk_Recent_Manager                     Luebeck            --
 --  Test for Gtk.Recent_Manager                    Winter, 2008       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -50,7 +50,6 @@ with Gtk.Tree_Model;            use Gtk.Tree_Model;
 with Gtk.Tree_Selection;        use Gtk.Tree_Selection;
 with Gtk.Tree_View;             use Gtk.Tree_View;
 with Gtk.Tree_View_Column;      use Gtk.Tree_View_Column;
-with Gtk.List_Store;            use Gtk.List_Store;
 with GtkAda.Types;              use GtkAda.Types;
 
 with Ada.Unchecked_Conversion;
@@ -153,7 +152,8 @@ begin
 -- Creating a list store of recent items
 --
    declare
-      Recent_List : Gtk_Recent_Info_Array := Get_Items (Get_Default);
+      Recent_List : constant Gtk_Recent_Info_Array :=
+                             Get_Items (Get_Default);
    begin
       Gtk_New
       (  List_Store,
@@ -172,10 +172,10 @@ begin
       )  );
       for Index in Recent_List'Range loop
          declare
-            Info  : Gtk_Recent_Info := Recent_List (Index);
+            Info  : constant Gtk_Recent_Info := Recent_List (Index);
             Row   : Gtk_Tree_Iter;
-            Stamp : Time       := Get_Added (Info);
-            Icon  : Gdk_Pixbuf := Get_Icon (Info, 16);
+            Stamp : constant Time       := Get_Added (Info);
+            Icon  : constant Gdk_Pixbuf := Get_Icon (Info, 16);
          begin
             Insert (List_Store, Row, GInt'Last);
             Set (List_Store, Row, 0, Icon);

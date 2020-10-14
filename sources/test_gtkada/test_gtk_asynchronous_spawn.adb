@@ -3,7 +3,7 @@
 --     Test_Gtk_Asynchronous_Spawn                 Luebeck            --
 --  Test for Gtk.Spawn.Asynchronous                Spring, 2009       --
 --                                                                    --
---                                Last revision :  15:24 01 Apr 2015  --
+--                                Last revision :  09:44 08 Oct 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,7 +31,6 @@ with GLib.Spawn.Asynchronous;    use GLib.Spawn.Asynchronous;
 with GLib.Spawn.Text_Bufferred;  use GLib.Spawn.Text_Bufferred;
 with GtkAda.Handlers;            use GtkAda.Handlers;
 with Gtk.Button;                 use Gtk.Button;
-with Gtk.Enums;                  use Gtk.Enums;
 with Gtk.Enums;                  use Gtk.Enums;
 with Gtk.GEntry;                 use Gtk.GEntry;
 with Gtk.Label;                  use Gtk.Label;
@@ -162,7 +161,8 @@ begin
       &  "Argument 2," & Character'Val (10)
       &  "...:"
    )  );
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 0, 1, 0, 1, XOptions => Fill);
    Gtk_New (Scroll);
    Gtk_New (Command);
@@ -172,7 +172,8 @@ begin
    Attach (Grid, Button, 2, 3, 0, 1, XOptions => Shrink);
 
    Gtk_New (Label, "Input:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 0, 1, 1, 2, XOptions => Fill);
    Gtk_New (Scroll);
    Gtk_New (Input);
@@ -180,7 +181,8 @@ begin
    Attach (Grid, Scroll, 1, 3, 1, 2);
 
    Gtk_New (Label, "Output:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 0, 1, 2, 3, XOptions => Fill);
    Gtk_New (Scroll);
    Gtk_New (Output);
@@ -188,7 +190,8 @@ begin
    Attach (Grid, Scroll, 1, 3, 2, 3);
 
    Gtk_New (Label, "Error:");
-   Set_Alignment (Label, 1.0, 0.5);
+   Label.Set_Halign (Align_End);
+   Label.Set_Valign (Align_Center);
    Attach (Grid, Label, 0, 1, 3, 4, XOptions => Fill);
    Gtk_New (Scroll);
    Gtk_New (Error);

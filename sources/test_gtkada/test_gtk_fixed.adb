@@ -3,7 +3,7 @@
 --  Test for renderer                              Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -67,8 +67,8 @@ procedure Test_Gtk_Fixed is
              (  Cell  : access Gtk_Cell_Renderer_Fixed_Record'Class;
                 Store : Gtk_List_Store
              )  is
-      Row   : Gtk_Tree_Iter :=
-                 Get_Iter_From_String (Store, Get_Path (Cell));
+      Row   : constant Gtk_Tree_Iter :=
+                       Get_Iter_From_String (Store, Get_Path (Cell));
       Value : GValue;
    begin
       if Row /= Null_Iter then

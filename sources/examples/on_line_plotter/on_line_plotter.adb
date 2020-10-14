@@ -92,7 +92,8 @@ procedure On_Line_Plotter is
                Max  : GDouble := GDouble'Last
             )  return GDouble is
    begin
-      return Result : GDouble := GDouble'Value (Edit.Get_Text) do
+      return Result : constant GDouble :=
+                               GDouble'Value (Edit.Get_Text) do
          if Result not in Min..Max then
             raise Data_Error with Name & " out of range";
          end if;
@@ -111,7 +112,8 @@ procedure On_Line_Plotter is
                Max  : Integer := Integer'Last
             )  return Integer is
    begin
-      return Result : Integer := Integer'Value (Edit.Get_Text) do
+      return Result : constant Integer :=
+                               Integer'Value (Edit.Get_Text) do
          if Result not in Min..Max then
             raise Data_Error with Name & " out of range";
          end if;
@@ -272,7 +274,9 @@ begin
                Annotation : Gtk_Label;
             begin
                Gtk_New (Annotation, Label);
-               Annotation.Set_Alignment (1.0, 0.5);
+               Annotation.Set_Halign (Align_End);
+               Annotation.Set_Valign (Align_Center);
+--             Annotation.Set_Alignment (1.0, 0.5);
                Parameters.Attach
                (  Annotation,
                   0, 1, Row, Row + 1,
@@ -309,7 +313,9 @@ begin
                Label : Gtk_Label;
             begin
                Gtk_New (Label, "Autoscale Y");
-               Label.Set_Alignment (1.0, 0.5);
+               Label.Set_Halign (Align_End);
+               Label.Set_Valign (Align_Center);
+--             Label.Set_Alignment (1.0, 0.5);
                Parameters.Attach
                (  Label,
                   0, 1, 4, 5,
@@ -330,7 +336,9 @@ begin
                Label : Gtk_Label;
             begin
                Gtk_New (Label, "Use Unicode");
-               Label.Set_Alignment (1.0, 0.5);
+               Label.Set_Halign (Align_End);
+               Label.Set_Valign (Align_Center);
+--             Label.Set_Alignment (1.0, 0.5);
                Parameters.Attach
                (  Label,
                   0, 1, 5, 6,

@@ -3,7 +3,7 @@
 --      Test_Oscilloscope_Stacked                  Luebeck            --
 --  Test oscilloscopes stacked up                  Summer, 2011       --
 --  into a rack                                                       --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  09:08 05 Mar 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -35,8 +35,10 @@ with GLib;                        use GLib;
 with Gtk.Box;                     use Gtk.Box;
 with Gtk.Drawing_Area;            use Gtk.Drawing_Area;
 with Gtk.Enums;                   use Gtk.Enums;
+with Gtk.Label;                   use Gtk.Label;
 with Gtk.Layered.Refresh_Engine;  use Gtk.Layered.Refresh_Engine;
 with Gtk.Missed;                  use Gtk.Missed;
+with Gtk.Notebook;                use Gtk.Notebook;
 with Gtk.Oscilloscope;            use Gtk.Oscilloscope;
 with Gtk.Table;                   use Gtk.Table;
 with Gtk.Widget;                  use Gtk.Widget;
@@ -51,12 +53,12 @@ procedure Test_Oscilloscope_Stack is
    Stack_Height : constant := 5;  -- Number of oscilloscopes
    Axis_Height  : constant := 20; -- Lower horizontal axis height
    Axis_Width   : constant := 35; -- Left vertical axis width
-   Period       : constant Duration := 0.02; -- Refresh period
-   Rate         : constant Duration := 0.01; -- Generator rate
-   First        : Gdk_Color := RGB (1.00, 0.00, 0.00);
-   Background   : Gdk_Color := RGB (0.00, 0.00, 0.00);
-   Major_Line   : Gdk_Color := RGB (0.22, 0.22, 0.22);
-   Minor_Line   : Gdk_Color := RGB (0.12, 0.12, 0.12);
+   Period       : constant Duration  := 0.02; -- Refresh period
+   Rate         : constant Duration  := 0.01; -- Generator rate
+   First        : constant Gdk_Color := RGB (1.00, 0.00, 0.00);
+   Background   : constant Gdk_Color := RGB (0.00, 0.00, 0.00);
+   Major_Line   : constant Gdk_Color := RGB (0.22, 0.22, 0.22);
+   Minor_Line   : constant Gdk_Color := RGB (0.12, 0.12, 0.12);
    Window       : Gtk_Window;
    Engine       : aliased Layered_Refresh_Engine;
 
@@ -74,13 +76,29 @@ begin
    Engine.Set_Period (Period);
    declare
       Dice   : Ada.Numerics.Float_Random.Generator;
+      Pages  : Gtk_Notebook;
       Grid   : Gtk_Table;
       Scaler : Gtk_Oscilloscope;
    begin
       Gtk_New (Grid, Stack_Height + 1, 2, False);
       Grid.Set_Col_Spacings (3);
       Grid.Set_Row_Spacings (3);
-      Window.Add (Grid);
+      if True then
+         Gtk_New (Pages);
+         Window.Add (Pages);
+         declare
+            Label : Gtk_Label;
+            Box   : Gtk_HBox;
+         begin
+            Gtk_New (Box, Orientation_Horizontal, 3);
+            Label := Gtk_Label_New ("Test");
+            Box.Pack_Start (Label);
+            Box.Show_All;
+            Pages.Append_Page (Grid, Box);
+         end;
+      else
+         Window.Add (Grid);
+      end if;
       --
       -- Create the lowest  oscilloscope  used to sync  all others,  but
       -- showing no signal by itself.  Left on the oscilloscope a box is

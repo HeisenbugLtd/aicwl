@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  10:27 26 Mar 2016  --
+--                                Last revision :  09:08 05 Mar 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -40,11 +40,11 @@ with Gtk.Missed;              use Gtk.Missed;
 with Gtk.Widget;              use Gtk.Widget;
 with Interfaces.C;            use Interfaces.C;
 with Pango.Cairo.Fonts;       use Pango.Cairo.Fonts;
+with System;                  use System;
 
 with Ada.Finalization;
 with Ada.Unchecked_Deallocation;
 with Gtk.Handlers;
-with System;
 
 package Gtk.Layered is
 --
@@ -823,6 +823,7 @@ package Gtk.Layered is
                Constraint : Param_Spec
             )  return Natural;
 --
+--
 -- Get_Position -- Get the layer's position
 --
 --    Layer - The layer
@@ -1078,6 +1079,8 @@ package Gtk.Layered is
                 (  Layer : not null access Abstract_Layer;
                    Under : not null access Layer_Location'Class
                 );
+
+   function Image (Location : Address) return String;
 private
    Min_Step : constant := 1.0E-9;
 
@@ -1106,14 +1109,14 @@ private
    type Gtk_Layered_Record is
       new Gtk_Drawing_Area_Record and Layer_Location with
    record
-      Bottom       : Abstract_Layer_Ptr;
-      Depth        : Natural     := 0;
-      Aspect_Ratio : GDouble     := 1.0;
-      Center       : Cairo_Tuple := (0.0, 0.0);
-      Size         : GDouble     := 0.0;
-      Updated      : Boolean     := True;
-      Drawing      : Boolean     := False;
-      Drawing_Time : Time        := Clock;
+      Bottom        : Abstract_Layer_Ptr;
+      Depth         : Natural     := 0;
+      Aspect_Ratio  : GDouble     := 1.0;
+      Center        : Cairo_Tuple := (0.0, 0.0);
+      Size          : GDouble     := 0.0;
+      Updated       : Boolean     := True;
+      Drawing       : Boolean     := False;
+      Drawing_Time  : Time        := Clock;
    end record;
 --
 -- Destroy -- Handler of "destroy"

@@ -3,7 +3,7 @@
 --     Test_Gtk_Directory_Browser                  Luebeck            --
 --  Test for                                       Autumn, 2007       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -70,7 +70,6 @@ with Gtk.Tree_Model;            use Gtk.Tree_Model;
 with Ada.Unchecked_Conversion;
 with GNAT.Traceback.Symbolic;
 with Gtk.Button;
-with Gtk.Main.Router;
 
 with Gtk.Wildcard_Directory_Browser;
 use  Gtk.Wildcard_Directory_Browser;
@@ -252,7 +251,7 @@ procedure Test_Gtk_Directory_Browser is
       View    : Gtk_Tree_View;
       List    : Gtk_Tree_Store;
       Row     : Gtk_Tree_Iter;
-      Monitor : GVolume_Monitor  := Get;
+      Monitor : constant GVolume_Monitor  := Get;
       Drives  : Drive_List.Glist := Get_Connected_Drives (Monitor);
    begin
       Gtk_New (Frame);
@@ -276,10 +275,10 @@ procedure Test_Gtk_Directory_Browser is
             Set_Value (List, Row, 0, Value);
             Gtk.Missed.Set (List, Row, 1, Get_Name (Drive));
             declare
-               Parent  : Gtk_Tree_Iter := Row;
+               Parent  : constant Gtk_Tree_Iter := Row;
                Volume  : GVolume;
                Volumes : Volume_List.Glist := Get_Volumes (Drive);
-               Item    : Volume_List.Glist :=
+               Item    : constant Volume_List.Glist :=
                          Volume_List.First (Volumes);
             begin
                while Item /= Volume_List.Null_List loop
@@ -340,7 +339,7 @@ procedure Test_Gtk_Directory_Browser is
       View    : Gtk_Tree_View;
       List    : Gtk_Tree_Store;
       Row     : Gtk_Tree_Iter;
-      Monitor : GVolume_Monitor  := Get;
+      Monitor : constant GVolume_Monitor := Get;
       Volumes : Volume_List.Glist := Get_Volumes (Monitor);
    begin
       Gtk_New (Frame);
@@ -436,7 +435,7 @@ procedure Test_Gtk_Directory_Browser is
       View    : Gtk_Tree_View;
       List    : Gtk_Tree_Store;
       Row     : Gtk_Tree_Iter;
-      Monitor : GVolume_Monitor  := Get;
+      Monitor : constant GVolume_Monitor := Get;
       Mounts  : Mount_List.Glist := Get_Mounts (Monitor);
    begin
       Gtk_New (Frame);
@@ -470,7 +469,7 @@ procedure Test_Gtk_Directory_Browser is
             Gtk.Missed.Set (List, Row, 1, Get_Name (Mount));
 
             declare
-               Drive : GDrive := Get_Drive (Mount);
+               Drive : constant GDrive := Get_Drive (Mount);
             begin
                if Drive = null then
                   Gtk.Missed.Set (List, Row, 3, "none");
@@ -500,7 +499,7 @@ procedure Test_Gtk_Directory_Browser is
             Gtk.Missed.Set (List, Row, 7, Get_Root (Mount));
 
             declare
-               Volume : GVolume := Get_Volume (Mount);
+               Volume : constant GVolume := Get_Volume (Mount);
             begin
                if Volume = null then
                   Gtk.Missed.Set (List, Row, 9, "none");

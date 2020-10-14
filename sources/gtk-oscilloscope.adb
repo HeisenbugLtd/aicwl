@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  19:51 11 Apr 2016  --
+--                                Last revision :  09:08 05 Mar 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -5166,6 +5166,7 @@ package body Gtk.Oscilloscope is
                Gtk_New_VBox (Data.Box);
                Data.Box.Set_Spacing (0);
                Gtk_New (Data.Upper_Fill);
+               Data.Upper_Fill.Set_App_Paintable (True);
                Data.Box.Pack_Start (Data.Upper_Fill, False, False);
                Data.Upper_Fill.Set_Size_Request
                (  Width  => 1,
@@ -5180,6 +5181,7 @@ package body Gtk.Oscilloscope is
                Data.Scale.Set_Vexpand (True);
                Data.Scale.Set_Draw_Value (False);
                Gtk_New (Data.Lower_Fill);
+               Data.Lower_Fill.Set_App_Paintable (True);
                Data.Box.Pack_Start (Data.Lower_Fill, False, False);
                Data.Lower_Fill.Set_Size_Request
                (  Width  => 1,

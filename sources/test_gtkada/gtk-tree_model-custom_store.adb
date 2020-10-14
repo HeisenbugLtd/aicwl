@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Custom_Store                 Luebeck            --
 --  Implementation                                 Winter, 2007       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -130,8 +130,8 @@ package body Gtk.Tree_Model.Custom_Store is
                Iter  : Gtk_Tree_Iter
             )  return Gtk_Tree_Path is
       This : Transaction_Record_Ptr := Model.First;
-      That : Transaction_Record_Ptr := To_Ptr (Iter);
-      No   : GInt                   := 0;
+      That : constant Transaction_Record_Ptr := To_Ptr (Iter);
+      No   : GInt := 0;
    begin
       if This = null or else That = null then
          return Null_Gtk_Tree_Path;
@@ -155,7 +155,7 @@ package body Gtk.Tree_Model.Custom_Store is
                 Column : Gint;
                 Value  : out GValue
              )  is
-      Node    : Transaction_Record_Ptr := To_Ptr (Iter);
+      Node    : constant Transaction_Record_Ptr := To_Ptr (Iter);
       Year    : Year_Number;
       Month   : Month_Number;
       Day     : Day_Number;
@@ -251,7 +251,7 @@ package body Gtk.Tree_Model.Custom_Store is
                 Amount  : Currency;
                 Date    : Time
              )  is
-      Node : Transaction_Record_Ptr :=
+      Node : constant Transaction_Record_Ptr :=
                 new Transaction_Record'
                     (  Account  => Account,
                        User     => To_Unbounded_String (User),
@@ -282,7 +282,7 @@ package body Gtk.Tree_Model.Custom_Store is
              (  Model : not null access Gtk_Transaction_Store_Record;
                 Iter  : in out Gtk_Tree_Iter
              )  is
-      Node : Transaction_Record_Ptr := To_Ptr (Iter);
+      Node : constant Transaction_Record_Ptr := To_Ptr (Iter);
    begin
       if Node = null or else Node.Next = Model.First then
          Iter := Null_Iter;
@@ -339,7 +339,7 @@ package body Gtk.Tree_Model.Custom_Store is
              (  Model : not null access Gtk_Transaction_Store_Record;
                 Iter  : in out Gtk_Tree_Iter
              )  is
-      Node : Transaction_Record_Ptr := To_Ptr (Iter);
+      Node : constant Transaction_Record_Ptr := To_Ptr (Iter);
    begin
       if Node = null or else Node = Model.First then
          Iter := Null_Iter;

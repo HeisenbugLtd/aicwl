@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  10:25 19 Feb 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -91,17 +91,18 @@ package body Gtk.Main.Router is
    type Gateway_State is (Idle, Failed, Ready, Busy, Quitted);
    subtype Completed is Gateway_State range Idle..Ready;
 
-   GPS_Prompt   : constant String := "GPS>> ";
-   GPS_Port     : Natural         := 50_000;
-   Connected    : Boolean         := Standard.False;
-   Recursion    : Boolean         := Standard.False;
-   Window_X     : GInt            := 0;
-   Window_Y     : GInt            := 0;
-   Parent       : Gtk_Window      := null;
-   Main         : Task_ID         := Null_Task_ID;
-   Trace_Dialog : Gtk_Dialog;
-   Channel      : Socket_Type;
-   Command      : Unbounded_String;
+   Max_Recursion : constant        := 100;
+   GPS_Prompt    : constant String := "GPS>> ";
+   GPS_Port      : Natural         := 50_000;
+   Connected     : Boolean         := Standard.False;
+   Recursion     : Natural         := 0;
+   Window_X      : GInt            := 0;
+   Window_Y      : GInt            := 0;
+   Parent        : Gtk_Window      := null;
+   Main          : Task_ID         := Null_Task_ID;
+   Trace_Dialog  : Gtk_Dialog;
+   Channel       : Socket_Type;
+   Command       : Unbounded_String;
 
    function Where (Text : String) return String is
    begin
@@ -153,15 +154,20 @@ package body Gtk.Main.Router is
          Gateway.Initiate_Service (Data);
          exit when Data = null;
          begin
-            if not Recursion then
-               Recursion := Standard.True;
-               Service (Data.all);
-               Recursion := Standard.False;
+            if Recursion < Max_Recursion then
+               Recursion := Recursion + 1;
+               begin
+                  Service (Data.all);
+                  Recursion := Recursion - 1;
+               exception
+                  when others =>
+                     Recursion := Recursion - 1;
+                     raise;
+               end;
             end if;
             Gateway.Complete_Service;
          exception
             when Error : others =>
-               Recursion := Standard.False;
                Gateway.Abort_Service (Error);
          end;
       end loop;
@@ -297,6 +303,21 @@ package body Gtk.Main.Router is
                 Message_Data_Ptr
              );
 
+      package Sources is new Generic_Sources (Message_Data_Ptr);
+
+      function Service (Message : Message_Data_Ptr)
+         return Boolean is
+         Ptr : Message_Data_Ptr := Message;
+      begin
+         Message.Handler (Message.Data);
+         Free (Ptr);
+         return Standard.False;
+      exception
+         when others =>
+            Free (Ptr);
+            return Standard.False;
+      end Service;
+
       procedure Send
                 (  Handler : Handler_Procedure;
                    Data    : User_Data;
@@ -307,17 +328,11 @@ package body Gtk.Main.Router is
          Message.Handler := Handler;
          Message.Data    := Data;
          if Main = Current_Task then
-            if not Recursion then
-               begin
-                  Recursion := Standard.True;
-                  Service (Message.all);
-                  Recursion := Standard.False;
-               exception
-                  when others =>
-                     Recursion := Standard.False;
-                     raise;
-               end;
-            end if;
+            declare
+               ID : G_Source_ID;
+            begin
+               ID := Sources.Idle_Add (Service'Access, Message);
+            end;
          elsif Main = Null_Task_ID then
             raise Program_Error;
          else
@@ -535,14 +550,14 @@ package body Gtk.Main.Router is
          if Gateway.Get_State = Quitted then
             raise Quit_Error;
          end if;
-         if not Recursion then
+         if Recursion < Max_Recursion then
+            Recursion := Recursion + 1;
             begin
-               Recursion := Standard.True;
                Service (Data);
-               Recursion := Standard.False;
+               Recursion := Recursion - 1;
             exception
                when others =>
-                  Recursion := Standard.False;
+                  Recursion := Recursion - 1;
                   raise;
             end;
          end if;

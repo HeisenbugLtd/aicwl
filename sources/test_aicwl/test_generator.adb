@@ -3,7 +3,7 @@
 --  Test waveform generator                        Luebeck            --
 --                                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  09:44 08 Oct 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -140,7 +140,8 @@ package body Test_Generator is
       Wave.Set_Col_Spacings (3);
          -- Row 1
       Gtk_New (Label, "Shape");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
       Attach
       (  Wave,
          Label,
@@ -165,7 +166,8 @@ package body Test_Generator is
       );
          -- Row 2
       Gtk_New (Label, "Cycle");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
       Attach
       (  Wave,
          Label,
@@ -200,7 +202,8 @@ package body Test_Generator is
       );
          -- Row 3
       Gtk_New (Label, "Rate");
-      Set_Alignment (Label, 1.0, 0.5);
+      Label.Set_Halign (Align_End);
+      Label.Set_Valign (Align_Center);
       Attach
       (  Wave,
          Label,

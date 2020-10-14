@@ -3,7 +3,7 @@
 --  Test for Gtk.Main.Router                       Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  09:54 04 Feb 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

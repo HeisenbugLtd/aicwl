@@ -3,7 +3,7 @@
 --     Test_Gtk_Content_Type                       Luebeck            --
 --  Test for renderer                              Summer, 2010       --
 --                                                                    --
---                                Last revision :  19:09 09 Oct 2015  --
+--                                Last revision :  07:53 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -90,9 +90,9 @@ begin
          -- Filling the column with random numbers
          loop
             declare
-               Name    : UTF8_String := Dir_Read_Name (Dir);
-               Content : UTF8_String := Guess (Name);
-               Icon    : GObject     := Get_Icon (Content);
+               Name    : constant UTF8_String := Dir_Read_Name (Dir);
+               Content : constant UTF8_String := Guess (Name);
+               Icon    : constant GObject     := Get_Icon (Content);
                Value   : GValue;
             begin
                Append (Files, Row);

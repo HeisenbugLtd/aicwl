@@ -3,7 +3,7 @@
 --  Separate body                                  Luebeck            --
 --                                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  07:54 21 Jul 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -124,7 +124,7 @@ begin
       Store (Buffer, Text);
       Rewind (Buffer);
       declare
-         Value : String := Restore (Buffer'Access);
+         Value : constant String := Restore (Buffer'Access);
       begin
          if Text /= Value then
             Gtk.Main.Router.Trace
