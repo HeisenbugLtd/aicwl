@@ -31,7 +31,6 @@ with Gtk.Missed;
 
 generic
    type Enum_Type is (<>);
-
 package Gtk.Generic_Enum_Combo_Box is
 
    type Gtk_Enum_Combo_Box_Record is

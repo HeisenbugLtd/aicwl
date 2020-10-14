@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  09:44 08 Oct 2016  --
+--                                Last revision :  23:22 29 Sep 2017  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -134,13 +134,15 @@ package body Gtk.Layered_Editor is
                 )  is
          use Enum_Property;
          use Boxes;
-         Box   : constant Gtk_Enum := new Gtk_Enum_Record;
-         State : Enum_Property.Enumeration;
-         Error : Boolean := False;
+         Box    : constant Gtk_Enum := new Gtk_Enum_Record;
+         Combo  : Boxes.Gtk_Enum_Combo_Box_Record'Class renames
+                  Boxes.Gtk_Enum_Combo_Box_Record'Class (Box.all);
+         State  : Enum_Property.Enumeration;
+         Error  : Boolean := False;
       begin
          Box.No     := No;
          Box.Widget := Widget;
-         Initialize (Box, Capitalize_First, True);
+         Initialize (Combo'Access, Capitalize_First, True);
          Box.Set_Tooltip_Text (Tip);
          Attach
          (  Widget.Properties,
@@ -166,7 +168,7 @@ package body Gtk.Layered_Editor is
             end;
          end loop;
          if not Error then
-            Set_Active_Value (Box, State);
+            Combo.Set_Active_Value (State);
          end if;
          Enum_Handlers.Connect
          (  Box.all'Unchecked_Access,
@@ -188,7 +190,12 @@ package body Gtk.Layered_Editor is
          use Enum_Property;
          Value : GValue;
       begin
-         Set_Enum (Value, Combo.Get_Active_Value);
+         Set_Enum
+         (  Value,
+            Boxes.Gtk_Enum_Combo_Box_Record'Class
+            (  Combo.all
+            ) .Get_Active_Value
+         );
          for Layer_No in Combo.Widget.Selected_Layers'Range loop
             Combo.Widget.Selected_Layers (Layer_No).Set_Property_Value
             (  Combo.Widget.Selected_Properties (Layer_No, Combo.No),

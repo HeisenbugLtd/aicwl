@@ -119,7 +119,7 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;&nbsp;&nbsp;&nbsp; </td>
 		<td style="border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" colspan="2">precompiled and packaged for dpkg</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium">&nbsp;</td>
-		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
+		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_armhf.htm"><img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="center"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_x86_64.htm"><img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="center"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_i686.htm"><img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
 	</tr>
@@ -191,8 +191,8 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2">is a part of the developing package (has <i>dev</i> suffix)</td>
 		<td>&nbsp;</td>
-		<td align="right">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_x86_64.htm">	<img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
+		<td align="right"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_armhf.htm"><img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_x86_64.htm"><img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
 		<td align="center"><a href="http://www.dmitry-kazakov.de/distributions/ubuntu/gtkada_contributions_ubuntu_i686.htm"><img src="in.jpg" align=middle alt="[Download page]" width="29" height="29"></a></td>
 	</tr>
 	</table>
@@ -12759,7 +12759,7 @@ process's exist status. The default implementation does nothing.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Data</b>&nbsp;&nbsp;&nbsp; 
 : UTF8_String<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
-<p>This procedure is called to accept a new potion of the process's output into 
+<p>This procedure is called to accept a new portion of the process's output into 
 the standard error. Note that this procedure is called from an independent task. 
 Use <a href="#Gtk.Main.Router.Request_Data">Gtk.Main.Router</a> facilities if 
 you want to call GTK+ operations from Error. The default implementation does 
@@ -12801,7 +12801,7 @@ return</font> GInt;</tt></p></blockquote>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Count&nbsp;&nbsp; 
 : <font color="#0000FF">out</font> Natural<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
-<p>This procedure is called to get&nbsp; a new potion of the process's input. 
+<p>This procedure is called to get&nbsp; a new portion of the process's input. 
 The implementation puts it into <b>Data</b> and sets <b>Count</b> to the number 
 of characters put. <b>Count</b> is set to 0 to indicate end of input. This is 
 the default implementation. Note that this procedure is called from an 
@@ -12814,13 +12814,13 @@ facilities if you want to call GTK+ operations from Input.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Data</b>&nbsp;&nbsp;&nbsp; 
 : UTF8_String<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
-<p>This procedure is called to accept a new potion of the process's output into 
+<p>This procedure is called to accept a new portion of the process's output into 
 the standard output. Note that this procedure is called from an independent 
 task. Use <a href="#Gtk.Main.Router.Request_Data">Gtk.Main.Router</a> facilities 
 if you want to call GTK+ operations from Output. The default implementation does 
 nothing.</p>
 <blockquote>
-<p><tt><font color="#0000FF">procedure</font> Run<br>
+<p><tt><font color="#0000FF"><a name="GLib.Spawn.Asynchronous.Run"></a>procedure</font> Run<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Process</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : <font color="#0000FF">in out</font> Asynchronous_Process;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Name</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -12836,12 +12836,13 @@ Working_Directory</b> : UTF8_String; ]<br>
 indicates the process name. The parameter <b>Working_Directory</b> is optional. 
 When missing the directory of the process is used. <b>ArgV</b> is the list of 
 the arguments starting from the first one. Unlikely to <a href="#GLib.Spawn.Async_With_Pipes">
-Async_With_Pipes</a> it does not contain the process name. The list is either 
+Async_With_Pipes</a> <b>ArgV</b> does not contain the process name. The list is either 
 null-terminated or else a list of strings (see also 
 <a href="#Gtk.Enums.String_Lists">Gtk.Enums.String_Lists</a>). The optional 
 parameter <b>EnvP</b> is the environment. When omitted the environment of the 
 current process is used. The exception Use_Error is propagated when a process 
-associated with <b>Process</b> is not yet completed. Note that Run has to be 
+associated with <b>Process</b> is not yet completed. Note that 
+<a href="#GLib.Spawn.Asynchronous.Run">Run</a> has to be 
 used only on the context of the main GTK+ task.</p>
 <blockquote>
 <p><tt><font color="#0000FF">procedure</font> Wait<br>
@@ -12851,7 +12852,7 @@ used only on the context of the main GTK+ task.</p>
 Time_Out</b> : Duration := Duration'Last<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure is called to wait for process completion. Time_Error is 
-propagated when <b>Time_Out</b> is expired. This procedure can used from any 
+propagated when <b>Time_Out</b> is expired. This procedure can be used from any 
 task.</p>
 <h3><a name="10.2"></a>10.2. Text-buffered pipes</h3>
 <p><a name="GLib.Spawn.Text_Bufferred"></a>The package
@@ -12888,7 +12889,7 @@ Otherwise it is the output channel. It can be
 overridden in order to provide text tags etc. The procedure is called on the 
 context of the main GTK+ task.</p>
 <blockquote>
-<p><tt><font color="#0000FF">procedure</font> Run<br>
+<p><tt><font color="#0000FF"><a name="GLib.Spawn.Text_Bufferred.Run"></a>procedure</font> Run<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Process</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : in out Text_Bufferred_Process;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Name</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -12911,7 +12912,8 @@ Error</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure calls the process passing the source of <b>Input</b> text 
 buffer to the standard input and putting the standard output and error into 
-Output and Error, correspondingly. Note that Run has to be used only on the 
+Output and Error, correspondingly. Note that 
+<a href="#GLib.Spawn.Text_Bufferred.Run">Run</a> has to be used only on the 
 context of the main GTK+ task.</p>
 <hr>
 <p align="right">
