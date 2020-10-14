@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  18:53 28 Oct 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1938,9 +1938,8 @@ begin
          Seconds : Day_Duration;
       end record;
       T1, T2  : Time_Data;
-      Seconds : Seconds_Count;
    begin
-      loop
+      loop -- Filter out clock jumps because daylight save shifts
          T1.Time := Ada.Calendar.Clock;
          Epoch := Clock;
          T2.Time := Ada.Calendar.Clock;
@@ -1952,17 +1951,10 @@ begin
                  T1.Month = T2.Month
               and then
                  T1.Day = T2.Day
+              and then
+                 Seconds_Count (T1.Seconds) = Seconds_Count (T2.Seconds)
               );
       end loop;
-      T1.Seconds := (T1.Seconds + T2.Seconds) / 2;
-      Seconds    := Seconds_Count (T1.Seconds) mod 60;
-      Calendar_Epoch :=
-         Time_Of
-         (  T1.Year,
-            T1.Month,
-            T1.Day,
-            Duration (Seconds)
-         );
-      Epoch := Epoch - To_Time_Span (T1.Seconds - Duration (Seconds));
+      Calendar_Epoch := T1.Time + (T2.Time - T1.Time) / 2.0;
    end;
 end Gtk.Layered.Waveform;

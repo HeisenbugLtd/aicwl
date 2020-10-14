@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  11:46 29 Jul 2018  --
+--                                Last revision :  18:53 28 Oct 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
