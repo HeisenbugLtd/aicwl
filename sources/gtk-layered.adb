@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -230,9 +230,9 @@ package body Gtk.Layered is
                Context : Cairo_Context
             )  return Boolean is
    begin
---      Put_Line ("+++ " & Expanded_Name (Widget.all'Tag));
+      -- Put_Line ("+++ " & Expanded_Name (Widget.all'Tag) & Integer_Address'Image (To_Integer (Widget.all'Address)));
       Refresh (Widget, Context);
---      Put_Line ("--- " & Expanded_Name (Widget.all'Tag));
+      -- Put_Line ("--- " & Expanded_Name (Widget.all'Tag));
       return True;
    exception
       when Error : others =>
@@ -552,8 +552,8 @@ package body Gtk.Layered is
       Return_Boolean_Callback.Connect
       (  Widget,
          "draw",
-         Return_Boolean_Callback.To_Marshaller (Draw'Access),
-         True
+         Return_Boolean_Callback.To_Marshaller (Draw'Access)
+--         True
       );
       Widget_Callback.Connect
       (  Widget,
@@ -678,9 +678,9 @@ package body Gtk.Layered is
             if This /= Bottom and then This.Is_Caching then
                This.Store (Context);
             else
---             Put_Line("   +" & Expanded_Name (This'Tag));
+            -- Put_Line("   +" & Expanded_Name (This'Tag));
                This.Draw (Context, Area);
---             Put_Line("   -" & Expanded_Name (This'Tag));
+            -- Put_Line("   -" & Expanded_Name (This'Tag));
             end if;
             This := This.Next;
          end loop;

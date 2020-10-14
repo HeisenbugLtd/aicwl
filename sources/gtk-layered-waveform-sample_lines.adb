@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.                       Luebeck            --
 --        Sample_Lines                             Winter, 2011       --
 --  Separate body                                                     --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -166,6 +166,7 @@ separate (Gtk.Layered.Waveform)
       end if;
    end Done;
 
+   Got_It : Boolean;
 begin
    if Layer.Data = null then
       Layer.Sampled := True;
@@ -273,42 +274,40 @@ begin
          end if; -------------------------------------------------------
       end;
       Left := (T, V);
-      begin
-         Layer.Data.Forward (T, V);
+      Layer.Data.Forward (T, V, Got_It);
+      if not Got_It then -- No new points
+         Layer.Sampled := True;
+         Layer.Valid   := Data.Last_Count > 0;
+         Layer.Last_T1 := Layer.T1;
          if 0 /= (Tracing_Mode and Trace_Waveform) then ----------------
             Trace
             (  Layer'Address,
-               (  " |<"
-               &  Integer'Image (Data.First)
-               &  " T"
-               &  Horizontal_Offset'Image (To_X (T))
+               (  " >"
+               &  Integer'Image (Data.Last_Count)
+               &  " |"
+               &  Integer'Image (Data.Count)
+               &  " :"
+               &  Fixed'Image (Fixed (Data.Last_T))
+               &  " L"
+               &  Horizontal_Offset'Image (To_X (Layer.Last_T1))
                &  " ="
-               &  Fixed'Image (Fixed (T))
-               &  " >|"
+               &  Fixed'Image (Fixed (Layer.Last_T1))
             )  );
          end if; -------------------------------------------------------
-      exception
-         when End_Error => -- No new points
-            Layer.Sampled := True;
-            Layer.Valid   := Data.Last_Count > 0;
-            Layer.Last_T1 := Layer.T1;
-            if 0 /= (Tracing_Mode and Trace_Waveform) then -------------
-               Trace
-               (  Layer'Address,
-                  (  " >"
-                  &  Integer'Image (Data.Last_Count)
-                  &  " |"
-                  &  Integer'Image (Data.Count)
-                  &  " :"
-                  &  Fixed'Image (Fixed (Data.Last_T))
-                  &  " L"
-                  &  Horizontal_Offset'Image (To_X (Layer.Last_T1))
-                  &  " ="
-                  &  Fixed'Image (Fixed (Layer.Last_T1))
-               )  );
-            end if; ----------------------------------------------------
-            return;
-      end;
+         return;
+      end if;
+      if 0 /= (Tracing_Mode and Trace_Waveform) then -------------------
+         Trace
+         (  Layer'Address,
+            (  " |<"
+            &  Integer'Image (Data.First)
+            &  " T"
+            &  Horizontal_Offset'Image (To_X (T))
+            &  " ="
+            &  Fixed'Image (Fixed (T))
+            &  " >|"
+         )  );
+      end if; ----------------------------------------------------------
       if T >= Layer.T2 then
          --
          -- No new visible points within
@@ -368,26 +367,29 @@ begin
                   T1, T2 : X_Axis;
                   V1, V2 : Y_Axis;
                begin
-                  Layer.Data.First (T1, V1);
-                  Layer.Data.Last  (T2, V2);
-                  Trace
-                  (  Layer'Address,
-                     (  "sample [Last_T"
-                     &  Fixed'Image (Fixed (Data.Last_T))
-                     &  " not in "
-                     &  Fixed'Image (Fixed (T1))
-                     &  " .."
-                     &  Fixed'Image (Fixed (T2))
-                     &  ">|"
-                  )  );
-               exception
-                  when End_Error =>
+                  Layer.Data.First (T1, V1, Got_It);
+                  if Got_It then
+                     Layer.Data.Last  (T2, V2, Got_It);
+                  end if;
+                  if Got_It then
+                     Trace
+                     (  Layer'Address,
+                        (  "sample [Last_T"
+                        &  Fixed'Image (Fixed (Data.Last_T))
+                        &  " not in "
+                        &  Fixed'Image (Fixed (T1))
+                        &  " .."
+                        &  Fixed'Image (Fixed (T2))
+                        &  ">|"
+                     )  );
+                  else
                      Trace
                      (  Layer'Address,
                         (  "sample [Last_T"
                         &  Fixed'Image (Fixed (Data.Last_T))
                         &  " not in empty>|"
                      )  );
+                  end if;
                end;
             else
                Trace
@@ -409,52 +411,48 @@ begin
       --
       -- Getting the point left or at Layer.T1
       --
-      begin
-         Layer.Data.Backward (T, V);
-      exception
-         when End_Error => -- No points left of Layer.T1
-            begin
-               Layer.Data.Forward (T, V);
-            exception
-               when End_Error => -- No pints at all
-                  Layer.Sampled := True;
-                  Layer.Valid   := Data.Last_Count > 0;
-                  Layer.Last_T1 := Layer.T1;
-                  if 0 /= (Tracing_Mode and Trace_Waveform) then -------
-                     Trace
-                     (  Layer'Address,
-                        (  " >"
-                        &  Integer'Image (Data.Last_Count)
-                        &  " :"
-                        &  Fixed'Image (Fixed (Data.Last_T))
-                        &  " |"
-                        &  Integer'Image (Data.Count)
-                     )  );
-                  end if; ----------------------------------------------
-                  return;
-            end;
-            if T > Layer.T2 then -- No point left of Layer.T2
-               Layer.Sampled := True;
-               Layer.Valid   := Data.Last_Count > 0;
-               Layer.Last_T1 := Layer.T1;
-               if 0 /= (Tracing_Mode and Trace_Waveform) then ----------
-                  Trace
-                  (  Layer'Address,
-                     (  " >"
-                     &  Integer'Image (Data.Last_Count)
-                     &  " |"
-                     &  Integer'Image (Data.Count)
-                     &  " :"
-                     &  Fixed'Image (Fixed (Data.Last_T))
-                     &  " L"
-                     &  Horizontal_Offset'Image (To_X (Layer.Last_T1))
-                     &  " ="
-                     &  Fixed'Image (Fixed (Layer.Last_T1))
-                  )  );
-               end if; -------------------------------------------------
-               return;
-            end if;
-      end;
+      Layer.Data.Backward (T, V, Got_It);
+      if not Got_It then -- No points left of Layer.T1
+         Layer.Data.Forward (T, V, Got_It);
+         if not Got_It then -- No pints at all
+            Layer.Sampled := True;
+            Layer.Valid   := Data.Last_Count > 0;
+            Layer.Last_T1 := Layer.T1;
+            if 0 /= (Tracing_Mode and Trace_Waveform) then -------------
+               Trace
+               (  Layer'Address,
+                  (  " >"
+                  &  Integer'Image (Data.Last_Count)
+                  &  " :"
+                  &  Fixed'Image (Fixed (Data.Last_T))
+                  &  " |"
+                  &  Integer'Image (Data.Count)
+               )  );
+            end if; ----------------------------------------------------
+            return;
+         end if;
+         if T > Layer.T2 then -- No point left of Layer.T2
+            Layer.Sampled := True;
+            Layer.Valid   := Data.Last_Count > 0;
+            Layer.Last_T1 := Layer.T1;
+            if 0 /= (Tracing_Mode and Trace_Waveform) then -------------
+               Trace
+               (  Layer'Address,
+                  (  " >"
+                  &  Integer'Image (Data.Last_Count)
+                  &  " |"
+                  &  Integer'Image (Data.Count)
+                  &  " :"
+                  &  Fixed'Image (Fixed (Data.Last_T))
+                  &  " L"
+                  &  Horizontal_Offset'Image (To_X (Layer.Last_T1))
+                  &  " ="
+                  &  Fixed'Image (Fixed (Layer.Last_T1))
+               )  );
+            end if; ----------------------------------------------------
+            return;
+         end if;
+      end if;
       --
       -- Getting point right of Layer.T1
       --
@@ -472,88 +470,83 @@ begin
       else -- Starting before Layer.T1
          Left := (T, V);
          loop
-            begin
-               Layer.Data.Forward (T, V);
-               if T >= Layer.T2 then
-                  --
-                  -- No  visible  points  within  the box, but one point
-                  -- left of Layer.T1 and one point right of Layer.T2
-                  --
-                  case Layer.Mode is
-                     when Gtk.Layered.Left =>
-                        First := (Layer.T1, Left.V);
-                        Last  := (Layer.T2, Left.V);
-                     when Linear =>
-                        Right := (T, V);
-                        First :=
-                           (  T => Layer.T1,
-                              V => Interpolate (First.T, First, Last)
-                           );
-                        Last :=
-                           (  T => Layer.T2,
-                              V => Interpolate (Last.T, First, Last)
-                           );
-                  end case;
-                  Add_Point (To_X (First.T), First.V);
-                  Add_Point (To_X (Last.T),  Last.V);
-                  Total_Min := Y_Axis'Min (First.V, Last.V);
-                  Total_Max := Y_Axis'Max (First.V, Last.V);
-                  Layer.Last_T1 := Layer.T1;
-                  Done;
-                  return;
-               elsif T <= Layer.T1 then
-                  --
-                  -- Before  or  at the left  boundary (Layer.T1) of the
-                  -- interval
-                  --
-                  Left := (T, V);
-                  if T = Layer.T1 then -- Exactly at it
-                     First := Left;
-                     Add_Point (To_X (Left.T), Left.V);
-                     Total_Min := V;
-                     Total_Max := V;
-                     exit;
-                  end if;
-               else
-                  --
-                  -- The first point within the interval
-                  --
-                  First := (T, V);
-                  case Layer.Mode is
-                     when Gtk.Layered.Left =>
-                        Total_Min := Left.V;
-                        Total_Max := Total_Min;
-                        Add_Point (To_X (Layer.T1), Total_Min);
-                     when Linear =>
-                        Total_Min :=
-                           Interpolate (Layer.T1, Left, First);
-                        Total_Max := Total_Min;
-                        Add_Point (To_X (Layer.T1), Total_Min);
-                  end case;
+            Layer.Data.Forward (T, V, Got_It);
+            if not Got_It then -- No points visible
+               Layer.Sampled := True;
+               Layer.Valid   := Data.Last_Count > 0;
+               Layer.Last_T1 := Layer.T1;
+               if 0 /= (Tracing_Mode and Trace_Waveform) then ----------
+                  Trace
+                  (  Layer'Address,
+                     (  " >"
+                     &  Integer'Image (Data.Last_Count)
+                     &  " |"
+                     &  Integer'Image (Data.Count)
+                     &  " :"
+                     &  Fixed'Image (Fixed (Data.Last_T))
+                     &  " L"
+                     &  Horizontal_Offset'Image (To_X(Layer.Last_T1))
+                     &  " ="
+                     &  Fixed'Image (Fixed (Layer.Last_T1))
+                  )  );
+               end if; -------------------------------------------------
+               return;
+            end if;
+            if T >= Layer.T2 then
+               --
+               -- No visible points  within  the box, but one point left
+               -- of Layer.T1 and one point right of Layer.T2
+               --
+               case Layer.Mode is
+                  when Gtk.Layered.Left =>
+                     First := (Layer.T1, Left.V);
+                     Last  := (Layer.T2, Left.V);
+                  when Linear =>
+                     Right := (T, V);
+                     First := (  T => Layer.T1,
+                                 V => Interpolate (First.T, First, Last)
+                              );
+                     Last  := (  T => Layer.T2,
+                                 V => Interpolate (Last.T, First, Last)
+                              );
+               end case;
+               Add_Point (To_X (First.T), First.V);
+               Add_Point (To_X (Last.T),  Last.V);
+               Total_Min := Y_Axis'Min (First.V, Last.V);
+               Total_Max := Y_Axis'Max (First.V, Last.V);
+               Layer.Last_T1 := Layer.T1;
+               Done;
+               return;
+            elsif T <= Layer.T1 then
+               --
+               -- Before  or  at the  left  boundary  (Layer.T1)  of the
+               -- interval
+               --
+               Left := (T, V);
+               if T = Layer.T1 then -- Exactly at it
+                  First := Left;
+                  Add_Point (To_X (Left.T), Left.V);
+                  Total_Min := V;
+                  Total_Max := V;
                   exit;
                end if;
-            exception
-               when End_Error => -- No points visible
-                  Layer.Sampled := True;
-                  Layer.Valid   := Data.Last_Count > 0;
-                  Layer.Last_T1 := Layer.T1;
-                  if 0 /= (Tracing_Mode and Trace_Waveform) then -------
-                     Trace
-                     (  Layer'Address,
-                        (  " >"
-                        &  Integer'Image (Data.Last_Count)
-                        &  " |"
-                        &  Integer'Image (Data.Count)
-                        &  " :"
-                        &  Fixed'Image (Fixed (Data.Last_T))
-                        &  " L"
-                        &  Horizontal_Offset'Image (To_X(Layer.Last_T1))
-                        &  " ="
-                        &  Fixed'Image (Fixed (Layer.Last_T1))
-                     )  );
-                  end if; ----------------------------------------------
-                  return;
-            end;
+            else
+               --
+               -- The first point within the interval
+               --
+               First := (T, V);
+               case Layer.Mode is
+                  when Gtk.Layered.Left =>
+                     Total_Min := Left.V;
+                     Total_Max := Total_Min;
+                     Add_Point (To_X (Layer.T1), Total_Min);
+                  when Linear =>
+                     Total_Min := Interpolate (Layer.T1, Left, First);
+                     Total_Max := Total_Min;
+                     Add_Point (To_X (Layer.T1), Total_Min);
+               end case;
+               exit;
+            end if;
          end loop;
       end if;
    end if;
@@ -588,16 +581,14 @@ begin
                   --
                   -- Looking for the points within this interval
                   --
-                  begin
-                     Layer.Data.Forward (T, V);
-                  exception
-                     when End_Error => -- No more points left
-                        Add (X, Left.V, Max, Min, Max);
-                        Total_Min := Y_Axis'Min (Total_Min, Min);
-                        Total_Max := Y_Axis'Max (Total_Max, Max);
-                        Done;
-                        return;
-                  end;
+                  Layer.Data.Forward (T, V, Got_It);
+                  if not Got_It then -- No more points left
+                     Add (X, Left.V, Max, Min, Max);
+                     Total_Min := Y_Axis'Min (Total_Min, Min);
+                     Total_Max := Y_Axis'Max (Total_Max, Max);
+                     Done;
+                     return;
+                  end if;
                   exit when T >= T2;
                   Last  := (T, V);
                   Count := Count + 1;
@@ -661,26 +652,24 @@ begin
                   --
                   -- Looking for the points within this interval
                   --
-                  begin
-                     Layer.Data.Forward (X_Axis (T), Y_Axis (V));
-                  exception
-                     when End_Error => -- No more points left
-                        if Count = 1 then
-                           Add_Point (X, First.V);
-                        else
-                           Add
-                           (  X,
-                              Interpolate (T2 - Layer.dT, Left, First),
-                              Max,
-                              Min,
-                              Max
-                           );
-                        end if;
-                        Total_Min := Y_Axis'Min (Total_Min, Min);
-                        Total_Max := Y_Axis'Max (Total_Max, Max);
-                        Done;
-                        return;
-                  end;
+                  Layer.Data.Forward (X_Axis (T), Y_Axis (V), Got_It);
+                  if not Got_It then -- No more points left
+                     if Count = 1 then
+                        Add_Point (X, First.V);
+                     else
+                        Add
+                        (  X,
+                           Interpolate (T2 - Layer.dT, Left, First),
+                           Max,
+                           Min,
+                           Max
+                        );
+                     end if;
+                     Total_Min := Y_Axis'Min (Total_Min, Min);
+                     Total_Max := Y_Axis'Max (Total_Max, Max);
+                     Done;
+                     return;
+                  end if;
                   exit when T >= T2;
                   Last  := (T, V);
                   Count := Count + 1;

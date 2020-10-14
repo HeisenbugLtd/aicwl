@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.                       Luebeck            --
 --        Ring_Data_Buffer                         Winter, 2011       --
 --  Implementation                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -67,13 +67,65 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
             raise End_Error;
          end if;
          Index := Index - 1;
-         Scan_Backward (Buffer, Index, T, V);
+         Scan_Backward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            raise End_Error;
+         end if;
       else
-         Index := Buffer.Find (T, Above => True);
-         Scan_Backward (Buffer, Index, T, V);
+         Buffer.Find (T, True, Index, Got_It);
+         if not Got_It then
+            raise End_Error;
+         end if;
+         Scan_Backward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            raise End_Error;
+         end if;
       end if;
       Source.Index := Index;
       Source.T := T;
+   end Backward;
+
+   procedure Backward
+             (  Source : in out Source_Scanner;
+                T      : in out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+      Buffer : Gtk_Wavefrom_Ring_Data_Buffer_Record renames
+               Source.Source.all;
+      Index  : Reference := Source.Index;
+      This   : Point;
+   begin
+      if Buffer.Length = 0 then
+         Got_It := False;
+         return;
+      end if;
+      Buffer.Get (Index, This, Got_It);
+      if Got_It and then This.T = T then
+         if Index = 0 then
+            Got_It := False;
+         end if;
+         Index := Index - 1;
+         Scan_Backward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            return;
+         end if;
+      else
+         Buffer.Find (T, True, Index, Got_It);
+         if not Got_It then
+            return;
+         end if;
+         Scan_Backward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            return;
+         end if;
+      end if;
+      Source.Index := Index;
+      Source.T := T;
+      Got_It   := True;
+   exception
+      when End_Error =>
+         Got_It := False;
    end Backward;
 
    procedure Connected
@@ -187,42 +239,46 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
          )  );
    end Finalize;
 
-   function Find
-            (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
-               T      : X_Axis;
-               Above  : Boolean
-            )  return Reference is
+   procedure Find
+             (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
+                T      : X_Axis;
+                Above  : Boolean;
+                Index  : out Reference;
+                Got_It : out Boolean
+             )  is
       Lower   : Reference := Source.First;
       Upper   : Reference := Source.First + Source.Length - 1;
       Current : Reference;
-      Got_It  : Boolean;
       This    : Point;
    begin
       loop
          Current := (Lower + Upper) / 2;
          Source.Get (Current, This, Got_It);
          if not Got_It then
-            raise End_Error;
+            return;
          elsif This.T < T then
             if Upper <= Current then
                if Above and then Current < Upper then
-                  return Current + 1;
+                  Index := Current + 1;
                else
-                  return Current;
+                  Index := Current;
                end if;
+               return;
             end if;
             Lower := Current + 1;
          elsif This.T > T then
             if Lower >= Current then
                if Above or else Lower >= Current then
-                  return Current;
+                  Index := Current;
                else
-                  return Current - 1;
+                  Index := Current - 1;
                end if;
+               return;
             end if;
             Upper := Current - 1;
          else
-            return Current;
+            Index := Current;
+            return;
          end if;
       end loop;
    end Find;
@@ -250,6 +306,30 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
       end loop;
    end First;
 
+   procedure First
+             (  Source : in out Source_Scanner;
+                T      : out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+      Buffer : Gtk_Wavefrom_Ring_Data_Buffer_Record renames
+               Source.Source.all;
+      Data   : Point;
+   begin
+      loop
+         if Buffer.Length = 0 then
+            Got_It := False;
+            return;
+         end if;
+         Get (Buffer, Buffer.First, Data, Got_It);
+         if Got_It then
+            T := Data.T;
+            V := Data.V;
+            return;
+         end if;
+      end loop;
+   end First;
+
    procedure Forward
              (  Source : in out Source_Scanner;
                 T      : in out X_Axis;
@@ -267,13 +347,58 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
       Buffer.Get (Index, This, Got_It);
       if Got_It and then This.T = T then
          Index := Index + 1;
-         Scan_Forward (Buffer, Index, T, V);
+         Scan_Forward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            raise End_Error;
+         end if;
       else
-         Index := Buffer.Find (T, Above => False);
-         Scan_Forward (Buffer, Index, T, V);
+         Buffer.Find (T, False, Index, Got_It);
+         if not Got_It then
+            raise End_Error;
+         end if;
+         Scan_Forward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            raise End_Error;
+         end if;
       end if;
       Source.Index := Index;
       Source.T := T;
+   end Forward;
+
+   procedure Forward
+             (  Source : in out Source_Scanner;
+                T      : in out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+      Buffer : Gtk_Wavefrom_Ring_Data_Buffer_Record renames
+               Source.Source.all;
+      Index  : Reference := Source.Index;
+      This   : Point;
+   begin
+      if Buffer.Length = 0 then
+         Got_It := False;
+      end if;
+      Buffer.Get (Index, This, Got_It);
+      if Got_It and then This.T = T then
+         Index := Index + 1;
+         Scan_Forward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            return;
+         end if;
+      else
+         Buffer.Find (T, False, Index, Got_It);
+         if not Got_It then
+            return;
+         end if;
+         Scan_Forward (Buffer, Index, T, V, Got_It);
+         if not Got_It then
+            return;
+         end if;
+      end if;
+      Source.Index := Index;
+      Source.T := T;
+      Got_It := True;
    end Forward;
 
    procedure Get
@@ -378,19 +503,51 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
       end loop;
    end Last;
 
+   procedure Last
+             (  Source : in out Source_Scanner;
+                T      : out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+      Buffer : Gtk_Wavefrom_Ring_Data_Buffer_Record renames
+               Source.Source.all;
+      Data   : Point;
+   begin
+      loop
+         if Buffer.Length = 0 then
+            Got_It := False;
+            return;
+         end if;
+         Get (Buffer, Buffer.First + Buffer.Length - 1, Data, Got_It);
+         if Got_It then
+            T := Data.T;
+            V := Data.V;
+            return;
+         end if;
+      end loop;
+   end Last;
+
    procedure Notify
              (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
                 From   : X_Axis;
                 To     : X_Axis
              )  is
    begin
-      if Source.Layers.Connected > 0 then
+      if (  Source.Layers.Connected > 0
+         and then
+            Source.Layers.Ptr /= null
+         )
+      then
          declare
             Layers : Layers_List renames Source.Layers.Ptr.all;
          begin
             for Index in 1..Source.Layers.Connected loop
+               declare
+                  Layer : Waveform_Layer_Ptr := Layers (Index);
                begin
-                  Layers (Index).Changed (From, To);
+                  if Layer /= null then
+                     Layer.Changed (From, To);
+                  end if;
                exception
                   when Error : others =>
                      Log
@@ -474,16 +631,14 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
              (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
                 Index  : in out Reference;
                 T      : in out X_Axis;
-                V      : out Y_Axis
+                V      : out Y_Axis;
+                Got_It : out Boolean
              )  is
-      Got_It : Boolean;
-      This   : Point;
+      This : Point;
    begin
       loop
          Get (Source, Index, This, Got_It);
-         if not Got_It then
-            raise End_Error;
-         end if;
+         exit when not Got_It;
          if This.T < T then
             T := This.T;
             V := This.V;
@@ -497,16 +652,14 @@ package body Gtk.Layered.Waveform.Ring_Data_Buffer is
              (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
                 Index  : in out Reference;
                 T      : in out X_Axis;
-                V      : out Y_Axis
+                V      : out Y_Axis;
+                Got_It : out Boolean
              )  is
-      Got_It : Boolean;
-      This   : Point;
+      This : Point;
    begin
       loop
          Get (Source, Index, This, Got_It);
-         if not Got_It then
-            raise End_Error;
-         end if;
+         exit when not Got_It;
          if This.T > T then
             T := This.T;
             V := This.V;

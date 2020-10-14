@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper                     Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -265,7 +265,15 @@ package body Gtk.Layered.Graph_Paper is
    begin
       Layer.Changed := True;
       Layer.Updated := True;
-      if not Layer.Widget.Drawing then
+      if (  not Layer.Widget.Drawing
+         and then
+            Layer.Updated
+         and then
+            (  Adjustment.all not in Waveform_Sweeper'Class
+            or else
+               not Waveform_Sweeper'Class (Adjustment.all).Is_Active
+         )  )
+      then
          Queue_Draw (Layer.Widget); -- Signal draw to the widget
       end if;
    exception
@@ -956,14 +964,15 @@ package body Gtk.Layered.Graph_Paper is
    begin
       if Layer.X_Sweeper /= null then
          Layer.X_Sweeper.Set_Current_Time
-         (  Layer.Widget.Get_Drawing_Time
+         (  Layer.Widget.Get_Drawing_Time,
+            True
          );
       end if;
-      if Layer.Y_Sweeper /= null then
-         Layer.Y_Sweeper.Set_Current_Time
-         (  Layer.Widget.Get_Drawing_Time
-         );
-      end if;
+--        if Layer.Y_Sweeper /= null then
+--           Layer.Y_Sweeper.Set_Current_Time
+--           (  Layer.Widget.Get_Drawing_Time
+--           );
+--        end if;
    exception
       when Error : others =>
          Log

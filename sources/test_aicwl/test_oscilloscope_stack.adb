@@ -3,7 +3,7 @@
 --      Test_Oscilloscope_Stacked                  Luebeck            --
 --  Test oscilloscopes stacked up                  Summer, 2011       --
 --  into a rack                                                       --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -33,6 +33,7 @@ with Gdk.Color.IHLS;              use Gdk.Color.IHLS;
 with Gdk.Event;                   use Gdk.Event;
 with GLib;                        use GLib;
 with Gtk.Box;                     use Gtk.Box;
+with Gtk.Drawing_Area;            use Gtk.Drawing_Area;
 with Gtk.Enums;                   use Gtk.Enums;
 with Gtk.Layered.Refresh_Engine;  use Gtk.Layered.Refresh_Engine;
 with Gtk.Missed;                  use Gtk.Missed;
@@ -87,18 +88,19 @@ begin
       --
       declare
          Box    : Gtk_HBox;
-         Filler : Gtk_HBox;
+         Filler : Gtk_Drawing_Area;
       begin
          Gtk_New_HBox (Box);
-         Gtk_New_VBox (Filler);
+         Box.Set_App_Paintable (True);
+         Gtk_New (Filler);
          Filler.Set_Size_Request (Axis_Width, Axis_Height);
          Box.Pack_Start (Filler, False, False);
          Gtk_New
          (  Widget         => Scaler,
             Refresh_Engine => Engine'Access
          );
-         Scaler.Set_Time_Axis (Lower, True);
          Scaler.Set_Time_Axis_Height (Lower, Axis_Height);
+         Scaler.Set_Time_Axis (Lower, True);
          Box.Pack_Start (Scaler);
          Grid.Attach
          (  Child         => Box,

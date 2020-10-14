@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>GtkAda Contributions</b></font><BIG><br>
-<EM>version 3.14</EM></BIG><br>
+<EM>version 3.15</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -97,10 +97,10 @@ executable file might be covered by the GNU Public License.</P>
 	<tr>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
-		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_14.tgz">gtkada_contributions_3_14.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
+		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_15.tgz">gtkada_contributions_3_15.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium">&nbsp;</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
-		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_14.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_15.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
 	</tr>
 	<tr>
@@ -8508,6 +8508,20 @@ return</font> Gdk_Color;</tt></p>
 <p>This function converts RGBA argument to color. The alpha channel is ignored 
 as the result is always opaque.</p>
 <blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Missed.Freeze_Notify"></a>procedure</font> 
+Freeze_Notify<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Object</b> :
+<font color="#0000FF">not null access</font> GObject_Record'Class<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure increases the freeze count on object. If the freeze count is 
+non-zero, the emission of <i>notify</i> signals on object is stopped. The 
+signals are queued until the freeze count is decreased to zero. Duplicate 
+notifications are squashed so that at most one <i>notify</i> signal is emitted 
+for each property modified while the object is frozen. This is necessary for 
+accessors that modify multiple properties to prevent premature notification 
+while the object is still being modified. </p>
+<blockquote>
 	<p><tt><font color="#0000FF"><a name="Gtk.Missed.Row_Order"></a>type </font> Row_Order<font color="#0000FF"> is</font> 
 	(Before, Equal, After);<font color="#0000FF"><br>
 	<br>
@@ -8863,6 +8877,20 @@ UTF8_String) <font color="#0000FF">return</font> UTF8_String;</tt></p>
 <p>This function returns a <b>File_Name</b> part after the root component, i.e. 
 after the &quot;/&quot; in UNIX or &quot;C:\&quot; under Windows. Use_Error is propagated when <b>
 File_Name</b> is not absolute.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Missed.Thaw_Notify"></a>procedure</font> 
+Thaw_Notify<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Object</b> :
+<font color="#0000FF">not null access</font> GObject_Record'Class<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure reverts the effect of a previous call to
+<a href="#Gtk.Missed.Freeze_Notify">Freeze_Notify</a>. The freeze count is 
+decreased on object and when it reaches zero, queued <i>notify</i> signals are 
+emitted. Duplicate notifications for each property are squashed so that at most 
+one <i>notify</i> signal is emitted for each property, in the reverse order in 
+which they have been queued. It is an error to call this function when the 
+freeze count is zero. </p>
 		<blockquote>
 <p><tt><font color="#0000FF">function</font> Themed_Icon_New (<b>Icon_Name</b> : 
 UTF8_String) <font color="#0000FF">return</font> GObject;</tt></p>
@@ -13327,6 +13355,11 @@ The following versions were tested with the compilers:</i>
 	<li><i>GtkAda 3.8.3</i></li>
 	<li><i>GtkAda 3.8.4</i></li>
 </ul>
+<P>
+Changes (3 March 2016) to the version 3.14:<ul>
+	<li>Get_Clip_Rectangle procedure and function added to Gtk.Missed;</li>
+	<li>Freeze_Notify and Thaw_Notify added to Gtk.Missed.</li>
+	</ul>
 <P>
 Changes (10 October 2015) to the version 3.13:<ul>
 	<li>Minor bug fixes;</li>

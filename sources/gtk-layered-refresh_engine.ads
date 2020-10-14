@@ -3,7 +3,7 @@
 --     Gtk.Layered.Refresh_Engine                  Luebeck            --
 --  Interface                                      Winter, 2011       --
 --                                                                    --
---                                Last revision :  20:03 15 Sep 2011  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -100,7 +100,6 @@ package Gtk.Layered.Refresh_Engine is
              (  Engine : in out Layered_Refresh_Engine;
                 Period : Duration
              );
-
 private
    package Layered_Reference is
       new GLib.Object.Weak_References (Gtk_Layered_Record);

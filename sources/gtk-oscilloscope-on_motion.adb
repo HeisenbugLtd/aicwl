@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        On_Motion                                Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -98,91 +98,94 @@ begin
             V        : Y_Axis;
             Y        : GDouble;
             Color    : Gdk_Color;
+            Got_It   : Boolean;
             Position : Integer;
          begin
-            Waveform.Get_Point (GDouble (Point.X), T, V);
-            Y := GDouble (Waveform.Get_Y (V));
-            if abs (Point.Y - Y) <= Oscilloscope.Proximity then
-               Position := Pointer;
-               if Position > 1 then
+            Waveform.Get_Point (GDouble (Point.X), T, V, Got_It);
+            if Got_It then
+               Y := GDouble (Waveform.Get_Y (V));
+               if abs (Point.Y - Y) <= Oscilloscope.Proximity then
+                  Position := Pointer;
+                  if Position > 1 then
+                     Put
+                     (  Oscilloscope.Tip_Text,
+                        Position,
+                        Character'Val (10)
+                     );
+                  end if;
+                  Color := Waveform.Get_Line.Color;
                   Put
                   (  Oscilloscope.Tip_Text,
                      Position,
-                     Character'Val (10)
+                     "<span background='#"
                   );
+                  Put
+                  (  Destination => Oscilloscope.Tip_Text,
+                     Pointer     => Position,
+                     Value       => Integer (Red (Color) / 256),
+                     Base        => 16,
+                     Field       => 2,
+                     Fill        => '0',
+                     Justify     => Right
+                  );
+                  Put
+                  (  Destination => Oscilloscope.Tip_Text,
+                     Pointer     => Position,
+                     Value       => Integer (Green (Color) / 256),
+                     Base        => 16,
+                     Field       => 2,
+                     Fill        => '0',
+                     Justify     => Right
+                  );
+                  Put
+                  (  Destination => Oscilloscope.Tip_Text,
+                     Pointer     => Position,
+                     Value       => Integer (Blue (Color) / 256),
+                     Base        => 16,
+                     Field       => 2,
+                     Fill        => '0',
+                     Justify     => Right
+                  );
+                  Put (Oscilloscope.Tip_Text, Position, "'>  </span> ");
+                  Put
+                  (  Destination => Oscilloscope.Tip_Text,
+                     Pointer     => Position,
+                     X1          => GInt (Box.Y1),
+                     X2          => GInt (Box.Y2),
+                     V1          => GDouble (Waveform.Get_V2),
+                     V2          => GDouble (Waveform.Get_V1),
+                     V           => GDouble (V)
+                  );
+                  if Oscilloscope.Show_Time then
+                     declare
+                        Sweeper : Time_Axis_Data renames
+                                  Oscilloscope.Time_Axis
+                                  (  Oscilloscope.Get_Sweeper (Index)
+                                  );
+                     begin
+                        Put (Oscilloscope.Tip_Text, Position, " at ");
+                        if Sweeper.Time_Mode then
+                           Put
+                           (  Oscilloscope.Tip_Text,
+                              Position,
+                              Gtk.Layered.Graph_Paper_Annotation.Image
+                              (  To_Time (GDouble (T))
+                           )  );
+                        else
+                           Put
+                           (  Destination => Oscilloscope.Tip_Text,
+                              Pointer     => Position,
+                              X1          => GInt (Box.X1),
+                              X2          => GInt (Box.X2),
+                              V1          => GDouble (Waveform.Get_T1),
+                              V2          => GDouble (Waveform.Get_T2),
+                              V           => GDouble (T)
+                           );
+                        end if;
+                     end;
+                  end if;
+                  Pointer := Position;
                end if;
-               Color := Waveform.Get_Line.Color;
-               Put
-               (  Oscilloscope.Tip_Text,
-                  Position,
-                  "<span background='#"
-               );
-               Put
-               (  Destination => Oscilloscope.Tip_Text,
-                  Pointer     => Position,
-                  Value       => Integer (Red (Color) / 256),
-                  Base        => 16,
-                  Field       => 2,
-                  Fill        => '0',
-                  Justify     => Right
-               );
-               Put
-               (  Destination => Oscilloscope.Tip_Text,
-                  Pointer     => Position,
-                  Value       => Integer (Green (Color) / 256),
-                  Base        => 16,
-                  Field       => 2,
-                  Fill        => '0',
-                  Justify     => Right
-               );
-               Put
-               (  Destination => Oscilloscope.Tip_Text,
-                  Pointer     => Position,
-                  Value       => Integer (Blue (Color) / 256),
-                  Base        => 16,
-                  Field       => 2,
-                  Fill        => '0',
-                  Justify     => Right
-               );
-               Put (Oscilloscope.Tip_Text, Position, "'>  </span> ");
-               Put
-               (  Destination => Oscilloscope.Tip_Text,
-                  Pointer     => Position,
-                  X1          => GInt (Box.Y1),
-                  X2          => GInt (Box.Y2),
-                  V1          => GDouble (Waveform.Get_V2),
-                  V2          => GDouble (Waveform.Get_V1),
-                  V           => GDouble (V)
-               );
-               if Oscilloscope.Show_Time then
-                  declare
-                     Sweeper : Time_Axis_Data renames
-                               Oscilloscope.Time_Axis
-                               (  Oscilloscope.Get_Sweeper (Index)
-                               );
-                  begin
-                     Put (Oscilloscope.Tip_Text, Position, " at ");
-                     if Sweeper.Time_Mode then
-                        Put
-                        (  Oscilloscope.Tip_Text,
-                           Position,
-                           Gtk.Layered.Graph_Paper_Annotation.Image
-                           (  To_Time (GDouble (T))
-                        )  );
-                     else
-                        Put
-                        (  Destination => Oscilloscope.Tip_Text,
-                           Pointer     => Position,
-                           X1          => GInt (Box.X1),
-                           X2          => GInt (Box.X2),
-                           V1          => GDouble (Waveform.Get_T1),
-                           V2          => GDouble (Waveform.Get_T2),
-                           V           => GDouble (T)
-                        );
-                     end if;
-                  end;
-               end if;
-               Pointer := Position;
             end if;
          exception
             when others =>

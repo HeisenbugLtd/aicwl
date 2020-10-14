@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper                     Luebeck            --
 --  Interface                                      Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -417,7 +417,7 @@ private
       Y_Raster      : Gtk.Layered.Waveform.Rasters.Scale;
       X_Tick_Length : GUInt   := 50;
       Y_Tick_Length : GUInt   := 50;
-      Changed       : Boolean := True; -- Raster is invalid
+      Changed       : Boolean := True;  -- Raster is invalid
       Scaled        : Boolean := False;
       Widened       : Boolean := False;
       Updated       : Boolean := True;

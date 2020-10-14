@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.                       Luebeck            --
 --        Ring_Data_Buffer                         Winter, 2011       --
 --  Interface                                                         --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -80,6 +80,13 @@ package Gtk.Layered.Waveform.Ring_Data_Buffer is
                    V      : out Y_Axis
                 );
    overriding
+      procedure Backward
+                (  Source : in out Source_Scanner;
+                   T      : in out X_Axis;
+                   V      : out Y_Axis;
+                   Got_It : out Boolean
+                );
+   overriding
       procedure Connected
                 (  Source : in out Gtk_Wavefrom_Ring_Data_Buffer_Record;
                    Layer  : in out Waveform_Layer'Class
@@ -105,10 +112,24 @@ package Gtk.Layered.Waveform.Ring_Data_Buffer is
                    V      : out Y_Axis
                 );
    overriding
+      procedure First
+                (  Source : in out Source_Scanner;
+                   T      : out X_Axis;
+                   V      : out Y_Axis;
+                   Got_It : out Boolean
+                );
+   overriding
       procedure Forward
                 (  Source : in out Source_Scanner;
                    T      : in out X_Axis;
                    V      : out Y_Axis
+                );
+   overriding
+      procedure Forward
+                (  Source : in out Source_Scanner;
+                   T      : in out X_Axis;
+                   V      : out Y_Axis;
+                   Got_It : out Boolean
                 );
    overriding
       function Get_Source
@@ -124,6 +145,13 @@ package Gtk.Layered.Waveform.Ring_Data_Buffer is
                 (  Source : in out Source_Scanner;
                    T      : out X_Axis;
                    V      : out Y_Axis
+                );
+   overriding
+      procedure Last
+                (  Source : in out Source_Scanner;
+                   T      : out X_Axis;
+                   V      : out Y_Axis;
+                   Got_It : out Boolean
                 );
    overriding
       procedure Put
@@ -142,8 +170,9 @@ private
    end record;
    type Points_Array is array (Positive range <>) of Point;
 
+   type Waveform_Layer_Ptr is access all Waveform_Layer'Class;
    type Layers_List is
-      array (Positive range <>) of access Waveform_Layer'Class;
+      array (Positive range <>) of Waveform_Layer_Ptr;
    type Layers_List_Ptr is access Layers_List;
    type List is new Ada.Finalization.Controlled with record
       Connected : Natural   := 0;
@@ -171,23 +200,20 @@ private
 --    Source - To search through
 --    T      - To search for
 --    Above  - Constraint
+--    Index  - The reference
+--    Got_It - Set false when T < Buffer if Above = true
+--                         or T > Buffer if Above = false
 --
 -- When Above is true, the result is greater or equal to T. Otherwise it
 -- is less or equal to T.
 --
--- Returns :
---
---    The reference
---
--- Exceptions :
---
---    End_Error - T < Buffer when Above = true or T > Buffer otherwise
---
-   function Find
-            (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
-               T      : X_Axis;
-               Above  : Boolean
-            )  return Reference;
+   procedure Find
+             (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
+                T      : X_Axis;
+                Above  : Boolean;
+                Index  : out Reference;
+                Got_It : out Boolean
+             );
 
    procedure Get
              (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
@@ -211,14 +237,16 @@ private
              (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
                 Index  : in out Reference;
                 T      : in out X_Axis;
-                V      : out Y_Axis
+                V      : out Y_Axis;
+                Got_It : out Boolean
              );
 
    procedure Scan_Forward
              (  Source : Gtk_Wavefrom_Ring_Data_Buffer_Record;
                 Index  : in out Reference;
                 T      : in out X_Axis;
-                V      : out Y_Axis
+                V      : out Y_Axis;
+                Got_It : out Boolean
              );
 
    type Source_Scanner is new Waveform_Data_Scanner with record
@@ -228,8 +256,10 @@ private
    end record;
 
    pragma Inline (Find);
+   pragma Inline (First);
    pragma Inline (Get);
    pragma Inline (Is_In);
+   pragma Inline (Last);
    pragma Inline (Scan_Backward);
    pragma Inline (Scan_Forward);
 

@@ -2,7 +2,7 @@
 --  package Gtk.Missed              Copyright (c)  Maxim Reznik       --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -391,6 +391,24 @@ package Gtk.Missed is
                Name   : UTF8_String
             )  return Param_Spec;
 --
+-- Freeze_Notify -- Freeze emitting signals
+--
+--     Object - The object
+--
+-- Increases the  freeze  count  on  object.  If  the  freeze  count  is
+-- non-zero, the emission of "notify" signals on object is stopped.  The
+-- signals  are  queued  until  the  freeze  count is decreased to zero.
+-- Duplicate notifications are squashed so that  at  most  one  "notify"
+-- signal is emitted for each property  modified  while  the  object  is
+-- frozen.
+-- This  is  necessary  for accessors that modify multiple properties to
+-- prevent premature  notification  while  the  object  is  still  being
+-- modified.
+--
+   procedure Freeze_Notify
+             (  Object : not null access GObject_Record'Class
+             );
+--
 -- From_RGBA -- Conversion from RGBA to color
 --
 --    Color - To convert
@@ -463,6 +481,28 @@ package Gtk.Missed is
 --    The application name in a human readable form
 --
    function Get_Application_Name return UTF8_String;
+--
+-- Get_Clip_Rectangle -- Get approximation of clipping rectangle
+--
+--    Context   - The cairo context
+--    Rectangle - The clipping rectange if not Empty
+--    Empty     - No clipping rectangle set
+--
+   procedure Get_Clip_Rectangle
+             (  Context   : Cairo_Context;
+                Rectangle : out Gdk_Rectangle;
+                Empty     : out Boolean
+             );
+--
+-- Get_Clip_Rectangle -- Get approximation of clipping rectangle
+--
+--    Context   - The cairo context
+--
+-- Returns :
+--
+--    True if there is a clipping region
+--
+   function Get_Clip_Rectangle (Context : Cairo_Context) return Boolean;
 --
 -- Get_Current_Dir -- Returns current directory
 --
@@ -852,6 +892,22 @@ package Gtk.Missed is
 --    Use_Error - File_Name is not an absolute name
 --
    function Skip_Root (File_Name : UTF8_String) return UTF8_String;
+--
+-- Thaw_Notify -- Thaw emitting signals
+--
+--     Object - The object
+--
+-- Reverts the effect of a previous call to  Freeze_Notify.  The  freeze
+-- count  is  decreased  on  object  and  when  it  reaches zero, queued
+-- "notify" signals are emitted.
+-- Duplicate notifications for each property are  squashed  so  that  at
+-- most one "notify" signal is emitted for each property, in the reverse
+-- order in which they have been queued.
+-- It is an error to call this function when the freeze count is zero.
+--
+   procedure Thaw_Notify
+             (  Object : not null access GObject_Record'Class
+             );
 --
 -- Themed_Icon_New -- Create icon by name
 --

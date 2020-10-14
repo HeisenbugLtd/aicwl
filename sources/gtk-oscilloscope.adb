@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  22:22 02 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -32,8 +32,10 @@ with Cairo;                       use Cairo;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
 with Cairo.Font_Face;             use Cairo.Font_Face;
 with Cairo.Line_Cap_Property;     use Cairo.Line_Cap_Property;
+with Cairo.Region;                use Cairo.Region;
 with Gdk.Color.IHLS;              use Gdk.Color.IHLS;
 with Gdk.Types;                   use Gdk.Types;
+with Gdk.Window;                  use Gdk.Window;
 with Glib.Error;                  use Glib.Error;
 with GLib.Messages;               use GLib.Messages;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
@@ -55,6 +57,7 @@ with Ada.Unchecked_Deallocation;
 with Cairo.PDF;
 with Cairo.PNG;
 with Cairo.SVG;
+with Gdk.Device_Manager;
 with Gdk.Types;
 with Gdk.Window;
 with Gtk.Layered.Graph_Paper_Annotation;
@@ -2051,7 +2054,7 @@ package body Gtk.Oscilloscope is
                              Gtk_Waveform_Sweeper_Record'Class := null;
                 Refresh_Engine : not null access Layered_Refresh_Engine;
                 Background     : Gdk_Color := RGB (1.0, 1.0, 1.0);
-                Buffer_Size    : Positive := 1024 * 60;
+                Buffer_Size    : Positive  := 1024 * 60;
                 Max_Channels   : Channel_Number := 64
              )  is
    begin
@@ -2080,7 +2083,7 @@ package body Gtk.Oscilloscope is
                              Gtk_Waveform_Sweeper_Record'Class := null;
                 Refresh_Period : Duration  := 0.02;
                 Background     : Gdk_Color := RGB (1.0, 1.0, 1.0);
-                Buffer_Size    : Positive := 1024 * 60;
+                Buffer_Size    : Positive  := 1024 * 60;
                 Max_Channels   : Channel_Number := 64
              )  is
    begin
@@ -2175,22 +2178,27 @@ package body Gtk.Oscilloscope is
    begin
       return Result : Cairo_Tuple do
          if Hint then
-            declare
-               Mask   : Gdk.Types.Gdk_Modifier_Type;
-               Area   : Gdk_Rectangle;
-               Window : Gdk.Gdk_Window;
-            begin
-               Gdk.Window.Get_Pointer
-               (  Get_Window (Oscilloscope),
-                  GInt (Result.X),
-                  GInt (Result.Y),
-                  Mask,
-                  Window
-               );
-               Oscilloscope.Get_Allocation (Area);
-               Result.X := Result.X - GDouble (Area.X);
-               Result.Y := Result.Y - GDouble (Area.Y);
-            end;
+--              declare
+--                 use Gdk.Device_Manager;
+--                 Mask   : Gdk.Types.Gdk_Modifier_Type;
+--                 Area   : Gdk_Rectangle;
+--                 Window : Gdk.Gdk_Window := Oscilloscope.Get_Window;
+--              begin
+--                 Gdk.Window.Get_Device_Position
+--                 (  Window,
+--                    Get_Device_Manager
+--                    (  Get_Display (Window)
+--                    ) .Get_Client_Pointer,
+--                    GInt (Result.X),
+--                    GInt (Result.Y),
+--                    Mask,
+--                    Window
+--                 );
+--                 Oscilloscope.Get_Allocation (Area);
+--                 Result.X := Result.X - GDouble (Area.X);
+--                 Result.Y := Result.Y - GDouble (Area.Y);
+--              end;
+            Get_Coords (Event, Result.X, Result.Y);
          else
             Get_Axis (Event, Axis_X, Result.X);
             Get_Axis (Event, Axis_Y, Result.Y);
@@ -2336,17 +2344,19 @@ package body Gtk.Oscilloscope is
              (  Menu         : access GObject_Record'Class;
                 Oscilloscope : Gtk_Oscilloscope
              )  is
-      Y : GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
+      Y      : GDouble := Oscilloscope.Selection.Area.Get_Box.Y2;
+      Got_It : Boolean;
    begin
       for Index in 1..Oscilloscope.Channels_Number loop
          declare
             Data : Channel_Data renames Oscilloscope.Channels (Index);
          begin
-            Data.Value_1 := Data.Waveform.Get (GDouble (Y));
-            Data.Status  := Absolute;
-         exception
-            when others =>
+            Data.Waveform.Get (GDouble (Y), Data.Value_1, Got_It);
+            if Got_It then
+               Data.Status := Absolute;
+            else
                Data.Status := Undefined;
+            end if;
          end;
       end loop;
       Oscilloscope.Update_Value;
@@ -2425,17 +2435,19 @@ package body Gtk.Oscilloscope is
    begin
       for Index in 1..Oscilloscope.Channels_Number loop
          declare
-            Data : Channel_Data renames Oscilloscope.Channels (Index);
+            Data   : Channel_Data renames Oscilloscope.Channels (Index);
+            Got_It : Boolean;
          begin
             if Data.Status /= Undefined then
-               Data.Value_2 := Data.Waveform.Get (GDouble (Y));
-               Data.Status  := Difference;
-            end if;
-         exception
-            when others =>
-               if Data.Status = Difference then
-                  Data.Status := Undefined;
+               Data.Waveform.Get (GDouble (Y), Data.Value_2, Got_It);
+               if Got_It then
+                  Data.Status  := Difference;
+               else
+                  if Data.Status = Difference then
+                     Data.Status := Undefined;
+                  end if;
                end if;
+            end if;
          end;
       end loop;
       Oscilloscope.Update_Value;
@@ -2585,16 +2597,20 @@ package body Gtk.Oscilloscope is
    begin
       for Index in 1..Oscilloscope.Channels_Number loop
          declare
-            Data : Channel_Data renames Oscilloscope.Channels (Index);
+            Data   : Channel_Data renames Oscilloscope.Channels (Index);
+            Got_It : Boolean;
          begin
-            Data.Value_1 := Data.Waveform.Get (GDouble (Y1));
-            Data.Value_2 := Data.Waveform.Get (GDouble (Y2));
-            Data.Status  := Difference;
-         exception
-            when others =>
+            Data.Waveform.Get (GDouble (Y1), Data.Value_1, Got_It);
+            if Got_It then
+               Data.Waveform.Get (GDouble (Y2), Data.Value_2, Got_It);
+            end if;
+            if Got_It then
+               Data.Status := Difference;
+            else
                if Data.Status = Difference then
                   Data.Status := Undefined;
                end if;
+            end if;
          end;
       end loop;
       Oscilloscope.Update_Value;

@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer_Fixed                     Luebeck            --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  19:30 31 Jul 2015  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -29,6 +29,7 @@
 --  aligned along their decimal points. 
 --
 with Cairo;                     use Cairo;
+with Gdk.Color;                 use Gdk.Color;
 with Gdk.Event;                 use Gdk.Event;
 with Gdk.Rectangle;             use Gdk.Rectangle;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
@@ -36,6 +37,7 @@ with GLib.Values;               use GLib.Values;
 with Gtk.Cell_Renderer;         use Gtk.Cell_Renderer;
 with Gtk.GEntry;                use Gtk.GEntry;
 with Gtk.Handlers;              use Gtk.Handlers;
+with Gtk.Missed;                use Gtk.Missed;
 with Gtk.Widget;                use Gtk.Widget;
 with Pango.Layout;              use Pango.Layout;
 
@@ -183,15 +185,17 @@ private
       new Gtk.Cell_Renderer.
           Abstract_Renderer.Gtk_Abstract_Renderer_Record with
    record
-      Text       : Pango_Layout;     -- The text to display
-      Value      : GDouble := 0.0;   -- Current value
-      Empty      : Boolean := False; -- Leave it empty
-      After      : Natural := 0;     -- Places after the point
-      Max_Offset : GInt    := 0;     -- Pixel offset to the point
-      Height     : GInt    := 0;     -- Current pixel height
-      Width      : GInt    := 0;     -- Current pixel width
-      Left_Width : GInt;             -- Current space before the point
-      Focus_Out  : Handler_Id;       -- Current focus_out_event handler
+      Text       : Pango_Layout;       -- The text to display
+      Value      : GDouble   := 0.0;   -- Current value
+      Empty      : Boolean   := False; -- Leave it empty
+      Color_Set  : Boolean   := False; -- Use text color
+      After      : Natural   := 0;     -- Places after the point
+      Max_Offset : GInt      := 0;     -- Pixel offset to the point
+      Height     : GInt      := 0;     -- Current pixel height
+      Width      : GInt      := 0;     -- Current pixel width
+      Left_Width : GInt;               -- Current space before the point
+      Focus_Out  : Handler_Id;         -- Current focus_out_event handler
+      Color      : Gdk_Color := RGB (0.0, 0.0, 0.0);
    end record;
 --
 -- Editing_Done -- The handler of editing_done

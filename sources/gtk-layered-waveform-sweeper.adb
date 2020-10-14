@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.Sweeper                Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -258,12 +258,16 @@ package body Gtk.Layered.Waveform.Sweeper is
 
    procedure Set_Current_Time
              (  Sweeper : not null access Gtk_Waveform_Sweeper_Record;
-                Stamp   : Time
+                Stamp   : Time;
+                Active  : Boolean := False
              )  is
       Value : constant GDouble := To_Double (Stamp);
       Upper : constant GDouble := Sweeper.Get_Upper;
       Lower : constant GDouble := Sweeper.Get_Lower;
    begin
+      if Active then
+         Sweeper.Active := Sweeper.Active + 1;
+      end if;
       if Sweeper.Frozen then
          if Lower > Value then
             Sweeper.Set_Lower (Value);
@@ -280,7 +284,17 @@ package body Gtk.Layered.Waveform.Sweeper is
             Set_Value (Sweeper, Value - Upper + Sweeper.Get_Value);
          end if;
       end if;
+      if Active then
+         Sweeper.Active := Sweeper.Active - 1;
+      end if;
    end Set_Current_Time;
+
+   function Is_Active
+            (  Sweeper : not null access Gtk_Waveform_Sweeper_Record
+            )  return Boolean is
+   begin
+      return Sweeper.Active > 0;
+   end Is_Active;
 
    procedure Set_Frozen
              (  Sweeper : not null access Gtk_Waveform_Sweeper_Record;

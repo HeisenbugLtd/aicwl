@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        Do_Init                                  Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -138,8 +138,8 @@ begin
    );
    Oscilloscope_Handlers.Connect
    (  Widget.Layers,
-      "leave_notify_event",
-      Oscilloscope_Handlers.To_Marshaller (On_Leave'Access),
+      "button_release_event",
+      Oscilloscope_Handlers.To_Marshaller (On_Button_Release'Access),
       Widget.all'Unchecked_Access
    );
    Oscilloscope_Handlers.Connect
@@ -167,5 +167,6 @@ begin
    else
       Refresh_Engine.Add (Widget.Layers);
    end if;
+   Widget.Set_App_Paintable (True);
    On_Style_Updated (Widget, Widget.all'Unchecked_Access);
 end Do_Init;

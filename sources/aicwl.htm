@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>ADA INDUSTRIAL CONTROL WIDGET LIBRARY</b></font><BIG><br>
-<EM>version 3.12</EM></BIG><br>
+<EM>version 3.13</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -92,12 +92,12 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">
-		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_12.tgz">aicwl_3_12.tgz</a> (<b>tar</b> +
+		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_13.tgz">aicwl_3_13.tgz</a> (<b>tar</b> +
 		<b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td>&nbsp;</td>
 		<td align="center">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_12.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_13.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td align="center">&nbsp;</td>
 	</tr>
 	</table>
@@ -5294,12 +5294,15 @@ is interface</font>;</tt></p></blockquote>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>T</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : <font color="#0000FF">in out</font> X_Axis;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>V</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">out</font> Y_Axis<br>
+: <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <b>Got_It</b> 
+: <font color="#0000FF">out</font> Boolean ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
 <font color="#0000FF">is abstract</font>;</tt></p></blockquote>
-<p>The procedure scans the source backwards. It decreases <b>T</b> to the 
+<p>These procedures scan the source backwards. They decrease <b>T</b> to the 
 nearest available point in the data source of the scanner. <b>T</b> is then set 
-to the position of the point, <b>V</b> is to the point's value. End_Error is 
+to the position of the point, <b>V</b> is to the point's value. <b>Got_It</b> is 
+returned <font color="#800000"><i>false</i></font> or else End_Error is 
 propagated when the data source beginning is reached.</p>
 <blockquote>
 <p><tt><font color="#0000FF">procedure</font> First<br>
@@ -5308,10 +5311,13 @@ propagated when the data source beginning is reached.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>T&nbsp;&nbsp;
 </b>&nbsp;&nbsp; : <font color="#0000FF">out</font> X_Axis;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>V&nbsp;&nbsp;&nbsp;
-</b>&nbsp; : <font color="#0000FF">out</font> Y_Axis<br>
+</b>&nbsp; : <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <b>Got_It</b> 
+: <font color="#0000FF">out</font> Boolean ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
 <font color="#0000FF">is abstract</font>;</tt></p></blockquote>
-<p>This procedure returns the first point in the data source. End_Error is propagated 
+<p>This procedure returns the first point in the data source. <b>Got_It</b> is 
+returned <font color="#800000"><i>false</i></font> or else End_Error is propagated 
 when the data source is empty.</p>
 <blockquote>
 <p><tt><font color="#0000FF">procedure</font> Forward<br>
@@ -5320,12 +5326,15 @@ when the data source is empty.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>T</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : <font color="#0000FF">in out</font> X_Axis;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>V</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-: <font color="#0000FF">out</font> Y_Axis<br>
+: <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <b>Got_It</b> 
+: <font color="#0000FF">out</font> Boolean ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
 <font color="#0000FF">is abstract</font>;</tt></p></blockquote>
-<p>The procedure scans the source forward. It increases <b>T</b> to the nearest 
+<p>These procedures scan the source forward. They increase <b>T</b> to the nearest 
 available point in the data source of the scanner. <b>T</b> is then set to the 
-position of the point, <b>V</b> is to the point's value. End_Error is propagated 
+position of the point, <b>V</b> is to the point's value. <b>Got_It</b> is 
+returned <font color="#800000"><i>false</i></font> or else End_Error is propagated 
 when the data source beginning is reached.</p>
 <blockquote>
 <p><tt><font color="#0000FF">function</font> Is_In<br>
@@ -5345,10 +5354,13 @@ source.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>T&nbsp;&nbsp;
 </b>&nbsp;&nbsp; : <font color="#0000FF">out</font> X_Axis;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>V&nbsp;&nbsp;&nbsp;
-</b>&nbsp; : <font color="#0000FF">out</font> Y_Axis<br>
+</b>&nbsp; : <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <b>Got_It</b> 
+: <font color="#0000FF">out</font> Boolean ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
 <font color="#0000FF">is abstract</font>;</tt></p></blockquote>
-<p>This procedure returns the last point in the data source. End_Error is propagated 
+<p>This procedure returns the last point in the data source. <b>Got_It</b> is 
+returned <font color="#800000"><i>false</i></font> or else End_Error is propagated 
 when the data source is empty.</p>
 <p>The class-wide operation defined on the scanner:</p>
 <blockquote>
@@ -5360,13 +5372,16 @@ when the data source is empty.</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mode</b>&nbsp;&nbsp; 
 : Interpolation_Mode;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>V
-</b>&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">out</font> Y_Axis<br>
+</b>&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <b>Got_It</b> 
+: <font color="#0000FF">out</font> Boolean ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure searches the source connected to the scanner <b>Source</b> for 
 the value <b>V </b>corresponding to the parameter <b>T</b>. The
 <a href="#Gtk.Layered.Interpolation_Mode">
 interpolation mode</a> is specified by the parameter <b>Mode</b>. The procedure 
-does not extrapolate the data source values, End_Error is propagated when there 
+does not extrapolate the data source values, <b>Got_It</b> is 
+returned <font color="#800000"><i>false</i></font> or else End_Error is propagated when there 
 is no defined values around <b>T</b>. </p>
 <h4><a name="9.1.3"></a>9.1.3. Data source feed interface</h4>
 <p>The package <a href="#Gtk.Layered.Waveform">Gtk.Layered.Waveform</a> declares 
@@ -5669,7 +5684,9 @@ is interface</font>;</tt></p></blockquote>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Sweeper</b> :
 <font color="#0000FF">not null access</font> Waveform_Sweeper;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Stamp</b>&nbsp;&nbsp; : Time<br>
+Stamp</b>&nbsp;&nbsp; : Time;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Active</b>&nbsp; : Boolean := False<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
 <font color="#0000FF">is abstract</font>;</tt></p></blockquote>
 <p>This procedure is called before drawing the waveform layer. The 
@@ -5677,7 +5694,26 @@ implementation can change the adjustment to sweep the waveform. Note that it can
 be called multiple times when the sweeper object is shared by several waveforms.
 Usually
 <b>Stamp</b> changes the adjustment value so that the right margin of the 
-adjustment page would correspond to <b>Stamp</b>.</p>
+adjustment page would correspond to <b>Stamp</b>. When <b>Active</b> is passed
+<font color="#800000"><i>true</i></font> the active count is increased and 
+decreased again before return from
+<a href="#Gtk.Layered.Waveform.Set_Current_Time">Set_Current_Time</a>.
+<a href="#Gtk.Layered.Waveform.Is_Active">Is_Active</a> then returns <i>
+<font color="#800000">true</font></i> if the count is greater than zero.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Layered.Waveform.Is_Active"></a>
+function</font> Is_Active<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Sweeper</b> :
+<font color="#0000FF">not null access</font> Waveform_Sweeper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean <font color="#0000FF">is abstract</font>;</tt></p></blockquote>
+<p>Layers during preparation to drawing may call
+<a href="#Gtk.Layered.Waveform.Set_Current_Time">Set_Current_Time</a> with <b>
+Active</b> set <i><font color="#800000">true</font></i>. When they receive the
+<i>changed</i> signal from the sweeper they use<br>
+this function to decide not to a new queue drawing request (when
+<a href="#Gtk.Layered.Waveform.Is_Active">Is_Active</a> returns <i>
+<font color="#800000">true</font></i>).</p>
 <h4><a name="9.3.2"></a>9.3.2. Time operations</h4>
 <p>The package <a href="#Gtk.Layered.Waveform">Gtk.Layered.Waveform</a> provides 
 operations to convert time to the adjustment values.</p>
@@ -5738,15 +5774,6 @@ return</font> [Ada.Calendar.]Time;</tt></p></blockquote>
 <p>This function returns the time corresponding to the lower value of the 
 sweeper, i.e. the first time available. The result is either Ada.Real_Time.Time 
 or Ada.Calendar.Time.</p>
-<blockquote>
-<p><tt><font color="#0000FF">function</font> Get_Frozen<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Sweeper</b> :
-<font color="#0000FF">not null access constant</font> 
-Gtk_Waveform_Sweeper_Record<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
-return</font> Boolean;</tt></p></blockquote>
-<p>This function returns <i><font color="#800000">true</font></i> if the sweeper 
-is frozen.</p>
 <blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Frozen<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Sweeper</b> :
@@ -5848,7 +5875,7 @@ Page_Span</b> : Duration<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Stamp</b>&nbsp;&nbsp; : [Ada.Calendar.]Time<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
-<p>This procedure changes right margin of the sweeper to <b>Stamp</b>. <b>Stamp</b> 
+<p>This procedure changes the right margin of <b>Sweeper</b> to <b>Stamp</b>. <b>Stamp</b> 
 is either Ada.Real_Time.Time or Ada.Calendar.Time.</p>
 <p>The following additional signals are emitted by the object:</p>
 <ul>
@@ -6004,6 +6031,18 @@ to be redrawn when the time comes.</p>
 relative to the widget. End_Error is propagated when there is no defined values 
 around <b>X</b>. See also <a href="#Gtk.Layered.Waveform.Get_Point">Get_Point</a>, which returns values on both axes.</p>
 <blockquote>
+<p><tt><font color="#0000FF">procedure</font> Get<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp;&nbsp; 
+: Waveform_Layer;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>X</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GDouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Y</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Got_It</b>&nbsp; : <font color="#0000FF">out</font> Boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This variant does not use End_Error exception.</p>
+<blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Amplifier (<b>Layer</b> : 
 Waveform_Layer)<br>
 &nbsp;&nbsp; <font color="#0000FF">return</font> Gtk_Adjustment;</tt></p></blockquote>
@@ -6038,17 +6077,20 @@ Waveform_Layer) <font color="#0000FF">return</font> Fill_Opacity;</tt></p></bloc
 <blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Layered.Waveform.Get_Point"></a>
 procedure</font> Get_Point<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b> : 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer </b> &nbsp;: 
 Waveform_Layer;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>X
-</b>&nbsp;&nbsp;&nbsp; : GDouble;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>T</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+</b>&nbsp;&nbsp;&nbsp;&nbsp; : GDouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>T</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : <font color="#0000FF">out</font> X_Axis;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>V
-</b>&nbsp;&nbsp;&nbsp; : <font color="#0000FF">out</font> Y_Axis<br>
+</b>&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">out</font> Y_Axis;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ <b>Got_It</b> :
+<font color="#0000FF">out</font> Boolean ]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure returns the waveform point (T, V) corresponding to the coordinate <b>X</b>, 
-relative to the widget. End_Error is propagated when there is no defined values 
+relative to the widget. <b>Got_It</b> is returned <font color="#800000"><i>false</i></font> 
+or else End_Error is propagated when there is no defined values 
 around <b>X</b>.</p>
 <blockquote>
 <p><tt><font color="#0000FF">function</font> Get_Preferred_Method (<b>Layer</b> 
@@ -14186,6 +14228,12 @@ The following versions were tested with the compilers:</i>
 <i>and the GtkAda versions:</i><ul>
 	<li><i>GtkAda 3.8.3</i></li>
 	</ul>
+<p>Changes (4 March 2016) to the version 3.12:</p>
+<ul>
+  <li>Minor changes improving performance;</li>
+	<li>Waveform sweeper interface is enhanced to suppress the &quot;draw&quot; signal 
+	flood when a sweeper is shared by several independent widgets.</li>
+</ul>
 <p>Changes (18 October 2015) to the version 3.11:</p>
 <ul>
   <li>Adapted to GNAT 5</li>

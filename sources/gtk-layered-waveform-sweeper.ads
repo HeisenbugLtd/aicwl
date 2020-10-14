@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.Sweeper                Luebeck            --
 --  Interface                                      Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -232,8 +232,13 @@ package Gtk.Layered.Waveform.Sweeper is
       procedure Set_Current_Time
                 (  Sweeper : not null access
                              Gtk_Waveform_Sweeper_Record;
-                   Stamp   : Time
+                   Stamp   : Time;
+                   Active  : Boolean := False
                 );
+   overriding
+      function Is_Active
+               (  Sweeper : not null access Gtk_Waveform_Sweeper_Record
+               )  return Boolean;
 
    Class_Name : constant String := "GtkLayeredWaveformSweeper";
 private
@@ -244,6 +249,7 @@ private
       and Waveform_Sweeper with
    record
       Frozen : Boolean := False;
+      Active : Integer := 0;
    end record;
 
    procedure Set_Time

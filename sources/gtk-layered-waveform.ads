@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Interface                                      Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -54,9 +54,10 @@ package Gtk.Layered.Waveform is
 --
 -- Backward/Forward -- Buffer for a measurement point
 --
---    Source - The waveform data scanner
---    T      - The position in the buffer to start scan
---    V      - The value
+--    Source   - The waveform data scanner
+--    T        - The position in the buffer to start scan
+--    V        - The value
+--  [ Got_It ] - False if T is outside the buffer bounds
 --
 -- The procedure increases or decreases T to the nearest available point
 -- in  the  buffer.  T is then set to the position of the point, V is to
@@ -64,9 +65,20 @@ package Gtk.Layered.Waveform is
 --
 -- Exceptions :
 --
---    End_Error - T is outside the buffer bounds
+--    End_Error - T is outside the buffer bounds (if no Got_It used)
 --
    procedure Backward
+             (  Source : in out Waveform_Data_Scanner;
+                T      : in out X_Axis;
+                V      : out Y_Axis
+             )  is abstract;
+   procedure Backward
+             (  Source : in out Waveform_Data_Scanner;
+                T      : in out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is abstract;
+   procedure Forward
              (  Source : in out Waveform_Data_Scanner;
                 T      : in out X_Axis;
                 V      : out Y_Axis
@@ -74,14 +86,16 @@ package Gtk.Layered.Waveform is
    procedure Forward
              (  Source : in out Waveform_Data_Scanner;
                 T      : in out X_Axis;
-                V      : out Y_Axis
+                V      : out Y_Axis;
+                Got_It : out Boolean
              )  is abstract;
 --
 -- First -- Point in the buffer
 --
---    Source - The waveform data scanner
---    T      - The position of the first point in the buffer
---    V      - The value at this point
+--    Source   - The waveform data scanner
+--    T        - The position of the first point in the buffer
+--    V        - The value at this point
+--  [ Got_It ] - False if the buffer is empty
 --
 -- Exceptions :
 --
@@ -92,13 +106,20 @@ package Gtk.Layered.Waveform is
                 T      : out X_Axis;
                 V      : out Y_Axis
              )  is abstract;
+   procedure First
+             (  Source : in out Waveform_Data_Scanner;
+                T      : out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is abstract;
 --
 -- Get -- Data source value
 --
---    Source - The data source scanner
---    T      - The argument
---    Mode   - The interpolation mode
---    V      - The result, the value corresponding to T
+--    Source   - The data source scanner
+--    T        - The argument
+--    Mode     - The interpolation mode
+--    V        - The result, the value corresponding to T
+--  [ Got_It ] - False if The value is not defined by the data source
 --
 -- The procedure does not extrapolate the data source values,  End_Error
 -- is propagated when Source does not have defined values around T.
@@ -112,6 +133,13 @@ package Gtk.Layered.Waveform is
                 T      : X_Axis;
                 Mode   : Interpolation_Mode;
                 V      : out Y_Axis
+             );
+   procedure Get
+             (  Source : in out Waveform_Data_Scanner'Class;
+                T      : X_Axis;
+                Mode   : Interpolation_Mode;
+                V      : out Y_Axis;
+                Got_It : out Boolean
              );
 --
 -- Is_In -- Test if a point is in the buffer
@@ -130,9 +158,10 @@ package Gtk.Layered.Waveform is
 --
 -- Last -- Point in the buffer
 --
---    Source - The waveform data scanner
---    T      - The position of the last point in the buffer
---    V      - The value at this point
+--    Source   - The waveform data scanner
+--    T        - The position of the last point in the buffer
+--    V        - The value at this point
+--  [ Got_It ] - False if the buffer is empty
 --
 -- Exceptions :
 --
@@ -142,6 +171,12 @@ package Gtk.Layered.Waveform is
              (  Source : in out Waveform_Data_Scanner;
                 T      : out X_Axis;
                 V      : out Y_Axis
+             )  is abstract;
+   procedure Last
+             (  Source : in out Waveform_Data_Scanner;
+                T      : out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
              )  is abstract;
 ------------------------------------------------------------------------
 -- Waveform_Data_Source -- The  source  of  the  waveform data, a set of
@@ -277,16 +312,32 @@ package Gtk.Layered.Waveform is
 --
 --    Sweeper - The adjustment object
 --    Stamp   - The time indicated by the sweeper
+--    Active  - Increase active count until return from the procedure
 --
 -- This procedure is called before drawing the layer. The implementation
 -- can change the adjustment to sweep the waveform. Note that it can  be
 -- called multiple times when the sweeper object is  shared  by  several
--- waveforms. Stamp corresponds to the end (right margin) of the page.
+-- waveforms.  Stamp corresponds  to the end (right margin) of the page.
+-- When Active is passed True  the active count is increased.  Is_Active
+-- returns true if the count is greater than zero.
 --
    procedure Set_Current_Time
              (  Sweeper : not null access Waveform_Sweeper;
-                Stamp   : Time
+                Stamp   : Time;
+                Active  : Boolean := False
              )  is abstract;
+--
+-- Is_Active -- Check if setting time is active
+--
+--    Sweeper - The adjustment object
+--
+-- Layers during  preparation to drawing may call Set_Current_Time  with
+-- Active set True.  When they  receive the  "changed"  signal  they use
+-- Is_Active to decide not to a new queue drawing request.
+--
+   function Is_Active
+            (  Sweeper : not null access Waveform_Sweeper
+            )  return Boolean is abstract;
 ------------------------------------------------------------------------
 -- Add_Waveform -- Add a waveform
 --
@@ -419,6 +470,25 @@ package Gtk.Layered.Waveform is
 --
    function Get (Layer : Waveform_Layer; X : GDouble) return Y_Axis;
 --
+-- Get -- The data source value by horizontal coordinate
+--
+--    Layer  - The waveform
+--    X      - The coordinate to query the value
+--    Y      - The value corresponding to X
+--    Got_It - False if there is no value
+--
+-- The argument is relative to the widget of  the  layer.  The  function
+-- searches the data source for a value corresponding to the  coordinate
+-- X.  The result depends  on the waveform interpolation mode.  See also
+-- Get_Point.
+--
+   procedure Get
+             (  Layer  : Waveform_Layer;
+                X      : GDouble;
+                Y      : out Y_Axis;
+                Got_It : out Boolean
+             );
+--
 -- Get_Amplifier -- Get vertical adjustment
 --
 --    Layer - The waveform
@@ -484,10 +554,11 @@ package Gtk.Layered.Waveform is
 --
 -- Get_Point -- The data source point by horizontal coordinate
 --
---    Layer - The waveform
---    X     - The coordinate to query the value
---    T     - The horizontal axis value corresponding to X
---    V     - The waveform value at T
+--    Layer  - The waveform
+--    X      - The coordinate to query the value
+--    T      - The horizontal axis value corresponding to X
+--    V      - The waveform value at T
+--    Got_It - False if there is no value corresponding to X
 --
 -- The argument is relative to the widget of the  layer.  The  procedure
 -- searches the data source for a value corresponding to the  coordinate
@@ -502,6 +573,13 @@ package Gtk.Layered.Waveform is
                 X     : GDouble;
                 T     : out X_Axis;
                 V     : out Y_Axis
+             );
+   procedure Get_Point
+             (  Layer  : Waveform_Layer;
+                X      : GDouble;
+                T      : out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
              );
 --
 -- Get_Preferred_Method -- Get preferred rendering method
@@ -904,8 +982,10 @@ private
       Method    : Waveform_Drawing_Method := Resample_New_And_Stroke;
       Preferred : Waveform_Drawing_Method := Resample_New_And_Stroke;
       Line      : Line_Parameters;
-      T1, T2    : X_Axis; -- The times at the box boundaries (X1, X2)
-      V1, V2    : Y_Axis; -- The values at the box boundaries (Y1, Y2)
+      T1        : X_Axis := 1.0; -- The time at the box boundary X1
+      T2        : X_Axis := 0.0; --                              X2
+      V1        : Y_Axis := 0.0; -- The value at the box boundary Y1
+      V2        : Y_Axis := 0.0; --                               Y2
       Y0, YY    : GDouble; -- Linear conversion to Y coordinates
       dT        : X_Axis := 0.0;  -- Current step, time per one pixel
       Mode      : Interpolation_Mode := Linear;

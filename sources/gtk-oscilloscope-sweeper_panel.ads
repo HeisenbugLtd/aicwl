@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Sweeper_Panel              Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  19:09 09 Oct 2015  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -114,25 +114,25 @@ private
       new Gtk.Generic_Style_Button
           (  Class_Name => Class_Name & "OffsetPageLeftButton",
              Icon       => "gtk-media-previous",
-             Tip        => "Older"
+             Tip        => "Older, moves the window left"
           );
    package Offset_Left_Buttons is
       new Gtk.Generic_Style_Button
           (  Class_Name => Class_Name & "OffsetLeftButton",
              Icon       => "gtk-go-back",
-             Tip        => "Back"
+             Tip        => "Back, moves the window left"
           );
    package Offset_Right_Buttons is
       new Gtk.Generic_Style_Button
           (  Class_Name => Class_Name & "OffsetRightButton",
              Icon       => "gtk-go-forward",
-             Tip        => "Forward"
+             Tip        => "Forward, moves the window right"
           );
    package Offset_Page_Right_Buttons is
       new Gtk.Generic_Style_Button
           (  Class_Name => Class_Name & "OffsetPageRightButton",
              Icon       => "gtk-media-next",
-             Tip        => "More recent"
+             Tip        => "More recent, moves the window right"
           );
    package Page_Faster_Buttons is
       new Gtk.Generic_Style_Button

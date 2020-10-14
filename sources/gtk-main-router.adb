@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  23:16 14 Oct 2015  --
+--                                Last revision :  22:21 02 Mar 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -48,6 +48,7 @@ with Gtk.Menu;                 use Gtk.Menu;
 with Gtk.Missed;               use Gtk.Missed;
 with Gtk.Scrolled_Window;      use Gtk.Scrolled_Window;
 with Gtk.Stock;                use Gtk.Stock;
+with Gtk.Style_Context;        use Gtk.Style_Context;
 with Gtk.Text_Buffer;          use Gtk.Text_Buffer;
 with Gtk.Text_Iter;            use Gtk.Text_Iter;
 with Gtk.Text_Tag;             use Gtk.Text_Tag;
@@ -58,8 +59,11 @@ with Pango.Font;               use Pango.Font;
 with System;                   use System;
 with System.Storage_Elements;  use System.Storage_Elements;
 
+with Ada.Tags;
 with Ada.Unchecked_Deallocation;
 with Ada.Unchecked_Conversion;
+with Gdk.Event;
+with Gdk.Device_Manager;
 with Gtk.Generic_Style_Button;
 with Gtk.Handlers;
 
@@ -93,6 +97,8 @@ package body Gtk.Main.Router is
    GPS_Port     : Natural         := 50_000;
    Connected    : Boolean         := Standard.False;
    Recursion    : Boolean         := Standard.False;
+   Window_X     : GInt            := 0;
+   Window_Y     : GInt            := 0;
    Parent       : Gtk_Window      := null;
    Main         : Task_ID         := Null_Task_ID;
    Trace_Dialog : Gtk_Dialog;
@@ -122,6 +128,7 @@ package body Gtk.Main.Router is
       procedure Abort_Service (Error : Exception_Occurrence);
       procedure Complete_Service;
       function Get_State return Gateway_State;
+      function Get_Request_Info return String;
       entry Initiate_Service (Data : out Request_Data_Ptr);
       entry Request_Service
             (  Data        : in out Request_Data'Class;
@@ -188,6 +195,44 @@ package body Gtk.Main.Router is
       begin
          return State;
       end Get_State;
+
+      function Get_Request_Info return String is
+         use Ada.Tags;
+         function Info return String is
+         begin
+            return
+            (  Expanded_Name (Data.all'Tag)
+            &  " at"
+            &  Integer_Address'Image (To_Integer (Data.all'Address))
+            );
+         end Info;
+      begin
+         case State is
+            when Idle =>
+               return "idle";
+            when Ready =>
+               if Data = null then
+                  return "ready ";
+               else
+                  return "ready with " & Info;
+               end if;
+            when Busy =>
+               if Data = null then
+                  return "busy";
+               else
+                  return "busy on " & Info;
+               end if;
+            when Failed =>
+               if Data = null then
+                  return "failed [" & Exception_Message (Fault) & "]";
+               else
+                  return "failed [" & Exception_Message (Fault) &
+                         "] on " & Info;
+               end if;
+            when Quitted =>
+               return "quitted";
+         end case;
+      end Get_Request_Info;
 
       entry Initiate_Service
             (  Data : out Request_Data_Ptr
@@ -281,7 +326,8 @@ package body Gtk.Main.Router is
             select
                Gateway.Request_Service (Message.all, Standard.False);
             or delay Timeout;
-               raise Busy_Error;
+               raise Busy_Error with
+                     "Current state " & Gateway.Get_Request_Info;
             end select;
          end if;
       exception
@@ -620,7 +666,14 @@ package body Gtk.Main.Router is
       new Gtk.Handlers.Callback (Gtk_Dialog_Record);
 
    package View_Handlers is
-      new Gtk.Handlers.Callback (Gtk_Text_View_Record);
+      new Gtk.Handlers.User_Callback (Gtk_Text_View_Record, Gtk_Dialog);
+
+   package View_Event_Handlers is
+      new Gtk.Handlers.User_Return_Callback
+          (  Gtk_Text_View_Record,
+             Boolean,
+             Gtk_Dialog
+          );
 
    package Gtk_Image_Menu_Item_Handlers is
       new Gtk.Handlers.Callback (Gtk_Image_Menu_Item_Record);
@@ -634,6 +687,21 @@ package body Gtk.Main.Router is
    type Tag_Index is mod 5;
    Tags        : array (Tag_Index) of Gtk_Text_Tag;
    Current_Tag : Tag_Index := 0;
+--
+-- On_Button_Press -- Event handler
+--
+   function On_Button_Press
+            (  Dialog : access Gtk_Text_View_Record'Class;
+               Event  : Gdk_Event;
+               Parent : Gtk_Dialog
+            )  return Boolean is
+   begin
+      if Get_Event_Type (Event) = Button_Press then
+         Window_X := GInt (Event.Button.X);
+         Window_Y := GInt (Event.Button.Y);
+      end if;
+      return Standard.False;
+   end On_Button_Press;
 --
 -- On_Go_To_Location -- Event handler
 --
@@ -741,7 +809,8 @@ package body Gtk.Main.Router is
 --
    procedure On_Populate_Popup
              (  Dialog : access Gtk_Text_View_Record'Class;
-                Params : GValues
+                Params : GValues;
+                Parent : Gtk_Dialog
              )  is
       Buffer : Gtk_Text_Buffer := Get_Buffer (Dialog);
       Widget : Gtk_Widget;
@@ -756,7 +825,11 @@ package body Gtk.Main.Router is
       if Widget /= null and then Widget.all in Gtk_Menu_Record'Class
       then
          Menu := Gtk_Menu_Record'Class (Widget.all)'Unchecked_Access;
-
+         Menu.Modify_Font
+         (  Get_Font
+            (  Get_Style_Context (Parent),
+               Gtk_State_Flag_Normal
+         )  );
          if Get.Wait_Is_Text_Available then -- Paste traceback item
             Gtk_New (Item, "Paste stack traceback");
             Gtk_New (Icon, Stock_Find, Icon_Size_Menu);
@@ -771,13 +844,12 @@ package body Gtk.Main.Router is
          end if;
          if Main /= Null_Task_ID then -- Go to the location item
             declare
+               use Gdk.Device_Manager;
+               use type Gdk.Gdk_Window;
                Buffer_X : GInt;
                Buffer_Y : GInt;
-               Window_X : GInt;
-               Window_Y : GInt;
                Moved    : Boolean;
             begin
-               Dialog.Get_Pointer (Window_X, Window_Y);
                Dialog.Window_To_Buffer_Coords
                (  Text_Window_Widget,
                   Window_X,
@@ -915,7 +987,16 @@ package body Gtk.Main.Router is
             View_Handlers.Connect
             (  View,
                "populate-popup",
-               On_Populate_Popup'Access
+               On_Populate_Popup'Access,
+               Trace_Dialog
+            );
+            View_Event_Handlers.Connect
+            (  View,
+               "button_press_event",
+               View_Event_Handlers.To_Marshaller
+               (  On_Button_Press'Access
+               ),
+               Trace_Dialog
             );
                -- Scrolled window
             Gtk_New (Scroll);
@@ -963,6 +1044,7 @@ package body Gtk.Main.Router is
             );
             Trace_Dialog.Set_Default_Size (200, 400);
             Trace_Dialog.Show_All;
+            Trace_Dialog.Set_Transient_For (Get_Parent);
          end;
       end if;
       declare

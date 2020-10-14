@@ -689,6 +689,15 @@ package body Gtk.Missed is
       end if;
    end Find_Property;
 
+   procedure Freeze_Notify
+             (  Object : not null access GObject_Record'Class
+             )  is
+      procedure Internal (Object : Address);
+      pragma Import (C, Internal, "g_object_freeze_notify");
+   begin
+      Internal (Get_Object (Object));
+   end Freeze_Notify;
+
    function Get_Application_Name return UTF8_String is
       function Internal return Interfaces.C.Strings.Chars_Ptr;
       pragma Import (C, Internal, "g_get_application_name");
@@ -794,6 +803,35 @@ package body Gtk.Missed is
       G_Free (Ptr);
       return Result;
    end Get_Basename;
+
+   function Get_Clip_Rectangle (Context : Cairo_Context)
+      return Boolean is
+      function Internal
+               (  Context   : Cairo_Context;
+                  Rectangle : System.Address := Null_Address
+               )  return GBoolean;
+      pragma Import (C, Internal, "gdk_cairo_get_clip_rectangle");
+   begin
+      return 0 /= Internal (Context);
+   end Get_Clip_Rectangle;
+
+   procedure Get_Clip_Rectangle
+             (  Context   : Cairo_Context;
+                Rectangle : out Gdk_Rectangle;
+                Empty     : out Boolean
+             )  is
+      function Internal
+               (  Context   : Cairo_Context;
+                  Rectangle : access Gdk_Rectangle
+               )  return GBoolean;
+      pragma Import (C, Internal, "gdk_cairo_get_clip_rectangle");
+      Area : aliased Gdk_Rectangle;
+   begin
+      Empty := 0 = Internal (Context, Area'Access);
+      if not Empty then
+         Rectangle := Area;
+      end if;
+   end Get_Clip_Rectangle;
 
    function Get_Column (Value : GValue) return Gtk_Tree_View_Column is
       use System;
@@ -1524,6 +1562,15 @@ package body Gtk.Missed is
          return Value (Ptr);
       end if;
    end Skip_Root;
+
+   procedure Thaw_Notify
+             (  Object : not null access GObject_Record'Class
+             )  is
+      procedure Internal (Object : Address);
+      pragma Import (C, Internal, "g_object_thaw_notify");
+   begin
+      Internal (Get_Object (Object));
+   end Thaw_Notify;
 
    function Themed_Icon_New (Icon_Name : UTF8_String) return GObject is
       function Internal (Name : Char_Array) return Address;

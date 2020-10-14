@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  16:49 28 Feb 2016  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -319,7 +319,15 @@ package body Gtk.Layered.Waveform is
              )  is
    begin
       Layer.Query_Sweeper;
-      if not Layer.Widget.Drawing and then Layer.Updated then
+      if (  not Layer.Widget.Drawing
+         and then
+            Layer.Updated
+         and then
+            (  Adjustment.all not in Waveform_Sweeper'Class
+            or else
+               not Waveform_Sweeper'Class (Adjustment.all).Is_Active
+         )  )
+      then
          Queue_Draw (Layer.Widget); -- Signal draw to the widget
       end if;
    exception
@@ -399,6 +407,44 @@ package body Gtk.Layered.Waveform is
       end if;
    end Get;
 
+   procedure Get
+             (  Source : in out Waveform_Data_Scanner'Class;
+                T      : X_Axis;
+                Mode   : Interpolation_Mode;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+      T1 : X_Axis := X_Axis'Succ (T);
+      T2 : X_Axis;
+      V1 : Y_Axis;
+      V2 : Y_Axis;
+   begin
+      Source.Backward (T1, V1, Got_It);
+      if not Got_It then
+         return;
+      end if;
+      if T1 = T then
+         V := V1;
+      else
+         T2 := T1; -- Check if the value is well-defined
+         Source.Forward (T2, V2, Got_It);
+         if not Got_It then
+            return;
+         end if;
+         case Mode is
+            when Left =>
+               V := V1;
+            when Linear =>
+               V :=
+                  (  (  Y_Axis (T - T1) * V2
+                     +  Y_Axis (T2 - T) * V1
+                     )
+                  /  Y_Axis (T2 - T1)
+                  );
+         end case;
+      end if;
+   end Get;
+
    function Get (Layer : Waveform_Layer; X : GDouble) return Y_Axis is
    begin
       if Layer.Data = null then
@@ -407,6 +453,20 @@ package body Gtk.Layered.Waveform is
          return V : Y_Axis do
             Layer.Data.Get (Get_T (Layer, X), Layer.Mode, V);
          end return;
+      end if;
+   end Get;
+
+   procedure Get
+             (  Layer  : Waveform_Layer;
+                X      : GDouble;
+                Y      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+   begin
+      if Layer.Data = null then
+         Got_It := False;
+      else
+         Layer.Data.Get (Get_T (Layer, X), Layer.Mode, Y, Got_It);
       end if;
    end Get;
 
@@ -465,6 +525,22 @@ package body Gtk.Layered.Waveform is
       else
          T := Get_T (Layer, X);
          Layer.Data.Get (T, Layer.Mode, V);
+      end if;
+   end Get_Point;
+
+   procedure Get_Point
+             (  Layer  : Waveform_Layer;
+                X      : GDouble;
+                T      : out X_Axis;
+                V      : out Y_Axis;
+                Got_It : out Boolean
+             )  is
+   begin
+      if Layer.Data = null then
+         Got_It := False;
+      else
+         T := Get_T (Layer, X);
+         Layer.Data.Get (T, Layer.Mode, V, Got_It);
       end if;
    end Get_Point;
 
@@ -907,7 +983,8 @@ package body Gtk.Layered.Waveform is
    begin
       if Layer.Sweeper_Object /= null then
          Layer.Sweeper_Object.Set_Current_Time
-         (  Layer.Widget.Get_Drawing_Time
+         (  Layer.Widget.Get_Drawing_Time,
+            True
          );
          Layer.Query_Sweeper;
       end if;
