@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_Browser              Luebeck            --
 --  Implementation                                 Winter, 2008       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  11:44 29 May 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -32,12 +32,10 @@ with GLib.Messages;             use GLib.Messages;
 with GLib.Properties;           use GLib.Properties;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Types;                use GLib.Types;
-with Gtk.Box;                   use Gtk.Box;
 with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Scrolled_Window;       use Gtk.Scrolled_Window;
 with Gtk.Stock;                 use Gtk.Stock;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
-with Interfaces;                use Interfaces;
 with Strings_Edit;              use Strings_Edit;
 
 with Strings_Edit.Symmetric_Serialization;
@@ -1464,8 +1462,7 @@ package body Gtk.Persistent_Storage_Browser is
       begin
          Browse (Cache'Access, Old_Path, Storage, Object);
       exception
-         when Error : Name_Error | End_Error |
-                      Ada.IO_Exceptions.Data_Error =>
+         when  Name_Error | End_Error | Ada.IO_Exceptions.Data_Error =>
             Log
             (  GtkAda_Contributions_Domain,
                Log_Level_Critical,
@@ -1481,7 +1478,7 @@ package body Gtk.Persistent_Storage_Browser is
             Get_Parent (Storage, Object)
          );
       exception
-         when Error : Constraint_Error =>
+         when Constraint_Error =>
             Log
             (  GtkAda_Contributions_Domain,
                Log_Level_Critical,
@@ -1536,8 +1533,7 @@ package body Gtk.Persistent_Storage_Browser is
             Parent
          );
       exception
-         when Error : Name_Error | End_Error |
-                      Ada.IO_Exceptions.Data_Error =>
+         when Name_Error | End_Error | Ada.IO_Exceptions.Data_Error =>
             Log
             (  GtkAda_Contributions_Domain,
                Log_Level_Critical,
@@ -1554,7 +1550,7 @@ package body Gtk.Persistent_Storage_Browser is
             Parent
          );
       exception
-         when Error : Constraint_Error =>
+         when  Constraint_Error =>
             Log
             (  GtkAda_Contributions_Domain,
                Log_Level_Critical,
@@ -1715,7 +1711,7 @@ package body Gtk.Persistent_Storage_Browser is
          --
          Erase (Data.Root_List);
          declare
-            Exec : UTF8_String renames Get_Application_Name;
+            Exec : constant UTF8_String := Get_Application_Name;
             Info : Gtk_Recent_Info;
             List : constant Gtk_Recent_Info_Array :=
                    Get_Items (Data.Manager);

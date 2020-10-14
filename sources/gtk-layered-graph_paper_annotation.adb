@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper_Annotation          Luebeck            --
 -- Implementation                                  Summer, 2011       --
 --                                                                    --
---                                Last revision :  19:08 30 Jan 2020  --
+--                                Last revision :  11:44 29 May 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1689,13 +1689,14 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                Value  : GDouble;
                Raster : Gtk.Layered.Waveform.Rasters.Scale
             )  return UTF8_String is
-      Small : constant Integer := 0;
+      Small : Integer := 0;
       Power : Integer;
    begin
        if Raster.Small > 0 then
           Power := (Raster.Small / 3) * 3;
        elsif Raster.Small < -3 then
-          Power := -3 * ((2 - Raster.Small) / 3);
+          Power := -3 * ((-Raster.Small) / 3);
+          Small := Raster.Small - Power;
        else
           return Image (Value, AbsSmall => Raster.Small);
        end if;

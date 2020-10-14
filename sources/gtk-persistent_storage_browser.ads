@@ -3,7 +3,7 @@
 --      Gtk.Persistent_Storage_Browser             Luebeck            --
 --  Interface                                      Winter, 2008       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  11:44 29 May 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -52,7 +52,6 @@ with Gtk.Widget;              use Gtk.Widget;
 with Persistent;              use Persistent;
 with Persistent.Handle;       use Persistent.Handle;
 
-with Ada.Finalization;
 with Object.Handle;
 with Tables;
 

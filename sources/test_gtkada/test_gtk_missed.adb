@@ -3,7 +3,7 @@
 --  Test for Gtk.Missed                            Luebeck            --
 --                                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  10:33 11 May 2019  --
+--                                Last revision :  11:26 01 Jun 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

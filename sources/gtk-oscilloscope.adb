@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  21:57 12 Jan 2020  --
+--                                Last revision :  11:44 29 May 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -3886,7 +3886,7 @@ package body Gtk.Oscilloscope is
             (  Null_Iter,
                GInt (Channel) - 1
             ),
-            3,
+            4,
             Interpolation_Mode'Pos (Mode)
          );
          Emit (Widget, Signal_IDs (10), GUInt (Channel));

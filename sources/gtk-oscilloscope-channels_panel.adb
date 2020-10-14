@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Channels_Panel             Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  13:15 14 Sep 2019  --
+--                                Last revision :  11:44 29 May 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

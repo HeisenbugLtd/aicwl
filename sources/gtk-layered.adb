@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  22:38 18 Nov 2019  --
+--                                Last revision :  11:44 29 May 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -462,7 +462,7 @@ package body Gtk.Layered is
                    Layer.Widget.Bottom;
          begin
             for Position in 1..Layer.Widget.Depth loop
-               if This = Layer'Access then
+               if This.all'Address = Layer'Address then
                   return Position;
                end if;
                This := This.Next;
