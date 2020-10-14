@@ -3,7 +3,7 @@
 --  Test                                           Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -70,6 +70,7 @@ with Gtk.Layered.Stream_IO;        use Gtk.Layered.Stream_IO;
 with Gtk.Missed;                   use Gtk.Missed;
 with Gtk.Scale;                    use Gtk.Scale;
 with Gtk.Scrolled_Window;          use Gtk.Scrolled_Window;
+with Gtk.Stock;                    use Gtk.Stock;
 with Gtk.Paned;                    use Gtk.Paned;
 with Gtk.Window;                   use Gtk.Window;
 with Gtk.Widget;                   use Gtk.Widget;
@@ -262,13 +263,17 @@ procedure Test_AICWL is
    procedure On_Load (Button : access Gtk_Button_Record'Class) is
       use Ada.Streams.Stream_IO;
       use Gtk.File_Chooser_Dialog;
-      Dialog  : Gtk_File_Chooser_Dialog;
-      Action  : Gtk_File_Chooser_Action := Action_Open;
-      Confirm : Gtk_Widget;
+      Dialog : Gtk_File_Chooser_Dialog;
+      Action : Gtk_File_Chooser_Action := Action_Open;
    begin
       Editor.Get.Erase;
       Gtk_New (Dialog, "Select file to load", Window, Action);
-      Confirm := Add_Button (Dialog, "OK", Gtk_Response_Accept);
+      Add_Button_From_Stock
+      (  Dialog,
+         Gtk_Response_Accept,
+         "_OK",
+         Stock_OK
+      );
       if Run (Gtk_Dialog (Dialog)) = Gtk_Response_Accept then
          declare
             File : File_Type;
@@ -294,12 +299,16 @@ procedure Test_AICWL is
    procedure On_Save (Button : access Gtk_Button_Record'Class) is
       use Ada.Streams.Stream_IO;
       use Gtk.File_Chooser_Dialog;
-      Dialog  : Gtk_File_Chooser_Dialog;
-      Action  : Gtk_File_Chooser_Action := Action_Save;
-      Confirm : Gtk_Widget;
+      Dialog : Gtk_File_Chooser_Dialog;
+      Action : Gtk_File_Chooser_Action := Action_Save;
    begin
       Gtk_New (Dialog, "Select file to save", Window, Action);
-      Confirm := Add_Button (Dialog, "OK", Gtk_Response_Accept);
+      Add_Button_From_Stock
+      (  Dialog,
+         Gtk_Response_Accept,
+         "_OK",
+         Stock_OK
+      );
       if Run (Gtk_Dialog (Dialog)) = Gtk_Response_Accept then
          declare
             File : File_Type;
@@ -2555,7 +2564,7 @@ begin
       procedure Add_Test (Name : String; Test : System.Address) is
       begin
          Append (List, Row, Parent);
-         Set (List, Row, 0, Name);
+         Gtk.Missed.Set (List, Row, 0, Name);
          Set_Address (Ptr, Test);
          Set_Value (List, Row, 1, Ptr);
       end Add_Test;
@@ -2572,7 +2581,7 @@ begin
       -- Creating the list of tests
          -- Raw I/O
          Append (List, Parent, Null_Iter);
-         Set (List, Parent, 0, "Raw I/O");
+         Gtk.Missed.Set (List, Parent, 0, "Raw I/O");
             Add_Test ("Gtk_Layered", Test_1'Address);
             Add_Test ("Elliptic backgrounds",         Test_20'Address);
             Add_Test ("Text transformations (toy)",   Test_35'Address);
@@ -2580,7 +2589,7 @@ begin
             Add_Test ("Caps",                         Test_22'Address);
          -- Gauges
          Append (List, Parent, Null_Iter);
-         Set (List, Parent, 0, "Gauges");
+         Gtk.Missed.Set (List, Parent, 0, "Gauges");
             Add_Test ("Gtk_Gauge_Round_90",           Test_15'Address);
             Add_Test ("Gtk_Gauge_Round_110",          Test_12'Address);
             Add_Test ("Gtk_Gauge_Round_180",          Test_8'Address);
@@ -2598,7 +2607,7 @@ begin
             Add_Test ("Gtk_Gauge_Flat_Vertical",      Test_19'Address);
          -- Meters
          Append (List, Parent, Null_Iter);
-         Set (List, Parent, 0, "Meters");
+         Gtk.Missed.Set (List, Parent, 0, "Meters");
             Add_Test ("Gtk_Meter_Angular_90",         Test_25'Address);
             Add_Test ("Gtk_Meter_Elliptic_90",        Test_23'Address);
             Add_Test ("Gtk_Meter_Round_90",           Test_24'Address);
@@ -2608,24 +2617,24 @@ begin
             Add_Test ("Gtk_Meter_Thermo_Symmetric",   Test_29'Address);
          -- Leds
          Append (List, Parent, Null_Iter);
-         Set (List, Parent, 0, "LEDs");
+         Gtk.Missed.Set (List, Parent, 0, "LEDs");
             Add_Test ("Gtk_Gauge_LED_Rectangular", Test_33'Address);
             Add_Test ("Gtk_Gauge_LED_Round",       Test_32'Address);
          -- Clocks
          Append (List, Parent, Null_Iter);
-         Set (List, Parent, 0, "Wall clocks");
+         Gtk.Missed.Set (List, Parent, 0, "Wall clocks");
             Add_Test ("Gtk_Clock_Imperial", Test_7'Address);
             Add_Test ("Gtk_Clock_Modern",   Test_6'Address);
             Add_Test ("Gtk_Clock_Classic",  Test_5'Address);
          -- Waveforms
          Append (List, Parent, Null_Iter);
-         Set (List, Parent, 0, "Waveforms");
+         Gtk.Missed.Set (List, Parent, 0, "Waveforms");
             Add_Test ("Waveform",               Test_27'Address);
             Add_Test ("Graph paper",            Test_28'Address);
             Add_Test ("Graph paper annotation", Test_34'Address);
          Append (List, Parent, Null_Iter);
          -- Refresh engines
-         Set (List, Parent, 0, "Refresh engine");
+         Gtk.Missed.Set (List, Parent, 0, "Refresh engine");
             Add_Test ("Clocks", Test_16'Address);
          -- Done with the list
       Unset (Ptr);

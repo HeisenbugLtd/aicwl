@@ -28,7 +28,8 @@
 with Ada.Exceptions;        use Ada.Exceptions;
 with Ada.Text_IO;           use Ada.Text_IO;
 with Gdk.Event;             use Gdk.Event;
-with Glib;                  use Glib;
+with GLib;                  use GLib;
+with GLib.Properties;       use GLib.Properties;
 with Gtk.Enums;             use Gtk.Enums;
 with Gtk.Box;               use Gtk.Box;
 with Gtk.Button;            use Gtk.Button;
@@ -42,6 +43,7 @@ with Gtk.Label;             use Gtk.Label;
 with Gtk.Layered.Waveform;  use Gtk.Layered.Waveform;
 with Gtk.Oscilloscope;      use Gtk.Oscilloscope;
 with Gtk.Progress_Bar;      use Gtk.Progress_Bar;
+with Gtk.Stock;             use Gtk.Stock;
 with Gtk.Table;             use Gtk.Table;
 with Gtk.Widget;            use Gtk.Widget;
 with Gtk.Window;            use Gtk.Window;
@@ -126,11 +128,20 @@ procedure On_Line_Plotter is
       use Gtk.File_Chooser_Dialog;
       use Gtk.Main.Router;
       Dialog : Gtk_File_Chooser_Dialog;
-      Button : Gtk_Widget;
    begin
       Gtk_New (Dialog, "PDF file to save into", Window, Action_Save);
-      Button := Dialog.Add_Button ("OK",     Gtk_Response_OK);
-      Button := Dialog.Add_Button ("Cancel", Gtk_Response_Cancel);
+      Add_Button_From_Stock
+      (  Dialog,
+         Gtk_Response_OK,
+         "_OK",
+         Stock_OK
+      );
+      Add_Button_From_Stock
+      (  Dialog,
+         Gtk_Response_Cancel,
+         "_Cancel",
+         Stock_Cancel
+      );
       case Dialog.Run is
          when Gtk_Response_OK =>
             Oscilloscope.Capture_PDF (Get_Filename (+Dialog));
@@ -270,6 +281,13 @@ begin
                );
                Gtk_New (Edit);
                Edit.Set_Width_Chars (10);
+               if Find_Property (Edit, "max-width-chars") /= null then
+                  Set_Property
+                  (  Edit,
+                     Build ("max-width-chars"),
+                     GInt'(10)
+                  );
+               end if;
                Edit.Set_Text (Init);
                Parameters.Attach
                (  Edit,

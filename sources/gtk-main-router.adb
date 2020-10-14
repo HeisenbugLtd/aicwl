@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -39,6 +39,7 @@ with GNAT.Sockets;             use GNAT.Sockets;
 with GNAT.Traceback;           use GNAT.Traceback;
 with GNAT.Traceback.Symbolic;  use GNAT.Traceback.Symbolic;
 with Gtk.Box;                  use Gtk.Box;
+with Gtk.Button;               use Gtk.Button;
 with Gtk.Check_Button;         use Gtk.Check_Button;
 with Gtk.Clipboard;            use Gtk.Clipboard;
 with Gtk.Image;                use Gtk.Image;
@@ -59,6 +60,7 @@ with System.Storage_Elements;  use System.Storage_Elements;
 
 with Ada.Unchecked_Deallocation;
 with Ada.Unchecked_Conversion;
+with Gtk.Generic_Style_Button;
 with Gtk.Handlers;
 
 package body Gtk.Main.Router is
@@ -90,6 +92,7 @@ package body Gtk.Main.Router is
    GPS_Prompt   : constant String := "GPS>> ";
    GPS_Port     : Natural         := 50_000;
    Connected    : Boolean         := Standard.False;
+   Recursion    : Boolean         := Standard.False;
    Parent       : Gtk_Window      := null;
    Main         : Task_ID         := Null_Task_ID;
    Trace_Dialog : Gtk_Dialog;
@@ -100,6 +103,16 @@ package body Gtk.Main.Router is
    begin
       return " in Gtk.Main.Router." & Text;
    end Where;
+
+   function Get_Parent (Window : Gtk_Window := null)
+      return Gtk_Window is
+   begin
+      if Window = null then
+         return Parent;
+      else
+         return Window;
+      end if;
+   end Get_Parent;
 
    package Window_Callback is
       new Gtk.Handlers.Callback (Gtk_Window_Record);
@@ -134,10 +147,15 @@ package body Gtk.Main.Router is
          Gateway.Initiate_Service (Data);
          exit when Data = null;
          begin
-            Service (Data.all);
+            if not Recursion then
+               Recursion := Standard.True;
+               Service (Data.all);
+               Recursion := Standard.False;
+            end if;
             Gateway.Complete_Service;
          exception
             when Error : others =>
+               Recursion := Standard.False;
                Gateway.Abort_Service (Error);
          end;
       end loop;
@@ -240,7 +258,17 @@ package body Gtk.Main.Router is
          Message.Handler := Handler;
          Message.Data    := Data;
          if Main = Current_Task then
-            Service (Message.all);
+            if not Recursion then
+               begin
+                  Recursion := Standard.True;
+                  Service (Message.all);
+                  Recursion := Standard.False;
+               exception
+                  when others =>
+                     Recursion := Standard.False;
+                     raise;
+               end;
+            end if;
          elsif Main = Null_Task_ID then
             raise Program_Error;
          else
@@ -292,7 +320,7 @@ package body Gtk.Main.Router is
          &  " port"
          &  Integer'Image (GPS_Port)
          ),
-         null,
+         Get_Parent,
          Destroy_With_Parent + Modal
       );
       Gtk_New (Label, "...connecting...");
@@ -362,12 +390,16 @@ package body Gtk.Main.Router is
             return Standard.True;
          end Connect_Callback;
 
-         Button : Gtk_Widget;
-         ID     : G_Source_Id;
+         ID : G_Source_Id;
       begin
-         Show_All (Dialog);
-         Button :=
-            Add_Button (Dialog, Stock_Close, Gtk_Response_Close);
+         Add_Button_From_Stock
+         (  Dialog   => Dialog,
+            Response => Gtk_Response_Close,
+            Icon     => Stock_Close,
+            Label    => "_Close",
+            Tip      => "Stop connecting"
+         );
+         Dialog.Show_All;
          ID := Timers.Timeout_Add
                (  Interval => 50,
                   Func     => Connect_Callback'Access,
@@ -448,7 +480,17 @@ package body Gtk.Main.Router is
    procedure Request (Data : in out Request_Data'Class) is
    begin
       if Main = Current_Task then
-         Service (Data);
+         if not Recursion then
+            begin
+               Recursion := Standard.True;
+               Service (Data);
+               Recursion := Standard.False;
+            exception
+               when others =>
+                  Recursion := Standard.False;
+                  raise;
+            end;
+         end if;
       elsif Main = Null_Task_ID then
          Log
          (  GtkAda_Contributions_Domain,
@@ -501,45 +543,58 @@ package body Gtk.Main.Router is
    type Say_Data is record
       Message       : UTF8_String_Ptr;
       Title         : UTF8_String_Ptr;
-      Dialog_Type   : Message_Dialog_Type;
+      Mode          : UTF8_String_Ptr;
       Justification : Gtk_Justification;
-      Parent        : Gtk_Window;
+      Parent        : Gtk_Widget;
    end record;
    package Say_Callback is new Generic_Callback_Request (Say_Data);
 
    procedure Say (Data : not null access Say_Data) is
+      Main : Gtk_Window := Parent;
    begin
-      if (  Button_OK
-         =  Message_Dialog
-            (  Msg           => Data.Message.all,
-               Dialog_Type   => Data.Dialog_Type,
-               Buttons       => Button_OK,
-               Title         => Data.Title.all,
-               Justification => Data.Justification,
-               Parent        => Data.Parent
-         )  )
-      then
-         null;
+      if Data.Parent /= null then
+         declare
+            Top : Gtk_Widget;
+         begin
+            Top := Data.Parent.Get_Toplevel;
+            if (  Top /= null
+               and then
+                  Top.all in Gtk_Window_Record'Class
+               )
+            then
+               Main :=
+                  Gtk_Window_Record'Class (Top.all)'Unchecked_Access;
+            end if;
+         end;
       end if;
+      Message_Dialog
+      (  Message       => Data.Message.all,
+         Mode          => Data.Mode.all,
+         Title         => Data.Title.all,
+         Justification => Data.Justification,
+         Parent        => Main
+      );
    end Say;
 
    procedure Say
              (  Message       : UTF8_String;
-                Title         : UTF8_String         := "";
-                Dialog_Type   : Message_Dialog_Type := Information;
-                Justification : Gtk_Justification   := Justify_Left;
-                Parent        : Gtk_Window          := null
+                Title         : UTF8_String := "";
+                Mode          : UTF8_String := Stock_Dialog_Info;
+                Justification : Gtk_Justification := Justify_Left;
+                Parent        : access Gtk_Widget_Record'Class := null
              )  is
       Message_Text : aliased UTF8_String := Message;
       Title_Text   : aliased UTF8_String := Title;
-      Data         : aliased Say_Data :=
-                     (  Message       => Message_Text'Unchecked_Access,
-                        Title         => Title_Text'Unchecked_Access,
-                        Dialog_Type   => Dialog_Type,
-                        Justification => Justification,
-                        Parent        => Parent
-                     );
+      Mode_Text    : aliased UTF8_String := Mode;
+      Data         : aliased Say_Data;
    begin
+      Data.Message := Message_Text'Unchecked_Access;
+      Data.Title   := Title_Text'Unchecked_Access;
+      Data.Mode    := Mode_Text'Unchecked_Access;
+      Data.Justification := Justification;
+      if Parent /= null then
+         Data.Parent := Parent.all'Unchecked_Access;
+      end if;
       Say_Callback.Request (Say'Access, Data'Access);
    end Say;
 
@@ -560,8 +615,8 @@ package body Gtk.Main.Router is
       new Gtk.Handlers.Callback (Gtk_Image_Menu_Item_Record);
 
    Messages_List : Gtk_Text_Buffer;
-   Step_Button   : Gtk_Widget;
-   Run_Button    : Gtk_Widget;
+   Step_Button   : Gtk_Button;
+   Run_Button    : Gtk_Button;
    View          : Gtk_Text_View;
    Break_Button  : Gtk_Check_Button;
 
@@ -828,11 +883,16 @@ package body Gtk.Main.Router is
       if Trace_Dialog = null then
          declare
             Scroll : Gtk_Scrolled_Window;
-            Button : Gtk_Widget;
+            Button : Gtk_Button;
             Font   : Pango_Font_Description :=
                         From_String ("monospace 10");
          begin
-            Gtk_New (Trace_Dialog, "Trace", null, Destroy_With_Parent);
+            Gtk_New
+            (  Trace_Dialog,
+               "Trace",
+               Get_Parent,
+               Destroy_With_Parent
+            );
 
             Tags := (others => null);
             Gtk_New (Messages_List);
@@ -861,19 +921,28 @@ package body Gtk.Main.Router is
             );
                -- Continue button
             Step_Button :=
-               Trace_Dialog.Add_Button
-               (  Stock_Media_Next,
-                  Gtk_Response_OK
+               Add_Button_From_Stock
+               (  Dialog   => Trace_Dialog,
+                  Response => Gtk_Response_OK,
+                  Icon     => Stock_Media_Next,
+                  Label    => "_Next",
+                  Tip      => "Run to the next message"
                );
             Run_Button :=
-               Trace_Dialog.Add_Button
-               (  Stock_Media_Record,
-                  Gtk_Response_Cancel
+               Add_Button_From_Stock
+               (  Dialog   => Trace_Dialog,
+                  Response => Gtk_Response_Cancel,
+                  Icon     => Stock_Media_Record,
+                  Label    => "_Continue",
+                  Tip      => "Continue without breaking"
                );
             Button :=
-               Trace_Dialog.Add_Button
-               (  Stock_Quit,
-                  Gtk_Response_Close
+               Add_Button_From_Stock
+               (  Dialog   => Trace_Dialog,
+                  Response => Gtk_Response_Close,
+                  Icon     => Stock_Quit,
+                  Label    => "_Close",
+                  Tip      => "Close trace window and continue"
                );
             Dialog_Handlers.Connect
             (  Trace_Dialog,

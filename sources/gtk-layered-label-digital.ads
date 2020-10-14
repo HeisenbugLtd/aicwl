@@ -3,7 +3,7 @@
 --     Gtk.Layered.Label.Digital                   Luebeck            --
 --  Interface                                      Summer, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  09:08 27 Jun 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -34,9 +34,7 @@ package Gtk.Layered.Label.Digital is
 --
 -- Digital_Layer -- A layer rendering value as a text
 --
-   type Digital_Layer (<>) is
-      new Abstract_Layer
-      and Scalable_Layer with private;
+   type Digital_Layer (<>) is new Label_Layer with private;
 --
 -- Add_Digital -- Add digital layer
 --
@@ -392,6 +390,7 @@ package Gtk.Layered.Label.Digital is
                 (  Stream : in out Root_Stream_Type'Class;
                    Layer  : Digital_Layer
                 );
+
 private
    type Digital_Layer is new Label_Layer with record
       Value         : GDouble := 0.0;
@@ -420,5 +419,4 @@ private
                   Markup   : Boolean;
                   Scaled   : Boolean
                )  return not null access Digital_Layer;
-
 end Gtk.Layered.Label.Digital;

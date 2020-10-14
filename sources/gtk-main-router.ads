@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -69,10 +69,10 @@
 --
 with Ada.Exceptions;         use Ada.Exceptions;
 with Ada.Strings.Unbounded;  use Ada.Strings.Unbounded;
-with GtkAda.Dialogs;         use GtkAda.Dialogs;
 with Gtk.Dialog;             use Gtk.Dialog;
 with Gtk.Enums;              use Gtk.Enums;
 with Gtk.Label;              use Gtk.Label;
+with Gtk.Stock;              use Gtk.Stock;
 with Gtk.Window;             use Gtk.Window;
 
 with Ada.Finalization;
@@ -238,6 +238,7 @@ package Gtk.Main.Router is
 --
 --    Message       - To show
 --    Title         - Of the message box
+--    Mode          - Of the dialog
 --    Justification - Of the message text
 --    Parent        - Of the box
 --
@@ -251,10 +252,10 @@ package Gtk.Main.Router is
 --
    procedure Say
              (  Message       : UTF8_String;
-                Title         : UTF8_String         := "";
-                Dialog_Type   : Message_Dialog_Type := Information;
-                Justification : Gtk_Justification   := Justify_Left;
-                Parent        : Gtk_Window          := null
+                Title         : UTF8_String := "";
+                Mode          : UTF8_String := Stock_Dialog_Info;
+                Justification : Gtk_Justification := Justify_Left;
+                Parent        : access Gtk_Widget_Record'Class := null
              );
 --
 -- Trace -- Messages trace box

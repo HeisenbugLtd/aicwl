@@ -3,7 +3,7 @@
 --     Gtk.Main.Router.GNAT_Stack                  Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -38,6 +38,7 @@ with GNAT.Most_Recent_Exception;
 package body Gtk.Main.Router.GNAT_Stack is
 
    Traceback_Depth : constant := 1_000;
+   Filters_List    : Log_Filter_Ptr;
 
    procedure Dump_Call_Stack (Prefix : String := "") is
       use Ada.Text_IO, GNAT.Most_Recent_Exception;
@@ -57,6 +58,25 @@ package body Gtk.Main.Router.GNAT_Stack is
       end if;
    end Dump_Call_Stack;
 
+   procedure Finalize (Filter : in out Log_Filter) is
+   begin
+      if Filter.Next /= null then
+         if Filters_List = Filter'Unchecked_Access then
+            if Filter.Next = Filter'Unchecked_Access then
+               Filters_List := null;
+            else
+               Filters_List := Filter.Next;
+               Filter.Previous.Next := Filter.Next;
+               Filter.Next.Previous := Filter.Previous;
+            end if;
+         else
+            Filter.Previous.Next := Filter.Next;
+            Filter.Next.Previous := Filter.Previous;
+         end if;
+         Filter.Next := null;
+      end if;
+   end Finalize;
+
    procedure Indent
              (  Message : UTF8_String;
                 Break   : Boolean  := Standard.False;
@@ -73,12 +93,26 @@ package body Gtk.Main.Router.GNAT_Stack is
       );
    end Indent;
 
+   procedure Initialize (Filter : in out Log_Filter) is
+   begin
+      if Filters_List = null then
+         Filters_List    := Filter'Unchecked_Access;
+         Filter.Previous := Filters_List;
+         Filter.Next     := Filters_List;
+      else
+         Filter.Previous := Filters_List.Previous;
+         Filter.Next     := Filters_List;
+         Filters_List.Previous      := Filter'Unchecked_Access;
+         Filters_List.Previous.Next := Filter'Unchecked_Access;
+      end if;
+   end Initialize;
+
    procedure Say
              (  Message       : UTF8_String;
-                Title         : UTF8_String         := "";
-                Dialog_Type   : Message_Dialog_Type := Information;
-                Justification : Gtk_Justification   := Justify_Left;
-                Parent        : Gtk_Window          := null
+                Title         : UTF8_String := "";
+                Mode          : UTF8_String := Stock_Dialog_Info;
+                Justification : Gtk_Justification := Justify_Left;
+                Parent        : access Gtk_Widget_Record'Class := null
              )  is
       TB  : Tracebacks_Array (1..Traceback_Depth);
       Len : Natural;
@@ -86,10 +120,10 @@ package body Gtk.Main.Router.GNAT_Stack is
       Call_Chain (TB, Len);
       Gtk.Main.Router.Say
       (  Message => Message & LF & Symbolic_Traceback (TB (1..Len)),
-         Title         => Title,
-         Dialog_Type   => Dialog_Type,
-         Justification => Justification,
-         Parent        => Parent
+         Title   => Title,
+         Mode    => Mode,
+         Parent  => Parent,
+         Justification => Justification
       );
    end Say;
 
@@ -132,18 +166,39 @@ package body Gtk.Main.Router.GNAT_Stack is
                 Level   : Log_Level_Flags;
                 Message : UTF8_String
              )  is
-      TB  : Tracebacks_Array (1..Traceback_Depth);
-      Len : Natural;
+      Head : Log_Filter_Ptr := Filters_List;
    begin
-      Call_Chain (TB, Len);
-      Log_Default_Handler (Domain, Level, Message);
-      Gtk.Main.Router.Trace
-      (  Message =>
-            (  Domain & " " & Message & LF
-            &  Symbolic_Traceback (TB (1..Len))
-            ),
-         Break => Standard.True
-      );
+      if Head /= null then
+         declare
+            This : Log_Filter_Ptr := Head;
+            Next : Log_Filter_Ptr;
+            Done : Boolean;
+         begin
+            loop
+               Next := This.Next;
+               Done := Next = Head;
+               if This.Ignore (Domain, Level, Message) then
+                  return;
+               end if;
+               exit when Done;
+               This := Next;
+            end loop;
+         end;
+      end if;
+      declare
+         TB  : Tracebacks_Array (1..Traceback_Depth);
+         Len : Natural;
+      begin
+         Call_Chain (TB, Len);
+         Log_Default_Handler (Domain, Level, Message);
+         Gtk.Main.Router.Trace
+         (  Message =>
+               (  Domain & " " & Message & LF
+               &  Symbolic_Traceback (TB (1..Len))
+               ),
+            Break => Standard.True
+         );
+      end;
    end Log_Function;
 
    procedure Set_Log_Trace

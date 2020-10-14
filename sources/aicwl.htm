@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>ADA INDUSTRIAL CONTROL WIDGET LIBRARY</b></font><BIG><br>
-<EM>version 3.10</EM></BIG><br>
+<EM>version 3.11</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -92,12 +92,12 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">
-		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_10.tgz">aicwl_3_10.tgz</a> (<b>tar</b> +
+		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_11.tgz">aicwl_3_11.tgz</a> (<b>tar</b> +
 		<b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td>&nbsp;</td>
 		<td align="center">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_10.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_11.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td align="center">&nbsp;</td>
 	</tr>
 	</table>
@@ -3932,9 +3932,8 @@ which text is determined by the indicated value. Value to text conversion is
 performed by a primitive operation <a href="#Gtk.Layered.Digital.Render">Render</a> 
 which can be overridden when necessary. The layer type is declared as follows:</p>
 <blockquote>
-<p><tt><font color="#0000FF">type</font> Digital_Layer (&lt;&gt;)<font color="#0000FF"> is<br>
-&nbsp;&nbsp; new </font><a href="#Gtk.Layered.Abstract_Layer">Abstract_Layer</a>
-<font color="#0000FF"> and</font> <a href="#Gtk.Layered.Scalable_Layer">Scalable_Layer</a>
+<p><tt><font color="#0000FF">type</font> Digital_Layer (&lt;&gt;)<font color="#0000FF"> is new
+<a href="#Gtk.Layered.Label">Label</a></font><a href="#Gtk.Layered.Label">_Layer</a>
 <font color="#0000FF">with private</font>;</tt></p>
 </blockquote>
 <p align="left">The following operations are defined in the package:</p>
@@ -14167,6 +14166,23 @@ these packages add the following line to <i>/etc/apt/sources.list</i>:</p>
 <P>
 <i>
 The following versions were tested with the compilers:</i>
+<ul>
+  <li>
+<i>GNAT GPL 2015 (20150428-49)</i></li>
+	<li><i>GNAT 4.9.2</i></li>
+  </ul>
+<P>
+<i>and the GtkAda versions:</i><ul>
+	<li><i>GtkAda 3.8.3</i></li>
+	</ul>
+<p>Changes (28 June 2015) to the version 3.10:</p>
+<ul>
+  <li>Adapted to GNAT GPL 2015 and GtkAda 3.8.3.</li>
+</ul>
+<p>
+<i>
+The following versions were tested with the compilers:</i>
+</p>
 <ul>
   <li>
 <i>GNAT GPL 2014 (20140331)</i></li>

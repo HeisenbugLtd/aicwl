@@ -3,7 +3,7 @@
 --  Test waveform generator                        Luebeck            --
 --                                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,9 +27,11 @@
 
 with Ada.Real_Time;         use Ada.Real_Time;
 with GLib;                  use GLib;
+with GLib.Properties;       use GLib.Properties;
 with Gtk.Enums;             use Gtk.Enums;
 with Gtk.Label;             use Gtk.Label;
 with Gtk.Layered.Waveform;  use Gtk.Layered.Waveform;
+with Gtk.Missed;            use Gtk.Missed;
 with Interfaces.C;          use Interfaces.C;
 with Strings_Edit.Floats;   use Strings_Edit.Floats;
 
@@ -173,6 +175,14 @@ package body Test_Generator is
       );
       Gtk_New (Wave.Period_Edit);
       Wave.Period_Edit.Set_Width_Chars (6);
+      if Find_Property (Wave.Period_Edit, "max-width-chars") /= null
+      then
+         Set_Property
+         (  Wave.Period_Edit,
+            Build ("max-width-chars"),
+            GInt'(6)
+         );
+      end if;
       Set_Text (Wave.Period_Edit, Image (Float (Cycle)));
       Attach
       (  Wave,
@@ -200,6 +210,14 @@ package body Test_Generator is
       );
       Gtk_New (Wave.Refresh_Edit);
       Wave.Refresh_Edit.Set_Width_Chars (6);
+      if Find_Property (Wave.Refresh_Edit, "max-width-chars") /= null
+      then
+         Set_Property
+         (  Wave.Refresh_Edit,
+            Build ("max-width-chars"),
+            GInt'(6)
+         );
+      end if;
       Set_Text (Wave.Refresh_Edit, Image (Float (Period)));
       Attach
       (  Wave,

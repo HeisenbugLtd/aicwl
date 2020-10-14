@@ -3,7 +3,7 @@
 --     Test_Gtk_Source_View                        Luebeck            --
 --  Test for Gtk.Source_View                       Summer, 2009       --
 --                                                                    --
---                                Last revision :  22:06 23 Jul 2014  --
+--                                Last revision :  09:08 27 Jun 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -108,26 +108,24 @@ begin
             Free (MIME (Index));
          end loop;
       end;
-      if not Windows then     --** This is bug under Windows GTK 3.8.2
-         Put_Line ("        Globs:");
-         declare
-            Globs : Chars_Ptr_Array := Language.Get_Globs;
-         begin
-            for Index in Globs'Range loop
-               Put_Line ("      " & Value (Globs (Index)));
-               Free (Globs (Index));
-            end loop;
-         end;
-         Put_Line ("    Style IDs:");
-         declare
-            Styles : Chars_Ptr_Array := Language.Get_Style_IDs;
-         begin
-            for Index in Styles'Range loop
-               Put_Line ("      " & Value (Styles (Index)));
-               Free (Styles (Index));
-            end loop;
-         end;
-      end if;
+      Put_Line ("        Globs:");
+      declare
+         Globs : Chars_Ptr_Array := Language.Get_Globs;
+      begin
+         for Index in Globs'Range loop
+            Put_Line ("      " & Value (Globs (Index)));
+            Free (Globs (Index));
+         end loop;
+      end;
+      Put_Line ("    Style IDs:");
+      declare
+         Styles : Chars_Ptr_Array := Language.Get_Style_IDs;
+      begin
+         for Index in Styles'Range loop
+            Put_Line ("      " & Value (Styles (Index)));
+            Free (Styles (Index));
+         end loop;
+      end;
       Put_Line ("--------------");
    end;
    if Windows then     --** This is bug under Windows GTK 3.8.2

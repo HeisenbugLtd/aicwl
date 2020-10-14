@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer_Fixed                     Luebeck            --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:30 31 Jul 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -183,14 +183,15 @@ private
       new Gtk.Cell_Renderer.
           Abstract_Renderer.Gtk_Abstract_Renderer_Record with
    record
-      Text       : Pango_Layout;   -- The text to display
-      Value      : GDouble := 0.0; -- Current value
-      After      : Natural := 0;   -- Places after the point
-      Max_Offset : GInt    := 0;   -- Pixel offset to the point
-      Height     : GInt    := 0;   -- Current pixel height
-      Width      : GInt    := 0;   -- Current pixel width
-      Left_Width : GInt;           -- Current space before the point
-      Focus_Out  : Handler_Id;     -- Current focus_out_event handler
+      Text       : Pango_Layout;     -- The text to display
+      Value      : GDouble := 0.0;   -- Current value
+      Empty      : Boolean := False; -- Leave it empty
+      After      : Natural := 0;     -- Places after the point
+      Max_Offset : GInt    := 0;     -- Pixel offset to the point
+      Height     : GInt    := 0;     -- Current pixel height
+      Width      : GInt    := 0;     -- Current pixel width
+      Left_Width : GInt;             -- Current space before the point
+      Focus_Out  : Handler_Id;       -- Current focus_out_event handler
    end record;
 --
 -- Editing_Done -- The handler of editing_done

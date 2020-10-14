@@ -3,7 +3,7 @@
 --      Gtk.Persistent_Storage_Browser             Luebeck            --
 --  Interface                                      Winter, 2008       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1273,7 +1273,8 @@ private
 --    Reason - Error text (if not empty)
 --
    procedure Say
-             (  Widget : access Gtk_Persistent_Storage_Tree_View_Record;
+             (  Widget : not null access
+                         Gtk_Persistent_Storage_Tree_View_Record;
                 Name   : UTF8_String;
                 Reason : UTF8_String := ""
              );
@@ -1288,7 +1289,7 @@ private
 --    Reason - Error text (if not empty)
 --
    procedure Say
-             (  Widget : access
+             (  Widget : not null access
                          Gtk_Persistent_Storage_Items_View_Record;
                 Name   : UTF8_String;
                 Reason : UTF8_String := ""

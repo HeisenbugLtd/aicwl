@@ -29,18 +29,31 @@ with Ada.IO_Exceptions;     use Ada.IO_Exceptions;
 with Gdk.Cursor;            use Gdk.Cursor;
 with Gdk.Window;            use Gdk.Window;
 with GLib.Messages;         use GLib.Messages;
+with GLib.Properties;       use GLib.Properties;
+with GLib.Types;            use GLib.Types;
 with GLib.Unicode;          use GLib.Unicode;
 with Gtk.Main;              use Gtk.Main;
+with Gtk.Box;               use Gtk.Box;
+with Gtk.CSS_Provider;      use Gtk.CSS_Provider;
+with Gtk.Icon_Source;       use Gtk.Icon_Source;
+with Gtk.Icon_Set;          use Gtk.Icon_Set;
+with Gtk.Icon_Theme;        use Gtk.Icon_Theme;
+with Gtk.Image;             use Gtk.Image;
+with Gtk.Label;             use Gtk.Label;
+with Gtk.Style_Provider;    use Gtk.Style_Provider;
 with Gtk.Tree_Model;        use Gtk.Tree_Model;
 with Interfaces.C;          use Interfaces.C;
 with Interfaces.C.Strings;  use Interfaces.C.Strings;
 with System;                use System;
 
 with Ada.Unchecked_Conversion;
+with Gdk.Pixbuf;
+with GLib.Object.Checked_Destroy;
 with Gtk.Adjustment;
 with Gtk.Widget;
 
 package body Gtk.Missed is
+   use Gtk.Cell_Renderer;
 
    function Where (Name : String) return String is
    begin
@@ -49,6 +62,185 @@ package body Gtk.Missed is
 
    procedure G_Free (Border : Interfaces.C.Strings.Chars_Ptr);
    pragma Import (C, G_Free, "g_free");
+------------------------------------------------------------------------
+   type GHashTable is new System.Address;
+   No_Table : constant GHashTable := GHashTable (Null_Address);
+
+   type GEqualFunc is access function (A, B : char_array)
+      return GBoolean;
+   pragma Convention (C, GEqualFunc);
+
+   type GHashFunc is access function (Key : char_array) return GInt;
+   pragma Convention (C, GHashFunc);
+
+   type GDestroyNotify is access procedure (Data : chars_ptr);
+   pragma Convention (C, GDestroyNotify);
+
+   procedure Destroy (Data : chars_ptr);
+   pragma Convention (C, Destroy);
+
+   procedure Destroy (Data : chars_ptr) is
+      Ptr : chars_ptr := Data;
+   begin
+      Free (Ptr);
+   end Destroy;
+
+   function Str_Hash (Key : char_array) return GInt;
+   pragma Import (C, Str_Hash, "g_str_hash");
+
+   function Str_Equal (A, B : char_array) return GBoolean;
+   pragma Import (C, Str_Equal, "g_str_equal");
+
+   function Table_New
+            (  Hash          : GHashFunc      := Str_Hash'Access;
+               Equal         : GEqualFunc     := Str_Equal'Access;
+               Key_Destroy   : GDestroyNotify := Destroy'Access;
+               Value_Destroy : System.Address := System.Null_Address
+            )  return GHashTable;
+   pragma Import (C, Table_New, "g_hash_table_new_full");
+
+   function Insert
+            (  Table : GHashTable;
+               Key   : chars_ptr;
+               Value : System.Address
+            )  return GBoolean;
+   pragma Import (C, Insert, "g_hash_table_insert");
+
+   function Look_Up
+            (  Table : GHashTable;
+               Key   : char_array
+            )  return System.Address;
+   pragma Import (C, Look_Up, "g_hash_table_lookup");
+------------------------------------------------------------------------
+   Stock_Icons : GHashTable := No_Table;
+
+   function "+" (Width : GInt) return Gtk_Icon_Size is
+   begin
+      if Width <= 16 then
+         return Icon_Size_Menu;
+      elsif Width <= 18 then
+         return Icon_Size_Small_Toolbar;
+      elsif Width <= 24 then
+         return Icon_Size_Large_Toolbar;
+      elsif Width <= 32 then
+         return Icon_Size_Dnd;
+      else
+         return Icon_Size_Dialog;
+      end if;
+   end "+";
+
+   procedure Add_Button_From_Stock
+             (  Dialog     : not null access Gtk_Dialog_Record'Class;
+                Response   : Gtk_Response_Type;
+                Label      : UTF8_String   := "";
+                Icon       : UTF8_String   := "";
+                Icon_Left  : Boolean       := True;
+                Size       : Gtk_Icon_Size := Icon_Size_Button;
+                Spacing    : GUInt         := 3;
+                Tip        : UTF8_String   := "";
+                Relief     : Gtk_Relief_Style := Relief_Normal
+             )  is
+      Button : Gtk_Button;
+   begin
+      Button := Add_Button_From_Stock
+                (  Dialog    => Dialog,
+                   Response  => Response,
+                   Label     => Label,
+                   Icon      => Icon,
+                   Icon_Left => Icon_Left,
+                   Size      => Size,
+                   Spacing   => Spacing,
+                   Tip       => Tip,
+                   Relief    => Relief
+                );
+   end Add_Button_From_Stock;
+
+   function Add_Button_From_Stock
+            (  Dialog     : not null access Gtk_Dialog_Record'Class;
+               Response   : Gtk_Response_Type;
+               Label      : UTF8_String   := "";
+               Icon       : UTF8_String   := "";
+               Icon_Left  : Boolean       := True;
+               Size       : Gtk_Icon_Size := Icon_Size_Button;
+               Spacing    : GUInt         := 3;
+               Tip        : UTF8_String   := "";
+               Relief     : Gtk_Relief_Style := Relief_Normal
+            )  return Gtk_Button is
+      Button : Gtk_Button;
+      Box    : Gtk_HBox;
+      Text   : Gtk_Label;
+      Image  : Gtk_Image;
+   begin
+      Gtk_New (Button);
+      Gtk_New_HBox (Box, False, 0);
+      Box.Set_Border_Width (0);
+      Box.Set_Spacing (GInt (Spacing));
+      Button.Add (Box);
+      Button.Set_Relief (Relief);
+      if Icon_Left then
+         if Icon'Length > 0 then
+            Gtk_New (Image, Icon, Size);
+            Box.Pack_Start (Image, False, False);
+         end if;
+         if Label'Length > 0 then
+            Gtk_New_With_Mnemonic (Text, Label);
+            Box.Pack_Start (Text, False, False);
+         end if;
+      else
+         if Label'Length > 0 then
+            Gtk_New_With_Mnemonic (Text, Label);
+            Box.Pack_Start (Text, False, False);
+         end if;
+         if Icon'Length > 0 then
+            Gtk_New (Image, Icon, Size);
+            Box.Pack_Start (Image, False, False);
+         end if;
+      end if;
+      if Tip'Length > 0 then
+         Button.Set_Tooltip_Text (Tip);
+      end if;
+      Dialog.Add_Action_Widget (Button, Response);
+      return Button;
+   end Add_Button_From_Stock;
+
+   procedure Add_Named
+             (  Name : UTF8_String;
+                Icon : Gdk_Pixbuf
+             )  is
+      Key    : Chars_Ptr;
+      Set    : Gtk_Icon_Set;
+      Result : GBoolean;
+   begin
+      Key := New_String (Name);
+      if Stock_Icons = No_Table then
+         Stock_Icons := Table_New;
+         Gtk_New (Set);
+         Result := Insert (Stock_Icons, Key, Set.Get_Object);
+      else
+         declare
+            Address : System.Address :=
+                      Look_Up (Stock_Icons, Value (Key));
+         begin
+            if Address = Null_Address then
+               Gtk_New (Set);
+               Result := Insert (Stock_Icons, Key, Set.Get_Object);
+            else
+               Set.Set_Object (Address);
+               Free (Key);
+            end if;
+         end;
+      end if;
+      declare
+         Source : Gtk_Icon_Source;
+      begin
+         Gtk_New (Source);
+         Set_Pixbuf (Source, Icon);
+         Source.Set_Size (+Get_Width (Icon));
+         Source.Set_Size_Wildcarded (False);
+         Set.Add_Source (Source);
+         Free (Source);
+      end;
+   end Add_Named;
 
    function Build_Filename (First_Element, Second_Element : UTF8_String)
       return UTF8_String is
@@ -342,6 +534,63 @@ package body Gtk.Missed is
       Free (List);
    end Erase;
 
+   function Get
+            (  Store  : not null access Gtk_List_Store_Record'Class;
+               Row    : Gtk_Tree_Iter;
+               Column : GInt
+            )  return String is
+      Data : GValue;
+   begin
+      Store.Get_Value (Row, Column, Data);
+      declare
+         Result : String := Get_String (Data);
+      begin
+         Unset (Data);
+         return Result;
+      end;
+   exception
+      when others =>
+         return "";
+   end Get;
+
+   function Get
+            (  Store  : Gtk_Tree_Model;
+               Row    : Gtk_Tree_Iter;
+               Column : GInt
+            )  return String is
+      Data : GValue;
+   begin
+      Get_Value (Store, Row, Column, Data);
+      declare
+         Result : String := Get_String (Data);
+      begin
+         Unset (Data);
+         return Result;
+      end;
+   exception
+      when others =>
+         return "";
+   end Get;
+
+   function Get
+            (  Store  : not null access Gtk_Tree_Store_Record'Class;
+               Row    : Gtk_Tree_Iter;
+               Column : GInt
+            )  return String is
+      Data : GValue;
+   begin
+      Store.Get_Value (Row, Column, Data);
+      declare
+         Result : String := Get_String (Data);
+      begin
+         Unset (Data);
+         return Result;
+      end;
+   exception
+      when others =>
+         return "";
+   end Get;
+
    function G_Find_Program_In_Path_UTF8 (Program : Char_Array)
       return Chars_Ptr;
    pragma Import
@@ -413,6 +662,33 @@ package body Gtk.Missed is
       end if;
    end Finalize;
 
+   function Find_Property
+            (  Class : GObject_Class;
+               Name  : UTF8_String
+            )  return Param_Spec is
+      function Internal
+               (  Class : GObject_Class;
+                  Name  : Char_Array
+               )  return Param_Spec;
+      pragma Import (C, Internal, "g_object_class_find_property");
+   begin
+      return Internal (Class, To_C (Name));
+   end Find_Property;
+
+   function Find_Property
+            (  Object : not null access GObject_Record'Class;
+               Name   : UTF8_String
+            )  return Param_Spec is
+      Class : GObject_Class;
+   begin
+      Class := Class_Peek (Get_Type (Object));
+      if Class = Null_GObject_Class then
+         return null;
+      else
+         return Find_Property (Class, Name);
+      end if;
+   end Find_Property;
+
    function Get_Application_Name return UTF8_String is
       function Internal return Interfaces.C.Strings.Chars_Ptr;
       pragma Import (C, Internal, "g_get_application_name");
@@ -474,6 +750,40 @@ package body Gtk.Missed is
       end if;
       return Result;
    end Get_Background_Area;
+
+   function Get_Background_Color
+            (  Context : not null access Gtk_Style_Context_Record'Class;
+               State   : Gtk_State_Flags
+            )  return Gdk_RGBA is
+      type Gdk_RGBA_Ptr is access all Gdk_RGBA;
+      pragma Convention (C, Gdk_RGBA_Ptr);
+
+      procedure Free (Ptr : Gdk_RGBA_Ptr);
+      pragma Import (C, Free, "gdk_rgba_free");
+
+      procedure Internal
+                (  Style : System.Address;
+                   State : Gtk_State_Flags;
+                   Name  : char_array;
+                   Color : out Gdk_RGBA_Ptr;
+                   Nil   : System.Address := Null_Address
+                );
+      pragma Import (C, Internal, "gtk_style_context_get");
+      Color : Gdk_RGBA := (others => 0.0);
+      Ptr   : Gdk_RGBA_Ptr;
+   begin
+      Internal
+      (  Get_Object (Context),
+         State,
+         To_C ("background-color"),
+         Ptr
+      );
+      if Ptr /= null then
+         Color := Ptr.all;
+         Free (Ptr);
+      end if;
+      return Color;
+   end Get_Background_Color;
 
    function Get_Basename (File_Name : UTF8_String) return UTF8_String is
       function Internal (File_Name : Char_Array) return Chars_Ptr;
@@ -965,6 +1275,88 @@ package body Gtk.Missed is
       return Internal (To_C (File_Name)) /= 0;
    end Is_Absolute;
 
+   procedure Message_Dialog
+             (  Message       : UTF8_String;
+                Parent        : not null access Gtk_Widget_Record'Class;
+                Title         : UTF8_String       := "";
+                Mode          : UTF8_String       := Stock_Dialog_Error;
+                Justification : Gtk_Justification := Justify_Center;
+                Response      : access Gtk_Response_Type := null
+             )  is
+      function Get_Title return String is
+      begin
+         if Title'Length > 0 then
+            return Title;
+         elsif Mode = Stock_Dialog_Error then
+            return "Error";
+         elsif Mode = Stock_Dialog_Info then
+            return "Information";
+         elsif Mode = Stock_Dialog_Question then
+            return "Question";
+         elsif Mode = Stock_Dialog_Warning then
+            return "Warning";
+         else
+            return "";
+         end if;
+      end Get_Title;
+      Dialog : Gtk_Dialog;
+      Label  : Gtk_Label;
+      Box    : Gtk_Box;
+      Image  : Gtk_Image;
+      Result : Gtk_Response_Type;
+      Top    : Gtk_Widget := Parent.Get_Toplevel;
+   begin
+      if Top = null or else Top.all not in Gtk_Window_Record'Class then
+         if Response /= null then
+            Response.all := Gtk_Response_Cancel;
+         end if;
+         return;
+      end if;
+      Gtk_New
+      (  Dialog => Dialog,
+         Title  => Title,
+         Flags  => Modal or Destroy_With_Parent,
+         Parent => Gtk_Window_Record'Class (Top.all)'Unchecked_Access
+      );
+      Dialog.Realize;
+      Gtk_New_Hbox (Box);
+      Dialog.Get_Content_Area.Pack_Start (Box, Padding => 10);
+      Gtk_New (Image, Mode, Icon_Size_Dialog);
+      Box.Pack_Start (Image, Padding => 10);
+
+      if Mode = Stock_Dialog_Question then
+         Add_Button_From_Stock
+         (  Dialog   => Dialog,
+            Response => Gtk_Response_Yes,
+            Icon     => Stock_Yes,
+            Label    => "_Yes"
+         );
+         Add_Button_From_Stock
+         (  Dialog   => Dialog,
+            Response => Gtk_Response_No,
+            Icon     => Stock_Cancel,
+            Label    => "_No"
+         );
+      else
+         Add_Button_From_Stock
+         (  Dialog   => Dialog,
+            Response => Gtk_Response_OK,
+            Icon     => Stock_OK,
+            Label    => "_OK"
+         );
+      end if;
+      Gtk_New (Label, Message);
+      Label.Set_Selectable (True);
+      Label.Set_Justify (Justification);
+      Box.Pack_Start (Label, Padding => 10);
+      Dialog.Show_All;
+      Result := Dialog.Run;
+      if Response /= null then
+         Response.all := Result;
+      end if;
+      GLib.Object.Checked_Destroy (Dialog);
+   end Message_Dialog;
+
    procedure Remove (File_Name : UTF8_String) is
       function Internal (File_Name : Char_Array) return Int;
       pragma Import (C, Internal, "g_remove");
@@ -1007,12 +1399,76 @@ package body Gtk.Missed is
       return Result;
    end RGB;
 
+   procedure Set
+             (  Store  : not null access Gtk_List_Store_Record'Class;
+                Row    : Gtk_Tree_Iter;
+                Column : GInt;
+                Value  : String
+             )  is
+      Data : GValue;
+   begin
+      Init (Data, GType_String);
+      Set_String (Data, Value);
+      Store.Set_Value (Row, Column, Data);
+      Unset (Data);
+   exception
+      when others =>
+         Unset (Data);
+         raise;
+   end Set;
+
+   procedure Set
+             (  Store  : not null access Gtk_Tree_Store_Record'Class;
+                Row    : Gtk_Tree_Iter;
+                Column : GInt;
+                Value  : String
+             )  is
+      Data : GValue;
+   begin
+      Init (Data, GType_String);
+      Set_String (Data, Value);
+      Store.Set_Value (Row, Column, Data);
+      Unset (Data);
+   exception
+      when others =>
+         Unset (Data);
+         raise;
+   end Set;
+
    procedure Set (Value : in out GValue; Object : GObject) is
       procedure Internal (Value : in out GValue; Object : Address);
       pragma Import (C, Internal, "g_value_set_object");
    begin
       Internal (Value, Convert (Object));
    end Set;
+
+   procedure Set_Background_Color
+             (  Widget : not null access Gtk_Widget_Record'Class;
+                Color  : Gdk_RGBA
+             )  is
+      Provider : Gtk_CSS_Provider;
+      CSS      : String := "* { background-color: " &
+                           To_String (Color) &
+                           "; }";
+   begin
+      Gtk_New (Provider);
+      if Provider.Load_From_Data (CSS, null) then
+         Get_Style_Context (Widget).Add_Provider
+         (  +Provider,
+            Priority_Application
+         );
+      end if;
+      Provider.Unref;
+   exception
+      when Error : others =>
+         Log
+         (  GtkAda_Contributions_Domain,
+            Log_Level_Critical,
+            (  "Fault: "
+            &  Exception_Information (Error)
+            &  Where ("Set_Background_Color")
+         )  );
+   end Set_Background_Color;
 
    ------------------
    -- Set_Property --
@@ -1215,6 +1671,109 @@ package body Gtk.Missed is
       end Set_Cell_Data_Func;
 
    end Set_Column_Cell_Data;
+
+   package Set_Pixbuf_Data is new Set_Column_Cell_Data (GInt);
+
+   procedure Cell_Pixbuf
+             (  Column : not null access
+                         Gtk_Tree_View_Column_Record'Class;
+                Cell   : not null access Gtk_Cell_Renderer_Record'Class;
+                Model  : Gtk_Tree_Model;
+                Iter   : Gtk_Tree_Iter;
+                Data   : GInt
+             )  is
+      Value : GValue;
+      Width : GInt;
+   begin
+      Get_Value (Model, Iter, Data, Value);
+      Width := Get_Property (Cell, Build ("stock-size"));
+      declare
+         Name : String := Get_String (Value);
+      begin
+         Unset (Value);
+         declare
+            Address : System.Address;
+            Set     : Gtk_Icon_Set;
+         begin
+            if Stock_Icons /= No_Table then
+               Address := Look_Up (Stock_Icons, To_C (Name));
+               if Address /= Null_Address then
+                  Set.Set_Object (Address);
+                  Set_Property
+                  (  Cell,
+                     Property_Object'(Build ("pixbuf")),
+                     Set.Render_Icon_Pixbuf
+                     (  Get_Style_Context (Column.Get_Tree_View),
+                        +Width
+                  )  );
+                  return;
+               end if;
+            end if;
+         end;
+         declare
+            Icon    : Gdk_Pixbuf;
+            Default : Gtk_Icon_Theme := Get_Default;
+            Info    : Gtk_Icon_Info;
+         begin
+            if Default /= null then
+               Info := Default.Lookup_Icon
+                       (  Name,
+                          Width,
+                          Icon_Lookup_Use_Builtin
+                       );
+               if Info /= null then
+                  Icon := Load_Icon (Info);
+                  Info.Unref;
+                  if Icon /= null then
+                     Set_Property
+                     (  Cell,
+                        Property_Object'(Build ("pixbuf")),
+                        Icon
+                     );
+                     Icon.Unref;
+                     return;
+                  end if;
+               end if;
+            end if;
+         end;
+      end;
+      Set_Property (Cell, Property_String'(Build ("icon-name")), "");
+   exception
+      when Error : others =>
+         Log
+         (  GtkAda_Contributions_Domain,
+            Log_Level_Critical,
+            (  "Fault: "
+            &  Exception_Information (Error)
+            &  Where ("Cell_Pixbuf")
+         )  );
+   end Cell_Pixbuf;
+
+   procedure Add_Stock_Attribute
+             (  Cell_Layout : not null access
+                              Gtk_Tree_View_Column_Record'Class;
+                Cell        : not null access
+                              Gtk_Cell_Renderer_Pixbuf_Record'Class;
+                Column      : GInt
+             )  is
+   begin
+      Cell_Layout.Add_Attribute (Cell, "icon-name", Column);
+      Set_Pixbuf_Data.Set_Cell_Data_Func
+      (  Cell_Layout,
+         Cell,
+         Cell_Pixbuf'Access,
+         Column
+      );
+   exception
+      when Error : others =>
+         Log
+         (  GtkAda_Contributions_Domain,
+            Log_Level_Critical,
+            (  "Fault: "
+            &  Exception_Information (Error)
+            &  Where ("Add_Stock_Attribute")
+         )  );
+   end Add_Stock_Attribute;
 
 begin
    --

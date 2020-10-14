@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Sweeper_Panel              Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  21:30 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,6 +27,7 @@
 
 with Ada.Exceptions;            use Ada.Exceptions;
 with GLib.Messages;             use GLib.Messages;
+with GLib.Properties;           use GLib.Properties;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Types;                use GLib.Types;
 with Gtk.Enums;                 use Gtk.Enums;
@@ -168,6 +169,14 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
       );
       Gtk_New (Widget.Page_Edit);
       Widget.Page_Edit.Set_Width_Chars (Edit_Field);
+      if Find_Property (Widget.Page_Edit, "max-width-chars") /= null
+      then
+         Set_Property
+         (  Widget.Page_Edit,
+            Build ("max-width-chars"),
+            GInt'(Edit_Field)
+         );
+      end if;
       Widget.Page_Edit.Set_Text
       (  Image
          (  Value    => GDouble (Oscilloscope.Get_Page_Span (Sweeper)),
@@ -262,6 +271,14 @@ package body Gtk.Oscilloscope.Sweeper_Panel is
          -- Frequency box
       Gtk_New (Widget.Offset_Edit);
       Widget.Offset_Edit.Set_Width_Chars (Edit_Field);
+      if Find_Property (Widget.Offset_Edit, "max-width-chars") /= null
+      then
+         Set_Property
+         (  Widget.Offset_Edit,
+            Build ("max-width-chars"),
+            GInt'(Edit_Field)
+         );
+      end if;
       Widget.Show_Offset;
       Attach
       (  Widget,

@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>GtkAda Contributions</b></font><BIG><br>
-<EM>version 3.11</EM></BIG><br>
+<EM>version 3.13</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -97,10 +97,10 @@ executable file might be covered by the GNU Public License.</P>
 	<tr>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
-		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_11.tgz">gtkada_contributions_3_11.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
+		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_13.tgz">gtkada_contributions_3_13.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium">&nbsp;</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
-		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_11.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_13.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
 	</tr>
 	<tr>
@@ -112,7 +112,7 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-top-style: none; border-top-width: medium" valign="bottom" align="center">32bit</td>
 	</tr>
 	<tr>
-		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">Windows i386</td>
+		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">Windows i686</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px" colspan="2">
 		<a href="http://www.dmitry-kazakov.de/ada/xpm2gtkada.exe.gz">xpm2gtkada.exe.gz</a> (<b>gzip</b> compressed, Windows users may use WinZip)</td>
@@ -496,14 +496,15 @@ purposes:</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Message</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : UTF8_String;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Title</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Title</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : UTF8_String 
 := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</b>&nbsp;&nbsp; : UTF8_String := Stock_Dialog_Info;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Dialog_Type</b>&nbsp;&nbsp; : Message_Dialog_Type := Information;<br>
+Justification</b> : Gtk_Justification := Justify_Left;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Justification</b> : Gtk_Justification&nbsp;&nbsp; := Justify_Left;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Parent</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Gtk_Window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Parent</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">
+access</font> Gtk_Widget_Record'Class 
 := <font color="#0000FF">null</font><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
@@ -571,15 +572,15 @@ the message printed:</p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Message</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 : UTF8_String;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Title</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Title</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : UTF8_String 
 := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</b>&nbsp;&nbsp; : UTF8_String := Stock_Dialog_Info;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Dialog_Type</b>&nbsp;&nbsp; : Message_Dialog_Type := Information;<br>
+Justification</b> : Gtk_Justification := Justify_Left;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Justification</b> : Gtk_Justification&nbsp;&nbsp; := Justify_Left;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Parent</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Gtk_Window&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-:= <font color="#0000FF">null</font><br>
+Parent</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">
+access</font> Gtk_Widget_Record'Class := <font color="#0000FF">null</font><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<font color="#0000FF"><br>
 <a name="Gtk.Main.Router.GNAT_Stack.Trace"></a>procedure </font>Trace<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<b>&nbsp; Message</b> : 
 UTF8_String;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -648,6 +649,30 @@ Break</b>&nbsp;&nbsp; : Boolean&nbsp; := False;<br>
 a chain of spaces, which length is <b>Step</b> multiplied by the depth of the 
 call step: It can be useful to trace recursive subprograms in order to 
 determine which instance of the caller has printed the message.</p>
+
+		<blockquote>
+<p><tt><font color="#0000FF">type </font>Log_Filter<font color="#0000FF"> is 
+abstract tagged limited private</font>;</tt></p>
+</blockquote>
+		<p>An object of this type is used to filter messages additionally to the 
+		domain and level.</p>
+
+		<blockquote>
+<p><tt><font color="#0000FF">function </font>Ignore<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Filter</b>&nbsp; :
+<font color="#0000FF">not null access</font> Log_Filter;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Domain</b>&nbsp; 
+: String;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Level</b>&nbsp;&nbsp; 
+: Log_Level_Flags;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Message</b> 
+: UTF8_String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>Boolean<font color="#0000FF"> is abstract</font>;</tt></p>
+</blockquote>
+		<p>This function returns <i><font color="#800000">true</font></i> if the 
+		message must be ignored. If any of the filters returns <i>
+		<font color="#800000">true</font></i> the message is not traced. </p>
 <h3><a name="1.4"></a>1.4. Translation of addresses into the source lines</h3>
 <p><a name="Translation-of-addresses"></a>Right mouse click on the trace dialog brings the dropdown menu expanded with 
 two items as shown below (the look and feel may vary as it depends on the 
@@ -11682,6 +11707,100 @@ return</font> Handler_ID;</tt></p>
 of <b>Object</b>. The value <b>Data</b> is passed to <b>Callback</b>. 
 Constraint_Error is propagated when <b>Name</b> does not specify a signal of <b>
 Object</b>.</p>
+<h3><a name="5.12"></a>5.12. Stock items backward compatibility</h3>
+<p> 
+Starting with GTK+ 3.10 stock items are considered deprecated. The functionality 
+is threatened to be removed and warning messages generated run time. There is no 
+substitute for the functionality offered, in particular for the &quot;stock-id&quot; 
+property of the pixbuf cell renderer and Add_Button of dialog. The package 
+Gtk.Missed provides replacements for deprecated operations:</p>
+		<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Add_Button_From_Stock<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Dialog</b>&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">not null access</font> Gtk_Dialog_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Response</b>&nbsp; : Gtk_Response_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Label</b>&nbsp;&nbsp;&nbsp;&nbsp; : UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
+&quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Icon</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Icon_Left</b> : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
+True;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Size</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: Gtk_Icon_Size&nbsp;&nbsp;&nbsp; := Icon_Size_Button;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Spacing</b>&nbsp;&nbsp; : GUInt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+:= <font color="#800000">3</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Tip</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Relief</b>&nbsp;&nbsp;&nbsp; : Gtk_Relief_Style := Relief_Normal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<br>
+<font color="#0000FF">function</font> Add_Button_From_Stock<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Dialog</b>&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">not null access</font> Gtk_Dialog_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Response</b>&nbsp; 
+: Gtk_Response_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Label</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+: UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Icon</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Icon_Left</b> 
+: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := True;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Size</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: Gtk_Icon_Size&nbsp;&nbsp;&nbsp; := Icon_Size_Button;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Spacing</b>&nbsp;&nbsp; 
+: GUInt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Tip</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: UTF8_String&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := &quot;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Relief</b>&nbsp;&nbsp;&nbsp; 
+: Gtk_Relief_Style := Relief_Normal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Gtk_Button;</tt></p>
+</blockquote>
+<p>These subprograms replace Add_Button. The add a new button to <b>Dialog</b>.
+<b>Response</b> is the response returned by the dialog's Run when the button is 
+pressed. <b>Label</b> is the text used for the button. If can use mnemonics e.g. 
+&quot;_OK&quot;. <b>Icon</b> is the image name, e.g. &quot;gtk-ok&quot;. <b>Icon_Left</b> is true 
+when the image to be on the left, when present. <b>Size</b> is the image size.
+<b>Spacing</b> is the spacing between the label and image. <b>Tip</b> is the 
+tooltip text. Relief is the button shape.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Missed.Add_Named"></a>procedure</font> 
+Add_Named<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Name</b> : 
+UTF8_String;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Icon</b> 
+: Gdk_Pixbuf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure is a replacement to Add_Static. It is used in combination with
+<a href="#Gtk.Missed.Add_Stock_Attrubute">Add_Stock_Attribute</a>, which first 
+searches for the icons registered by this procedure and only then for themed 
+icons. <b>Name</b> is the icon name, case sensitive. <b>Icon</b> the icon. You 
+can add several icons of different sizes under the same name.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Missed.Add_Stock_Attrubute"></a>
+procedure</font> Add_Stock_Attribute<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Cell_Layout</b> 
+: <font color="#0000FF">not null access</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Tree_View_Column_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Cell</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">not null access</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Cell_Renderer_Pixbuf_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Column</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : GInt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure is an equivalent to Add_Attribute (<b>Cell_Layout</b>, <b>Cell</b>, 
+&quot;<i>stock-id</i>&quot;, <b>Column</b>), which is deprecated now. It uses &quot;<i>icon-name</i>&quot; 
+instead and adds a cell data function which first searches for the icons added 
+using <a href="#Gtk.Missed.Add_Named">Add_Named</a> and only then for the themed 
+ones.</p>
 <hr>
 <p align="right">
   <a name="6"></a><a href="#5"><IMG src="prev.gif" alt="[Back]" width="29"
@@ -13200,6 +13319,36 @@ these packages add the following line to <i>/etc/apt/sources.list</i>:</p>
 The following versions were tested with the compilers:</i>
 <ul>
   <li>
+<i>GNAT GPL 2015 (20150428-49)</i></li>
+	<li><i>GNAT 4.9.2</i></li>
+  </ul>
+<P>
+<i>and the GtkAda versions:</i><ul>
+	<li><i>GtkAda 3.8.3</i></li>
+	</ul>
+<p>Changes (24 August 2015) to the version 3.11:</p>
+<ul>
+  <li>Added workaround get/set string operations for tree model, store and list 
+	store (Gtk.Missed). The standard versions have critical bug;</li>
+	<li>Messages filter added to Gtk.Main.Router.GNAT_Stack;</li>
+	<li>Add_Button_From_Stock added to Gtk.Missed to work around Gtk.Dialog.Add_Button. (Add_Button generates warnings about GtkButton:use-stock 
+	being deprecated);</li>
+	<li>Add_Named and Add_Stock_Attribute added to Gtk.Messed to work around 
+	deprecated &quot;stock-id&quot; property of GtkCellRendererPixbuf;</li>
+	<li>Say procedures in Gtk.Main.Router and in Gtk.Main.Router.GNAT_Stack 
+	changed in order to be independent on GtkAda.Dialogs (for the same reason);</li>
+	<li>Bug fixes.</li>
+</ul>
+<p>Changes (29 June 2015) to the version 3.11:</p>
+<ul>
+  <li>Adapted to GNAT GPL 2015 and GtkAda 3.8.3.</li>
+</ul>
+	<p>
+<i>
+The following versions were tested with the compilers:</i>
+</p>
+<ul>
+  <li>
 <i>GNAT GPL 2014 (20140331)</i></li>
 	<li>
 <i>GNAT 4.8.2 (20131212)</i></li>
@@ -13752,7 +13901,8 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#5.8">5.8. Volumes (GVolume)</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#5.9">5.9. Drives (GDrive)</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#5.10">5.10. Volume monitor (GVolumeMonitor)</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#5.11">5.11. Generic signal handlers</A><hr>
+&nbsp;&nbsp;&nbsp; <A href="#5.11">5.11. Generic signal handlers</A><br>
+&nbsp;&nbsp;&nbsp; <A href="#5.12">5.12. Stock items backward compatibility</A><hr>
 <b><big><big>6</big></big></b>&nbsp;<A href="#6"><big>Handles as GTK+ values</big></A><hr>
 <b><big><big>7</big></big></b>&nbsp;<A href="#7"><big>Unit selection widget and dialogs</big></A><hr>
 <b><big><big>8</big></big></b>&nbsp;<A href="#8"><big>Improved HLS color model</big></A><hr>

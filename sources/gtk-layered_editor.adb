@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -33,6 +33,7 @@ with Ada.Tags;                  use Ada.Tags;
 with Cairo.Ellipses;            use Cairo.Ellipses;
 with Gdk.Color;                 use Gdk.Color;
 with GLib.Messages;             use GLib.Messages;
+with GLib.Properties;           use GLib.Properties;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Values;               use GLib.Values;
 with Gtk.Adjustment;            use Gtk.Adjustment;
@@ -404,7 +405,14 @@ package body Gtk.Layered_Editor is
    begin
       Edit := new Gtk_Double_Edit_Record;
       Gtk.GEntry.Initialize (Edit);
-      Set_Width_Chars (Edit, Default_Width);
+      Edit.Set_Width_Chars (Default_Width);
+      if Find_Property (Edit, "max-width-chars") /= null then
+         Set_Property
+         (  Edit,
+            Build ("max-width-chars"),
+            GInt'(Default_Width)
+         );
+      end if;
       Edit.No := No;
       Edit.Widget := Widget.all'Unchecked_Access;
       Edit.Set_Tooltip_Text (Tip);
@@ -477,6 +485,13 @@ package body Gtk.Layered_Editor is
       This.Edit := new Gtk_Text_Record;
       Gtk.GEntry.Initialize (This.Edit);
       This.Edit.Set_Width_Chars (Default_Width);
+      if Find_Property (This.Edit, "max-width-chars") /= null then
+         Set_Property
+         (  This.Edit,
+            Build ("max-width-chars"),
+            GInt'(Default_Width)
+         );
+      end if;
       This.Edit.Position := Positive (Row);
       This.Edit.Widget   := Widget.Editor;
       This.Edit.Set_Tooltip_Text ("Annotation text");
@@ -612,6 +627,14 @@ package body Gtk.Layered_Editor is
                   Edit.Widget := Widget.all'Unchecked_Access;
                   Gtk.GEntry.Initialize (Edit);
                   Edit.Set_Width_Chars (Default_Width);
+                  if Find_Property (Edit, "max-width-chars") /= null
+                  then
+                     Set_Property
+                     (  Edit,
+                        Build ("max-width-chars"),
+                        GInt'(Default_Width)
+                     );
+                  end if;
                   Edit.Set_Tooltip_Text (Tip);
                   Attach
                   (  Widget.Properties,
@@ -681,6 +704,13 @@ package body Gtk.Layered_Editor is
    begin
       Gtk.GEntry.Initialize (Edit);
       Set_Width_Chars (Edit, Default_Width);
+      if Find_Property (Edit, "max-width-chars") /= null then
+         Set_Property
+         (  Edit,
+            Build ("max-width-chars"),
+            GInt'(Default_Width)
+         );
+      end if;
       Edit.No := No;
       Edit.Widget := Widget.all'Unchecked_Access;
       Edit.Set_Tooltip_Text (Tip);
@@ -1067,7 +1097,7 @@ package body Gtk.Layered_Editor is
       Clear (Widget.Store);
       while Layer /= null loop
          Append (Widget.Store, Row);
-         Set (Widget.Store, Row, 0, Get_Name (Layer.all));
+         Gtk.Missed.Set (Widget.Store, Row, 0, Get_Name (Layer.all));
          Layer := Layer.Below;
          Depth := Depth + 1;
       end loop;
@@ -1297,6 +1327,16 @@ package body Gtk.Layered_Editor is
             -- Aspect edit
          Gtk_New (Widget.Aspect_Edit);
          Widget.Aspect_Edit.Set_Width_Chars (6);
+         if (  Find_Property (Widget.Aspect_Edit, "max-width-chars")
+            /= null
+            )
+         then
+            Set_Property
+            (  Widget.Aspect_Edit,
+               Build ("max-width-chars"),
+               GInt'(6)
+            );
+         end if;
          Widget.Button_Box.Pack_End (Widget.Aspect_Edit, False, False);
          Widget.Aspect_Edit.Set_Sensitive (False);
          Editor_Handlers.Connect
@@ -1676,7 +1716,7 @@ package body Gtk.Layered_Editor is
          Row,
          GInt (Widget.Layered.Get.Get_Depth - Position)
       );
-      Set
+      Gtk.Missed.Set
       (  Widget.Store,
          Row,
          0,
@@ -2388,6 +2428,16 @@ package body Gtk.Layered_Editor is
                      else
                         Gtk_New (Edit);
                         Edit.Set_Width_Chars (Default_Width);
+                        if (  Find_Property (Edit, "max-width-chars")
+                           /= null
+                           )
+                        then
+                           Set_Property
+                           (  Edit,
+                              Build ("max-width-chars"),
+                              GInt'(Default_Width)
+                           );
+                        end if;
                         Edit.Set_Tooltip_Text
                         (  Description (Specification)
                         );

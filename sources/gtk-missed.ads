@@ -2,7 +2,7 @@
 --  package Gtk.Missed              Copyright (c)  Maxim Reznik       --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,12 +28,20 @@ with Cairo;                     use Cairo;
 with Gdk.Color;                 use Gdk.Color;
 with Gdk.Cursor;                use Gdk.Cursor;
 with Gdk.Rectangle;             use Gdk.Rectangle;
+with Gdk.Pixbuf;                use Gdk.Pixbuf;
 with Gdk.RGBA;                  use Gdk.RGBA;
 with Gdk.Types;                 use Gdk.Types;
 with Glib.Error;                use Glib.Error;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with Glib.Values;               use Glib.Values;
+with Gtk.Button;                use Gtk.Button;
+with Gtk.Cell_Renderer_Pixbuf;  use Gtk.Cell_Renderer_Pixbuf;
 with Gtk.Container;             use Gtk.Container;
+with Gtk.Dialog;                use Gtk.Dialog;
+with Gtk.Enums;                 use Gtk.Enums;
+with Gtk.List_Store;            use Gtk.List_Store;
+with Gtk.Stock;                 use Gtk.Stock;
+with Gtk.Style_Context;         use Gtk.Style_Context;
 with Gtk.Text_Buffer;           use Gtk.Text_Buffer;
 with Gtk.Text_Iter;             use Gtk.Text_Iter;
 with Gtk.Tree_Model;            use Gtk.Tree_Model;
@@ -81,6 +89,75 @@ package Gtk.Missed is
    File_Test_Exists        : constant GFileTest := 2**4;
 
    type GDir is new Glib.C_Proxy;
+--
+-- Add_Button_From_Stock -- A replacement for deprecated Add_Button
+--
+--    Dialog    - The dialog
+--    Response  - The dialog response the button will generate
+--    Label     - The button label
+--    Icon      - The button stock ID for the button to add
+--    Icon_Left - Icon left of the label
+--    Size      - The icon size
+--    Spacing   - The spacing between the icon and label
+--    Tip       - The tooltip text
+--    Relief    - The button relief
+--
+   procedure Add_Button_From_Stock
+             (  Dialog     : not null access Gtk_Dialog_Record'Class;
+                Response   : Gtk_Response_Type;
+                Label      : UTF8_String   := "";
+                Icon       : UTF8_String   := "";
+                Icon_Left  : Boolean       := True;
+                Size       : Gtk_Icon_Size := Icon_Size_Button;
+                Spacing    : GUInt         := 3;
+                Tip        : UTF8_String   := "";
+                Relief     : Gtk_Relief_Style := Relief_Normal
+             );
+   function Add_Button_From_Stock
+            (  Dialog     : not null access Gtk_Dialog_Record'Class;
+               Response   : Gtk_Response_Type;
+               Label      : UTF8_String   := "";
+               Icon       : UTF8_String   := "";
+               Icon_Left  : Boolean       := True;
+               Size       : Gtk_Icon_Size := Icon_Size_Button;
+               Spacing    : GUInt         := 3;
+               Tip        : UTF8_String   := "";
+               Relief     : Gtk_Relief_Style := Relief_Normal
+            )  return Gtk_Button;
+--
+-- Add_Named -- Add a named stock image
+--
+--    Name - Of the image
+--    Icon - The pixbuf (static)
+--
+-- This procedure is a replacement to deprecated Add_Static.  It is used
+-- in combination with Add_Stock_Attribute.
+--
+   procedure Add_Named
+             (  Name : UTF8_String;
+                Icon : Gdk_Pixbuf
+             );
+--
+-- Add_Stock_Attribute -- Add stock image specified by the name
+--
+--    Cell_Layout - The tree view column
+--    Cell        - The cell renderer
+--    Column      - The tree model column (string containing icon name)
+--
+-- The procedure is a replacement to deprecated:
+--
+---   Cell_Layout.Add_Attribute (Cell, "stock-id", Column)
+--
+-- The  icon is first searched in the  list of images added by Add_Named
+-- and then in the list of themed icons.
+--
+   procedure Add_Stock_Attribute
+             (  Cell_Layout : not null access
+                              Gtk_Tree_View_Column_Record'Class;
+                Cell        : not null access
+                              Gtk_Cell_Renderer_Pixbuf_Record'Class;
+                Column      : GInt
+             );
 --
 -- Build_Filename -- File base name
 --
@@ -296,6 +373,24 @@ package Gtk.Missed is
    function Find_Program_In_Path (Program : UTF8_String)
       return UTF8_String;
 --
+-- Find_Property -- Find property of a class or an object
+--
+--    Class / Object - To look for the property
+--    Name           - The property name
+--
+-- Returns :
+--
+--    The property specification or null if there is none
+--
+   function Find_Property
+            (  Class : GObject_Class;
+               Name  : UTF8_String
+            )  return Param_Spec;
+   function Find_Property
+            (  Object : not null access GObject_Record'Class;
+               Name   : UTF8_String
+            )  return Param_Spec;
+--
 -- From_RGBA -- Conversion from RGBA to color
 --
 --    Color - To convert
@@ -305,6 +400,32 @@ package Gtk.Missed is
 --    The coresponding color
 --
    function From_RGBA (Color : Gdk_RGBA) return Gdk_Color;
+--
+-- Get -- Replacement of Gtk.Tree_Store.Get_String which has bugs
+--
+--    Store  - The tree store
+--    Row    - The row iterator
+--    Column - The column
+--
+-- Returns :
+--
+--    The cell value
+--
+   function Get
+            (  Store  : not null access Gtk_List_Store_Record'Class;
+               Row    : Gtk_Tree_Iter;
+               Column : GInt
+            )  return String;
+   function Get
+            (  Store  : Gtk_Tree_Model;
+               Row    : Gtk_Tree_Iter;
+               Column : GInt
+            )  return String;
+   function Get
+            (  Store  : not null access Gtk_Tree_Store_Record'Class;
+               Row    : Gtk_Tree_Iter;
+               Column : GInt
+            )  return String;
 --
 -- Insert_Alt -- Alternative version of text buffer insert
 --
@@ -438,6 +559,35 @@ package Gtk.Missed is
                Path      : Gtk_Tree_Path;
                Column    : Gtk_Tree_View_Column := null
             )  return Gdk_Rectangle;
+--
+-- Get_Background_Color -- Get background color
+--
+--    Context - The style context
+--    State   - The state
+--
+-- This function is used instead deprecated Get_Background_Color.
+--
+-- Returns :
+--
+--    The background color
+--
+   function Get_Background_Color
+            (  Context : not null access Gtk_Style_Context_Record'Class;
+               State   : Gtk_State_Flags
+            )  return Gdk_RGBA;
+--
+-- Set_Background_Color -- Set background color
+--
+--    Widget - The widget
+--    Color  - The color to set
+--
+-- This procedure uses CSS  provider to change the background color of a
+-- widget.
+--
+   procedure Set_Background_Color
+             (  Widget : not null access Gtk_Widget_Record'Class;
+                Color  : Gdk_RGBA
+             );
 --
 -- Get_Basename -- File base name
 --
@@ -599,6 +749,29 @@ package Gtk.Missed is
 --
    function Keyval_To_UTF8 (Key_Val : Gdk_Key_Type) return UTF8_String;
 --
+-- Message_Dialog -- Replacement for GtkAda.Dialog
+--
+--    Message       - The message to show
+--    Parent        - The parent widget/window
+--    Title         - The dialog title (guessed from Mode if empty)
+--    Mode          - The stock image ID
+--    Justification - Of the text within the dialog
+--    Response      - The dialog completion
+--
+-- When Mode is  Stock_Dialog_Question  the dialog  has two buttons.  In
+-- other cases the dialog has one button.  With two buttons the Response
+-- is Gtk_Response_Yes when yes button is pressed and Gtk_Response_No if
+-- No is pressed. In other cases it is Gtk_Response_OK.
+--
+   procedure Message_Dialog
+             (  Message       : UTF8_String;
+                Parent        : not null access Gtk_Widget_Record'Class;
+                Title         : UTF8_String       := "";
+                Mode          : UTF8_String       := Stock_Dialog_Error;
+                Justification : Gtk_Justification := Justify_Center;
+                Response      : access Gtk_Response_Type := null
+             );
+--
 -- Remove -- Delete a file or a directory
 --
 --    File_Name - To delete
@@ -637,6 +810,26 @@ package Gtk.Missed is
    procedure Set_Tip
              (  Widget : not null access
                          Gtk.Widget.Gtk_Widget_Record'Class
+             );
+--
+-- Set -- Replacement of Set_String which have bugs
+--
+--    Store  - The tree store / model
+--    Row    - The row iterator
+--    Column - The column
+--    Value  - The value to set
+--
+   procedure Set
+             (  Store  : not null access Gtk_List_Store_Record'Class;
+                Row    : Gtk_Tree_Iter;
+                Column : GInt;
+                Value  : String
+             );
+   procedure Set
+             (  Store  : not null access Gtk_Tree_Store_Record'Class;
+                Row    : Gtk_Tree_Iter;
+                Column : GInt;
+                Value  : String
              );
 --
 -- Set -- Missing in 2.14.0, GLib.Value.Set_Object since 2.14.2

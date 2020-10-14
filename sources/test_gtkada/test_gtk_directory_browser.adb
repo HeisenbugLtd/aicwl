@@ -3,7 +3,7 @@
 --     Test_Gtk_Directory_Browser                  Luebeck            --
 --  Test for                                       Autumn, 2007       --
 --                                                                    --
---                                Last revision :  22:06 23 Jul 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -40,10 +40,10 @@ with GLib;                      use GLib;
 with Glib.Object;               use Glib.Object;
 with GLib.Values;               use GLib.Values;
 with GNAT.Exception_Actions;    use GNAT.Exception_Actions;
-with GtkAda.Dialogs;            use GtkAda.Dialogs;
 with Gtk.Abstract_Browser;      use Gtk.Abstract_Browser;
 with Gtk.Cell_Renderer_Pixbuf;  use Gtk.Cell_Renderer_Pixbuf;
 with Gtk.Cell_Renderer_Text;    use Gtk.Cell_Renderer_Text;
+with Gtk.Dialog;                use Gtk.Dialog;
 with Gtk.Directory_Browser;     use Gtk.Directory_Browser;
 with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Frame;                 use Gtk.Frame;
@@ -140,18 +140,17 @@ procedure Test_Gtk_Directory_Browser is
                       String
                       (  Get_Current_Directory (Get_Tree_View (Browser))
                       );
+            Response : aliased Gtk_Response_Type;
          begin
-            case Message_Dialog
-                 (  "Do you want to delete directory " & Name,
-                    Confirmation,
-                    Button_OK or Button_Cancel,
-                    Button_Cancel
-                 )  is
-               when Button_OK =>
-                  Delete (Get_Cache (Browser), Name);
-               when others =>
-                  null;
-            end case;
+            Message_Dialog
+            (  Message  => "Do you want to delete directory " & Name,
+               Parent   => Widget,
+               Mode     => Stock_Dialog_Question,
+               Response => Response'Access
+            );
+            if Response = Gtk_Response_Yes then
+               Delete (Get_Cache (Browser), Name);
+            end if;
          exception
             when Error : others =>
                Say
@@ -166,7 +165,8 @@ procedure Test_Gtk_Directory_Browser is
          declare
             Selected : constant Selection :=
                           Get_Selection (Get_Files_View (Browser));
-            List : Unbounded_String;
+            List     : Unbounded_String;
+            Response : aliased Gtk_Response_Type;
          begin
             for Index in Selected'Range loop
                if Index /= 1 then
@@ -180,29 +180,28 @@ procedure Test_Gtk_Directory_Browser is
                         Selected (Index)
                )  )  );
             end loop;
-            case Message_Dialog
-                 (  (  "Do you want to delete "
-                    &  To_String (List)
-                    &  " from "
-                    &  String (Get_Directory (Get_Files_View (Browser)))
-                    ),
-                    Confirmation,
-                    Button_OK or Button_Cancel,
-                    Button_Cancel
-                 )  is
-               when Button_OK =>
-                  for Index in reverse Selected'Range loop
-                     Delete
-                     (  Get_Cache (Browser),
-                        String
-                        (  Get_Path
-                           (  Get_Files_View (Browser),
-                              Selected (Index)
-                     )  )  );
-                  end loop;
-               when others =>
-                   null;
-            end case;
+            Message_Dialog
+            (  Message  =>
+                  (  "Do you want to delete "
+                  &  To_String (List)
+                  &  " from "
+                  &  String (Get_Directory (Get_Files_View (Browser)))
+                  ),
+               Parent   => Widget,
+               Mode     => Stock_Dialog_Question,
+               Response => Response'Access
+            );
+            if Response = Gtk_Response_Yes then
+               for Index in reverse Selected'Range loop
+                  Delete
+                  (  Get_Cache (Browser),
+                     String
+                     (  Get_Path
+                        (  Get_Files_View (Browser),
+                           Selected (Index)
+                  )  )  );
+               end loop;
+            end if;
          exception
             when Error : others =>
                Say
@@ -275,7 +274,7 @@ procedure Test_Gtk_Directory_Browser is
                Icon.Unref;
             end if;
             Set_Value (List, Row, 0, Value);
-            Set (List, Row, 1, Get_Name (Drive));
+            Gtk.Missed.Set (List, Row, 1, Get_Name (Drive));
             declare
                Parent  : Gtk_Tree_Iter := Row;
                Volume  : GVolume;
@@ -367,7 +366,7 @@ procedure Test_Gtk_Directory_Browser is
                Icon.Unref;
             end if;
             Set_Value (List, Row, 0, Value);
-            Set (List, Row, 1, Get_Name (Volume));
+            Gtk.Missed.Set (List, Row, 1, Get_Name (Volume));
 
             Drive := Get_Drive (Volume);
             if Drive /= null then
@@ -377,7 +376,7 @@ procedure Test_Gtk_Directory_Browser is
                   Icon.Unref;
                end if;
                Set_Value (List, Row, 0, Value);
-               Set (List, Row, 1, Get_Name (Drive));
+               Gtk.Missed.Set (List, Row, 1, Get_Name (Drive));
                Drive.Unref;
             end if;
 
@@ -468,13 +467,13 @@ procedure Test_Gtk_Directory_Browser is
                Icon.Unref;
             end if;
             Set_Value (List, Row, 0, Value);
-            Set (List, Row, 1, Get_Name (Mount));
+            Gtk.Missed.Set (List, Row, 1, Get_Name (Mount));
 
             declare
                Drive : GDrive := Get_Drive (Mount);
             begin
                if Drive = null then
-                  Set (List, Row, 3, "none");
+                  Gtk.Missed.Set (List, Row, 3, "none");
                else
                   Icon := Drive.Get_Icon;
                   if Icon /= null then
@@ -482,29 +481,29 @@ procedure Test_Gtk_Directory_Browser is
                      Icon.Unref;
                   end if;
                   Set_Value (List, Row, 2, Value);
-                  Set (List, Row, 3, Get_Name (Drive));
+                  Gtk.Missed.Set (List, Row, 3, Get_Name (Drive));
                   Drive.Unref;
                end if;
             end;
 
-            Set (List, Row, 4, Get_UUID (Mount));
+            Gtk.Missed.Set (List, Row, 4, Get_UUID (Mount));
             if Can_Unmount (Mount) then
-               Set (List, Row, 5, "gtk-apply");
+               Gtk.Missed.Set (List, Row, 5, "gtk-apply");
             else
-               Set (List, Row, 5, "gtk-cancel");
+               Gtk.Missed.Set (List, Row, 5, "gtk-cancel");
             end if;
             if Can_Eject (Mount) then
-               Set (List, Row, 6, "gtk-apply");
+               Gtk.Missed.Set (List, Row, 6, "gtk-apply");
             else
-               Set (List, Row, 6, "gtk-cancel");
+               Gtk.Missed.Set (List, Row, 6, "gtk-cancel");
             end if;
-            Set (List, Row, 7, Get_Root (Mount));
+            Gtk.Missed.Set (List, Row, 7, Get_Root (Mount));
 
             declare
                Volume : GVolume := Get_Volume (Mount);
             begin
                if Volume = null then
-                  Set (List, Row, 9, "none");
+                  Gtk.Missed.Set (List, Row, 9, "none");
                else
                   Icon := Volume.Get_Icon;
                   if Icon /= null then
@@ -512,7 +511,7 @@ procedure Test_Gtk_Directory_Browser is
                      Icon.Unref;
                   end if;
                   Set_Value (List, Row, 8, Value);
-                  Set (List, Row, 9, Get_Name (Volume));
+                  Gtk.Missed.Set (List, Row, 9, Get_Name (Volume));
                   Volume.Unref;
                end if;
             end;
@@ -546,10 +545,10 @@ procedure Test_Gtk_Directory_Browser is
          Column.Set_Title ("Can");
          Gtk_New (Icon_Renderer);
          Column.Pack_Start (Icon_Renderer, False);
-         Column.Add_Attribute (Icon_Renderer, "stock-id", 5);
+         Add_Stock_Attribute (Column, Icon_Renderer, 5);
          Gtk_New (Icon_Renderer);
          Column.Pack_Start (Icon_Renderer, False);
-         Column.Add_Attribute (Icon_Renderer, "stock-id", 6);
+         Add_Stock_Attribute (Column, Icon_Renderer, 6);
          Column_No := Append_Column (View, Column);
          Column.Set_Resizable (False);
 

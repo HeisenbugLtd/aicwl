@@ -3,7 +3,7 @@
 --     Gtk.Abstract_Browser                        Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -1459,7 +1459,6 @@ package body Gtk.Abstract_Browser is
                Kind      : Item_Type
             )  return Boolean is
    begin
-gtk.Main.Router.trace("                             ====FILTER return true");
       return True;
    end Filter;
 
@@ -2890,7 +2889,7 @@ gtk.Main.Router.trace("                             ====FILTER return true");
 
          Gtk_New (Widget.Icon_Renderer);
          Column.Pack_Start (Widget.Icon_Renderer, False);
-         Column.Add_Attribute (Widget.Icon_Renderer, "stock-id", 0);
+         Add_Stock_Attribute (Column, Widget.Icon_Renderer, 0);
 
          Gtk_New (Widget.Name_Renderer);
          Column.Pack_Start (Widget.Name_Renderer, True);

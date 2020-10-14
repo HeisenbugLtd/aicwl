@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_                     Luebeck            --
 --         Credentials_Dialog                      Winter, 2008       --
 --  Implementation                                                    --
---                                Last revision :  22:06 23 Jul 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with Ada.Exceptions;            use Ada.Exceptions;
 with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
-with GtkAda.Dialogs;            use GtkAda.Dialogs;
 with GtkAda.Types;              use GtkAda.Types;
 with GLib.Messages;             use GLib.Messages;
 with GLib.Properties;           use GLib.Properties;
@@ -36,6 +35,7 @@ with GLib.Types;                use GLib.Types;
 with Gtk.Box;                   use Gtk.Box;
 with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Frame;                 use Gtk.Frame;
+with Gtk.Stock;                 use Gtk.Stock;
 with Gtk.Widget;                use Gtk.Widget;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
 
@@ -451,13 +451,19 @@ package body Gtk.Persistent_Storage_Credentials_Dialog is
       Dialog.User_Entry.Set_Text (User);
       Dialog.Store_Password.Set_Active (Stored);
       Dialog.Cancel_Button :=
-         Gtk_Button_Record'Class
-         (  Add_Button (Dialog, "", Gtk_Response_Cancel).all
-         ) 'Access;
+         Add_Button_From_Stock
+         (  Dialog   => Dialog,
+            Response => Gtk_Response_Cancel,
+            Icon     => Stock_Cancel,
+            Label    => "_Cancel"
+         );
       Dialog.OK_Button :=
-         Gtk_Button_Record'Class
-         (  Add_Button (Dialog, "", Gtk_Response_OK).all
-         ) 'Access;
+         Add_Button_From_Stock
+         (  Dialog   => Dialog,
+            Response => Gtk_Response_OK,
+            Icon     => Stock_OK,
+            Label    => "_OK"
+         );
       Style_Updated (Dialog);
    end Initialize;
 

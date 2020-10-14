@@ -3,7 +3,7 @@
 --     Gtk.Directory_Browser                       Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,8 +31,8 @@ with GIO.Content_Type;           use GIO.Content_Type;
 with GIO.Volume_Monitor;         use GIO.Volume_Monitor;
 with GLib.Error;                 use GLib.Error;
 with Glib.Messages;              use Glib.Messages;
-with GtkAda.Dialogs;             use GtkAda.Dialogs;
 with Gtk.Enums;                  use Gtk.Enums;
+with Gtk.Missed;                 use Gtk.Missed;
 with Gtk.Scrolled_Window;        use Gtk.Scrolled_Window;
 with Gtk.Stock;                  use Gtk.Stock;
 with Gtk.Tree_View;              use Gtk.Tree_View;
@@ -56,19 +56,17 @@ package body Gtk.Directory_Browser is
       return " in Gtk.Directory_Browser." & Name;
    end Where;
 
-   procedure Say (Text : String) is
+   procedure Say
+             (  Text   : String;
+                Parent : not null access Gtk_Widget_Record'Class
+             )  is
    begin
-      if (  Button_OK
-         =  Message_Dialog
-            (  Dialog_Type   => GtkAda.Dialogs.Error,
-               Buttons       => Button_OK,
-               Title         => "File renaming error",
-               Justification => Justify_Left,
-               Msg           => Text
-         )  )
-      then
-         null;
-      end if;
+      Message_Dialog
+      (  Title         => "File renaming error",
+         Justification => Justify_Left,
+         Message       => Text,
+         Parent        => Parent
+      );
    end Say;
 
    function Compare
@@ -665,27 +663,30 @@ package body Gtk.Directory_Browser is
          exception
             when Name_Error =>
                Say
-               (  "Directory "
-               &  String (Old_Path)
-               &  " does not exist"
+               (  "Directory " & String (Old_Path) & " does not exist",
+                  Widget
                );
                return;
             when Use_Error =>
                Say
-               (  "Directory "
-               &  String (Old_Path)
-               &  " cannot be renamed to "
-               &  String (New_Path)
+               (  (  "Directory "
+                  &  String (Old_Path)
+                  &  " cannot be renamed to "
+                  &  String (New_Path)
+                  ),
+                  Widget
                );
                return;
             when Error : others =>
                Say
-               (  "Unable to rename "
-               &  String (Old_Path)
-               &  " to "
-               &  String (New_Path)
-               &  " due to internal error. "
-               &  Exception_Message (Error)
+               (  (  "Unable to rename "
+                  &  String (Old_Path)
+                  &  " to "
+                  &  String (New_Path)
+                  &  " due to internal error. "
+                  &  Exception_Message (Error)
+                  ),
+                  Widget
                );
                return;
          end;
@@ -713,27 +714,33 @@ package body Gtk.Directory_Browser is
          exception
             when Name_Error =>
                Say
-               (  "File "
-               &  String (Get_Path (Widget, Index))
-               &  " does not exist"
+               (  (  "File "
+                  &  String (Get_Path (Widget, Index))
+                  &  " does not exist"
+                  ),
+                  Widget
                );
                return;
             when Use_Error =>
                Say
-               (  "File "
-               &  String (Get_Path (Widget, Index))
-               &  " cannot be renamed to "
-               &  String (Get_Path (Widget, Name))
+               (  (  "File "
+                  &  String (Get_Path (Widget, Index))
+                  &  " cannot be renamed to "
+                  &  String (Get_Path (Widget, Name))
+                  ),
+                  Widget
                );
                return;
             when Error : others =>
                Say
-               (  "Unable to rename "
-               &  String (Get_Path (Widget, Index))
-               &  " to "
-               &  String (Get_Path (Widget, Name))
-               &  " due to internal error. "
-               &  Exception_Message (Error)
+               (  (  "Unable to rename "
+                  &  String (Get_Path (Widget, Index))
+                  &  " to "
+                  &  String (Get_Path (Widget, Name))
+                  &  " due to internal error. "
+                  &  Exception_Message (Error)
+                  ),
+                  Widget
                );
                return;
          end;

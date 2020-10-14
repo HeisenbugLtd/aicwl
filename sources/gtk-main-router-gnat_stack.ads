@@ -3,7 +3,7 @@
 --     Gtk.Main.Router.GNAT_Stack                  Luebeck            --
 --  Interface                                      Autumn, 2007       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -44,7 +44,7 @@ package Gtk.Main.Router.GNAT_Stack is
 --    Break   - Force break flag
 --    Step    - Identation step per call
 --
--- This procedure showns Message in the messages box prefixed by a chain
+-- This procedure shows  Message in the messages box prefixed by a chain
 -- of spaces. The length of the chain is Step multiplied by the caller's
 -- depth.
 --
@@ -63,6 +63,7 @@ package Gtk.Main.Router.GNAT_Stack is
 --
 --    Message       - To show
 --    Title         - Of the message box
+--    Mode          - Of the dialog
 --    Justification - Of the message text
 --    Parent        - Of the box
 --
@@ -73,10 +74,10 @@ package Gtk.Main.Router.GNAT_Stack is
 --
    procedure Say
              (  Message       : UTF8_String;
-                Title         : UTF8_String         := "";
-                Dialog_Type   : Message_Dialog_Type := Information;
-                Justification : Gtk_Justification   := Justify_Left;
-                Parent        : Gtk_Window          := null
+                Title         : UTF8_String := "";
+                Mode          : UTF8_String := Stock_Dialog_Info;
+                Justification : Gtk_Justification := Justify_Left;
+                Parent        : access Gtk_Widget_Record'Class := null
              );
 --
 -- Trace -- Messages trace box
@@ -128,10 +129,42 @@ package Gtk.Main.Router.GNAT_Stack is
              );
    procedure Set_Log_Trace;
 --
+-- Log_Filter -- GTK+ errors filter
+--
+   type Log_Filter is abstract tagged limited private;
+--
+-- Ignore -- GTK+ errors filter
+--
+--    Domain  - The GTK+ domain log messages to trace
+--    Level   - The log messages mask
+--    Message - The log message
+--
+-- Returns :
+--
+--    True if the message must be ignored
+--
+   function Ignore
+            (  Filter  : not null access Log_Filter;
+               Domain  : String;
+               Level   : Log_Level_Flags;
+               Message : UTF8_String
+            )  return Boolean is abstract;
+--
 -- Dump_Call_Stack -- Write call stack to the standard output
 --
 --    Prefix - To the stack trace
 --
    procedure Dump_Call_Stack (Prefix : String := "");
+
+private
+   type Log_Filter_Ptr is access all Log_Filter'Class;
+   type Log_Filter is abstract
+      new Ada.Finalization.Limited_Controlled with
+   record
+      Previous : Log_Filter_Ptr;
+      Next     : Log_Filter_Ptr;
+   end record;
+   overriding procedure Finalize   (Filter : in out Log_Filter);
+   overriding procedure Initialize (Filter : in out Log_Filter);
 
 end Gtk.Main.Router.GNAT_Stack;

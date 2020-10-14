@@ -3,7 +3,7 @@
 --     Gtk.Persistent_Storage_Browser              Luebeck            --
 --  Implementation                                 Winter, 2008       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  19:57 08 Aug 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -37,8 +37,6 @@ with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Scrolled_Window;       use Gtk.Scrolled_Window;
 with Gtk.Stock;                 use Gtk.Stock;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
-with GtkAda.Dialogs;            use GtkAda.Dialogs;
-with GtkAda.Types;              use GtkAda.Types;
 with Interfaces;                use Interfaces;
 with Strings_Edit;              use Strings_Edit;
 
@@ -1933,59 +1931,50 @@ package body Gtk.Persistent_Storage_Browser is
    end Rewind;
 
    procedure Say
-             (  Widget : access Gtk_Persistent_Storage_Tree_View_Record;
+             (  Widget : not null access
+                         Gtk_Persistent_Storage_Tree_View_Record;
                 Name   : UTF8_String;
                 Reason : UTF8_String := ""
              )  is
-      Result : Message_Dialog_Buttons;
    begin
       if Reason'Length > 0 then
-         Result :=
-            Message_Dialog
-            (  Dialog_Type   => GtkAda.Dialogs.Error,
-               Buttons       => Button_OK,
-               Title         => Style_Get (Widget, "message-title"),
-               Justification => Justify_Left,
-               Msg           => Style_Get (Widget, Name) & ". " & Reason
-            );
+         Message_Dialog
+         (  Title         => Style_Get (Widget, "message-title"),
+            Justification => Justify_Left,
+            Message       => Style_Get (Widget, Name) & ". " & Reason,
+            Parent        => Widget
+         );
       else
-         Result :=
-            Message_Dialog
-            (  Dialog_Type   => GtkAda.Dialogs.Error,
-               Buttons       => Button_OK,
-               Title         => Style_Get (Widget, "message-title"),
-               Justification => Justify_Left,
-               Msg           => Style_Get (Widget, Name)
-            );
+         Message_Dialog
+         (  Title         => Style_Get (Widget, "message-title"),
+            Justification => Justify_Left,
+            Message       => Style_Get (Widget, Name),
+            Parent        => Widget
+         );
       end if;
    end Say;
 
    procedure Say
-             (  Widget : access
+             (  Widget : not null access
                          Gtk_Persistent_Storage_Items_View_Record;
                 Name   : UTF8_String;
                 Reason : UTF8_String := ""
              )  is
-      Result : Message_Dialog_Buttons;
    begin
       if Reason'Length > 0 then
-         Result :=
-            Message_Dialog
-            (  Dialog_Type   => GtkAda.Dialogs.Error,
-               Buttons       => Button_OK,
-               Title         => Style_Get (Widget, "message-title"),
-               Justification => Justify_Left,
-               Msg           => Style_Get (Widget, Name) & ". " & Reason
-            );
+         Message_Dialog
+         (  Title         => Style_Get (Widget, "message-title"),
+            Justification => Justify_Left,
+            Message       => Style_Get (Widget, Name) & ". " & Reason,
+            Parent        => Widget
+         );
       else
-         Result :=
-            Message_Dialog
-            (  Dialog_Type   => GtkAda.Dialogs.Error,
-               Buttons       => Button_OK,
-               Title         => Style_Get (Widget, "message-title"),
-               Justification => Justify_Left,
-               Msg           => Style_Get (Widget, Name)
-            );
+         Message_Dialog
+         (  Title         => Style_Get (Widget, "message-title"),
+            Justification => Justify_Left,
+            Message       => Style_Get (Widget, Name),
+            Parent        => Widget
+         );
       end if;
    end Say;
 

@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer_Fixed                     Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:30 31 Jul 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -46,6 +46,7 @@ package body Gtk.Cell_Renderer_Fixed is
    Renderer_Type : GType := GType_Invalid;
    Value_ID      : constant Property_ID := 1;
    After_ID      : constant Property_ID := 2;
+   Empty_ID      : constant Property_ID := 3;
 
    procedure Class_Init (Class : GObject_Class);
    pragma Convention (C, Class_Init);
@@ -75,6 +76,15 @@ package body Gtk.Cell_Renderer_Fixed is
             Minimum => 0,
             Maximum => GDouble'Digits,
             Default => 0
+      )  );
+      Class_Install_Property
+      (  Class,
+         Empty_ID,
+         Gnew_Boolean
+         (  Name    => "empty",
+            Nick    => "empty",
+            Blurb   => "leave the cell empty if set true",
+            Default => False
       )  );
    end Class_Init;
 
@@ -139,12 +149,12 @@ package body Gtk.Cell_Renderer_Fixed is
          );
       Result.Width :=
          GInt'Min
-         (  Result.X - Cell_Area.X + Cell_Area.Width,
+         (  Cell_Area.X - Result.X + Cell_Area.Width,
             Area.Width
          );
       Result.Height :=
          GInt'Min
-         (  Result.Y - Cell_Area.Y + Cell_Area.Height,
+         (  Cell_Area.Y - Result.Y + Cell_Area.Height,
             Area.Height
          );
       return Result;
@@ -164,6 +174,9 @@ package body Gtk.Cell_Renderer_Fixed is
          when After_ID =>
             Init (Value, GType_UInt);
             Set_UInt (Value, GUInt (Cell.After));
+         when Empty_ID =>
+            Init (Value, GType_Boolean);
+            Set_Boolean (Value, Cell.Empty);
          when others =>
             Init (Value, GType_String);
             Set_String (Value, "unknown");
@@ -193,7 +206,11 @@ package body Gtk.Cell_Renderer_Fixed is
       if Cell.Text = null then
          Cell.Text := Widget.Create_Pango_Layout;
       end if;
-      Put (Text, Cell.Value, Cell.After, 0);
+      if Cell.Empty then
+         Text := (others => ' ');
+      else
+         Put (Text, Cell.Value, Cell.After, 0);
+      end if;
       for Index in reverse Text'Range loop
          -- Find the beginning of the number in the output string
          if ' ' = Text (Index) then
@@ -341,9 +358,13 @@ package body Gtk.Cell_Renderer_Fixed is
    begin
       case Param_ID is
          when Value_ID =>
-            Cell.Value := Get_Double (Value);
+            if not Cell.Empty then
+               Cell.Value := Get_Double (Value);
+            end if;
          when After_ID =>
             Cell.After := Integer (Get_UInt (Value));
+         when Empty_ID =>
+            Cell.Empty := Get_Boolean (Value);
          when others =>
             null;
       end case;

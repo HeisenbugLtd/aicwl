@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Keys                     Luebeck            --
 --  Implementation                                 Autumn, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:30 31 Jul 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -118,7 +118,7 @@ package body Gtk.Recent_Manager_Keys is
       else
          This := Nth_Child (Enumerator.Model, Null_Iter, Row - 1);
       end if;
-      Set (Enumerator.Model, This, Enumerator.Column, Value);
+      Gtk.Missed.Set (Enumerator.Model, This, Enumerator.Column, Value);
    end Process;
 
    function Restore
