@@ -3,7 +3,7 @@
 --     Gtk.Valve.Round_90                          Luebeck            --
 --  Interface                                      Winter, 2017       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,18 +25,14 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Cairo;                      use Cairo;
-with Gdk.Color;                  use Gdk.Color;
 with Gtk.Adjustment;             use Gtk.Adjustment;
 with Gtk.Enums.String_Lists;     use Gtk.Enums.String_Lists;
 with Gtk.Layered;                use Gtk.Layered;
-with Gtk.Layered.Line;           use Gtk.Layered.Line;
 with Gtk.Layered.Sector_Needle;  use Gtk.Layered.Sector_Needle;
 with Gtk.Layered.Disk_Needle;    use Gtk.Layered.Disk_Needle;
 with Gtk.Widget;                 use Gtk.Widget;
 
 with Gtk.Enums;
-with Gtk.Layered.Arc;
 with Gtk.Layered.Elliptic_Scale;
 
 with Gtk.Layered.Elliptic_Annotation;
@@ -187,7 +183,6 @@ package Gtk.Valve.Round_90 is
                 );
 
 private
-   use Gtk.Layered.Arc;
    use Gtk.Layered.Elliptic_Scale;
 
    type Sector is record

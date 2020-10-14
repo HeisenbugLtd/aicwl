@@ -3,7 +3,7 @@
 --     Gtk.Meter.Thermo_Dual                       Luebeck            --
 --  Interface                                      Summer, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with Gdk.Color;                    use Gdk.Color;
 with Gtk.Adjustment;               use Gtk.Adjustment;
-with Gtk.Enums.String_Lists;       use Gtk.Enums.String_Lists;
 with Gtk.Layered;                  use Gtk.Layered;
 with Gtk.Layered.Bar;              use Gtk.Layered.Bar;
 with Gtk.Layered.Cache;            use Gtk.Layered.Cache;
@@ -37,9 +36,7 @@ with Gtk.Layered.Line;             use Gtk.Layered.Line;
 with Gtk.Missed;                   use Gtk.Missed;
 with Gtk.Widget;                   use Gtk.Widget;
 
-with Gtk.Enums;
 with Gtk.Layered.Flat_Scale;
-with Gtk.Layered.Waveform;
 
 with Gtk.Layered.Rectangular_Background;
 use  Gtk.Layered.Rectangular_Background;

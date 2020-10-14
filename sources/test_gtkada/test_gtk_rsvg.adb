@@ -3,7 +3,7 @@
 --     Test_Gtk_RSVG                               Luebeck            --
 --  Test for Gtk.RSVG                              Winter, 2017       --
 --                                                                    --
---                                Last revision :  19:06 02 Jan 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,18 +26,14 @@
 --____________________________________________________________________--
 
 with Ada.Exceptions;               use Ada.Exceptions;
-with Ada.Text_IO;                  use Ada.Text_IO;
 with Cairo;                        use Cairo;
 with GLib;                         use GLib;
 with GLib.Error;                   use GLib.Error;
-with Glib.Properties;              use Glib.Properties;
-with Gdk.Event;                    use Gdk.Event;
 with Gtk.Button;                   use Gtk.Button;
 with Gtk.Dialog;                   use Gtk.Dialog;
 with Gtk.File_Chooser;             use Gtk.File_Chooser;
 with Gtk.File_Chooser_Dialog;      use Gtk.File_Chooser_Dialog;
 with Gtk.File_Filter;              use Gtk.File_Filter;
-with Gtk.Grid;                     use Gtk.Grid;
 with Gtk.Drawing_Area;             use Gtk.Drawing_Area;
 with Gtk.Main.Router.GNAT_Stack;   use Gtk.Main.Router;
 with Gtk.Missed;                   use Gtk.Missed;
@@ -47,7 +43,7 @@ with Gtk.Widget;                   use Gtk.Widget;
 with RSVG.Handle;                  use RSVG.Handle;
 
 with Ada.Unchecked_Conversion;
-with Interfaces.C.Strings;
+with Ada.Text_IO;
 with GLib.Messages;
 with GLib.Object.Checked_Destroy;
 

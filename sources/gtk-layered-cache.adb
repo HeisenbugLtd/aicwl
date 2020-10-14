@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  22:38 18 Nov 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,8 +25,7 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Exceptions;  use Ada.Exceptions;
-with Cairo.Surface;   use Cairo.Surface;
+with Cairo.Surface;  use Cairo.Surface;
 
 with Ada.Unchecked_Deallocation;
 
@@ -151,7 +150,6 @@ package body Gtk.Layered.Cache is
    end Is_Caching;
 
    function Is_Updated (Layer : Cache_Layer) return Boolean is
-      type Layer_Ptr is access all Abstract_Layer'Class;
    begin
       return
       (  Layer.Cache = Null_Context

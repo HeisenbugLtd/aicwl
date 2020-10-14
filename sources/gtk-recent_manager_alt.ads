@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Alt                      Luebeck            --
 --  Interface                                      Winter, 2008       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,13 +27,12 @@
 
 with Ada.Calendar;  use Ada.Calendar;
 with Gdk.Pixbuf;    use Gdk.Pixbuf;
-with Gdk.Screen;    use Gdk.Screen;
 with GLib.Error;    use GLib.Error;
 with Gtk.Enums;     use Gtk.Enums;
 with Gtk.Missed;    use Gtk.Missed;
 with Gtkada.Types;  use Gtkada.Types;
 
-with Interfaces.C.Pointers;
+with Interfaces.C;
 
 package Gtk.Recent_Manager_Alt is
 --

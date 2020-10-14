@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        On_Button_Release                        Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  22:22 11 Apr 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -24,6 +24,9 @@
 --  exception  does not however invalidate any other reasons why the  --
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
+
+with Gtk.Image_Menu_Item;  use Gtk.Image_Menu_Item;
+with Gtk.Menu;             use Gtk.Menu;
 
 separate (Gtk.Oscilloscope)
    function On_Button_Release

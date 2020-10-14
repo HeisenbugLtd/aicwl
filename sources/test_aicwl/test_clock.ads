@@ -3,7 +3,7 @@
 --  Test real time clock                           Luebeck            --
 --                                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with Cairo;                  use Cairo;
 with Gtk.Button;             use Gtk.Button;
-with Gdk.Rectangle;          use Gdk.Rectangle;
 with Gtk.Wall_Clock.Modern;  use Gtk.Wall_Clock.Modern;
 
 with Gtk.Gauge.LED_Rectangular;

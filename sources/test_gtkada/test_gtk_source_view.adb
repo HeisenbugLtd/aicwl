@@ -3,7 +3,7 @@
 --     Test_Gtk_Source_View                        Luebeck            --
 --  Test for Gtk.Source_View                       Summer, 2009       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,10 +28,7 @@
 with Ada.Exceptions;               use Ada.Exceptions;
 with Ada.Text_IO;                  use Ada.Text_IO;
 with GLib;                         use GLib;
-with Glib.Properties;              use Glib.Properties;
-with Gdk.Event;                    use Gdk.Event;
 with Gtk.Main.Router.GNAT_Stack;   use Gtk.Main.Router;
-with Gtk.Missed;                   use Gtk.Missed;
 with Gtk.Scrolled_Window;          use Gtk.Scrolled_Window;
 with Gtk.Source_Buffer;            use Gtk.Source_Buffer;
 with Gtk.Source_Language;          use Gtk.Source_Language;
@@ -41,11 +38,11 @@ with Gtk.Table;                    use Gtk.Table;
 with Gtk.Text_Buffer;              use Gtk.Text_Buffer;
 with Gtk.Text_Iter;                use Gtk.Text_Iter;
 with Gtk.Window;                   use Gtk.Window;
-with Gtk.Widget;                   use Gtk.Widget;
 with GtkAda.Types;                 use GtkAda.Types;
 with Pango.Font;                   use Pango.Font;
 
 with GLib.Messages;
+with Gtk.Missed;
 
 procedure Test_Gtk_Source_View is
    Window  : Gtk_Window;

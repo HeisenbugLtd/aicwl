@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  18:53 28 Oct 2018  --
+--                                Last revision :  22:38 18 Nov 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,13 +25,11 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Exceptions;              use Ada.Exceptions;
-with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
-with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
-with Cairo.Surface;               use Cairo.Surface;
-with GLib.Messages;               use GLib.Messages;
-with GLib.Properties.Creation;    use GLib.Properties.Creation;
-with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
+with Ada.Exceptions;            use Ada.Exceptions;
+with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
+with GLib.Messages;             use GLib.Messages;
+with GLib.Properties.Creation;  use GLib.Properties.Creation;
+with Gtk.Layered.Stream_IO;     use Gtk.Layered.Stream_IO;
 
 with Ada.Unchecked_Deallocation;
 with Cairo.Line_Cap_Property;
@@ -1842,9 +1840,9 @@ package body Gtk.Layered.Waveform is
 
    procedure Sweep (Layer : in out Waveform_Layer; To : X_Axis) is
       dT : constant X_Axis := Layer.T2 - Layer.T1;
-      dX : X_Axis := X_Axis'Truncation
-                     (  X_Axis (Layer.Box.X2 - Layer.Box.X1 + 1.0)
-                     );
+--        dX : X_Axis := X_Axis'Truncation
+--                       (  X_Axis (Layer.Box.X2 - Layer.Box.X1 + 1.0)
+--                       );
    begin
       Layer.T2 := To;
       Layer.T1 := Layer.T2 - dT;

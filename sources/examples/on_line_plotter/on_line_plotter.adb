@@ -40,7 +40,6 @@ with Gtk.Frame;             use Gtk.Frame;
 with Gtk.GEntry;            use Gtk.GEntry;
 with Gtk.Missed;            use Gtk.Missed;
 with Gtk.Label;             use Gtk.Label;
-with Gtk.Layered.Waveform;  use Gtk.Layered.Waveform;
 with Gtk.Oscilloscope;      use Gtk.Oscilloscope;
 with Gtk.Progress_Bar;      use Gtk.Progress_Bar;
 with Gtk.Stock;             use Gtk.Stock;
@@ -48,13 +47,13 @@ with Gtk.Table;             use Gtk.Table;
 with Gtk.Widget;            use Gtk.Widget;
 with Gtk.Window;            use Gtk.Window;
 
-with Ada.Numerics.Elementary_Functions;
 with Ada.Unchecked_Conversion;
 with Gtk.File_Chooser;
 with Gtk.File_Chooser_Dialog;
+with Gtk.Layered;
 with Gtk.Main.Router;
 with Worker;
-with gtk.layered.line;
+
 procedure On_Line_Plotter is
    Window          : Gtk_Window;
    Calculator      : Worker.Process;

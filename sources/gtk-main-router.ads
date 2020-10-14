@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  19:18 30 Apr 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -67,13 +67,10 @@
 --
 -- Note the package is based on timer events.
 --
-with Ada.Exceptions;         use Ada.Exceptions;
-with Ada.Strings.Unbounded;  use Ada.Strings.Unbounded;
-with Gtk.Dialog;             use Gtk.Dialog;
-with Gtk.Enums;              use Gtk.Enums;
-with Gtk.Label;              use Gtk.Label;
-with Gtk.Stock;              use Gtk.Stock;
-with Gtk.Window;             use Gtk.Window;
+with Ada.Exceptions;  use Ada.Exceptions;
+with Gtk.Enums;       use Gtk.Enums;
+with Gtk.Stock;       use Gtk.Stock;
+with Gtk.Window;      use Gtk.Window;
 
 with Ada.Finalization;
 

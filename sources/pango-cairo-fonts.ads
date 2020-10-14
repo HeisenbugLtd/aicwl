@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2012       --
 --                                                                    --
---                                Last revision :  11:46 29 Jul 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,15 +28,13 @@
 --  This package provides an  abstraction  layer  above  toy  and  Pango
 --  fonts, which are differently handled in Cairo.
 --
-with Ada.Streams;      use Ada.Streams;
-with Cairo.Font_Face;  use Cairo.Font_Face;
-with Glib;             use GLib;
-with Pango.Enums;      use Pango.Enums;
-with Pango.Font;       use Pango.Font;
+with Ada.Streams;  use Ada.Streams;
+with Glib;         use GLib;
+with Pango.Enums;  use Pango.Enums;
+with Pango.Font;   use Pango.Font;
 
 with Ada.Finalization;
 with GtkAda.Types;
-with Interfaces.C.Strings;
 
 package Pango.Cairo.Fonts is
 --

@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper                     Luebeck            --
 --  Interface                                      Spring, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,6 +27,7 @@
 
 with Gtk.Handlers.References;  use Gtk.Handlers.References;
 with Gtk.Layered.Waveform;     use Gtk.Layered.Waveform;
+with Gtk.Missed;               use Gtk.Missed;
 
 package Gtk.Layered.Graph_Paper is
 --

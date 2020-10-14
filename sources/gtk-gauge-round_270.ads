@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Round_270                         Luebeck            --
 --  Interface                                      Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,8 +25,6 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Cairo;                   use Cairo;
-with Gdk.Color;               use Gdk.Color;
 with Gtk.Adjustment;          use Gtk.Adjustment;
 with Gtk.Enums.String_Lists;  use Gtk.Enums.String_Lists;
 with Gtk.Layered;             use Gtk.Layered;

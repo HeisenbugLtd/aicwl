@@ -3,7 +3,7 @@
 --  Test for Gtk.Missed                            Luebeck            --
 --                                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  10:33 11 May 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,6 +25,7 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
+with Ada.Calendar;            use Ada.Calendar;
 with Ada.Characters.Latin_1;  use Ada.Characters.Latin_1;
 with Ada.Exceptions;          use Ada.Exceptions;
 with GLib;                    use GLib;
@@ -37,6 +38,7 @@ with Gtk.Table;               use Gtk.Table;
 with Gtk.Label;               use Gtk.Label;
 
 with Ada.Unchecked_Conversion;
+with GLib.Time_Zone;
 
 procedure Test_Gtk_Missed is
    Window  : Gtk_Window;
@@ -100,14 +102,74 @@ begin
    Window.Set_Title ("Test Missed Stuff");
    Window.On_Delete_Event (Gtk.Missed.Delete_Event_Handler'Access);
    Window.On_Destroy (Gtk.Missed.Destroy_Handler'Access);
-   Gtk_New (Grid, 1, 1, False);
+   Gtk_New (Grid, 4, 4, False);
    Window.Add (Grid);
-   Gtk_New (Label, "label");
-   Grid.Attach (Label, 0, 1, 0, 1);
+   declare
+      use GLib.Time_Zone;
+      TZ       : GTime_Zone renames Gtk_New_Local.all;
+--    TZ       : GTime_Zone renames Gtk_New ("Europe/Helsinki").all;
+      Zone     : Gtk_Label;
+      Year     : Year_Number;
+      Month    : Month_Number;
+      Day      : Day_Number;
+      Seconds  : Day_Duration;
+      Interval : GInt;
+      Winter   : Time;
+      Summer   : Time;
+   begin
+      Gtk_New (Zone, "Identifier");
+      Grid.Attach (Zone, 0, 1, 0, 1);
+      Gtk_New (Zone, Get_Identifier (TZ));
+      Grid.Attach (Zone, 1, 4, 0, 1);
 
-   Label.Show;
-   Grid.Show;
-   Window.Show;
+      Split (Clock, Year, Month, Day, Seconds);
+      Winter := Time_Of (Year, 1, 1, 0.0);
+      Summer := Time_Of (Year, 6, 1, 0.0);
+
+      Gtk_New (Zone, "Winter time");
+      Grid.Attach (Zone, 0, 1, 1, 2);
+      Gtk_New (Zone, "Offset");
+      Grid.Attach (Zone, 2, 3, 1, 2);
+      Interval := Find_Interval (TZ, Winter);
+      if Interval >= 0 then
+         Gtk_New (Zone, Get_Abbreviation (TZ, Interval));
+         Grid.Attach (Zone,  1, 2, 1, 2);
+         Gtk_New
+         (  Zone,
+            Integer'Image (Integer (Get_Offset (TZ, Interval)))
+         );
+         Grid.Attach (Zone,  3, 4, 1, 2);
+      end if;
+
+      Gtk_New (Zone, "Summer time");
+      Grid.Attach (Zone, 0, 1, 2, 3);
+      Gtk_New (Zone, "Offset");
+      Grid.Attach (Zone, 2, 3, 2, 3);
+      Interval := Find_Interval (TZ, Summer);
+      if Interval >= 0 and then Is_DST (TZ, Interval) then
+         Gtk_New (Zone, Get_Abbreviation (TZ, Interval));
+         Grid.Attach (Zone, 1, 2, 2, 3);
+         Gtk_New
+         (  Zone,
+            Integer'Image (Integer (Get_Offset (TZ, Interval)))
+         );
+         Grid.Attach (Zone, 3, 4, 2, 3);
+      end if;
+
+--        Gtk_New (Zone, Image ());
+--        Grid.Attach (Zone,  1, 2, 1, 2);
+--
+--        Gtk_New (Zone, "Offset");
+--        Grid.Attach (Zone,  0, 1, 1, 2);
+--        Gtk_New (Zone, Image ());
+--        Grid.Attach (Zone,  1, 2, 1, 2);
+
+      Unref (TZ);
+   end;
+   Gtk_New (Label, "label");
+   Grid.Attach (Label, 0, 4, 3, 4);
+
+   Window.Show_All;
    declare
       Worker : Process; -- Now the task is on
    begin

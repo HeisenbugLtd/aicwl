@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Abstract_Store               Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -34,7 +34,6 @@ with Interfaces.C.Strings;  use Interfaces.C.Strings;
 
 with Ada.Unchecked_Conversion;
 with GNAT.Traceback.Symbolic;
-with System.Address_To_Access_Conversions;
 with System.Storage_Elements;
 
 package body Gtk.Tree_Model.Abstract_Store is

@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,7 +25,6 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Glib.Properties;          use Glib.Properties;
 with Gtk.Source_Language;      use Gtk.Source_Language;
 with Gtk.Source_Mark;          use Gtk.Source_Mark;
 with Gtk.Source_Style_Scheme;  use Gtk.Source_Style_Scheme;

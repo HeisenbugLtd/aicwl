@@ -3,7 +3,7 @@
 --     Gtk.Layered.Refresh_Engine                  Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,17 +26,16 @@
 --____________________________________________________________________--
 
 with Ada.IO_Exceptions;  use Ada.IO_Exceptions;
-with GLib.Messages;      use GLib.Messages;
-with Gtk.Missed;         use Gtk.Missed;
 
 with Ada.Unchecked_Deallocation;
 with System.Address_To_Access_Conversions;
-with Gdk.Window;
 
 package body Gtk.Layered.Refresh_Engine is
 
    package Conversions is
-      new System.Address_To_Access_Conversions (Layered_Refresh_Engine);
+      new System.Address_To_Access_Conversions
+          (  Layered_Refresh_Engine'Class
+          );
 
    function Where (Name : String) return String is
    begin
@@ -149,6 +148,30 @@ package body Gtk.Layered.Refresh_Engine is
       return Engine.Period;
    end Get_Period;
 
+   procedure Refresh (Engine : in out Layered_Refresh_Engine) is
+   begin
+      if Engine.List /= null then
+         Engine.Active := True;
+         declare
+            This : not null access List_Element := Engine.List;
+            Next : not null access List_Element := This;
+         begin
+            loop
+               Next := This.Next;
+               if Is_Valid (This.Widget) then
+                  Queue_Draw (Get (This.Widget));
+               else
+                  Delete (Engine, This.all'Unchecked_Access);
+                  exit when Engine.List = null;
+               end if;
+               exit when Next = Engine.List;
+               This := Next;
+            end loop;
+         end;
+         Engine.Active := False;
+      end if;
+   end Refresh;
+
    procedure Set_Period
              (  Engine : in out Layered_Refresh_Engine;
                 Period : Duration
@@ -177,29 +200,10 @@ package body Gtk.Layered.Refresh_Engine is
    end Set_Period;
 
    function Timer (Data : System.Address) return GBoolean is
-      Engine : Layered_Refresh_Engine renames
+      Engine : Layered_Refresh_Engine'Class renames
                   Conversions.To_Pointer (Data).all;
    begin
-      if Engine.List /= null then
-         Engine.Active := True;
-         declare
-            This : not null access List_Element := Engine.List;
-            Next : not null access List_Element := This;
-         begin
-            loop
-               Next := This.Next;
-               if Is_Valid (This.Widget) then
-                  Queue_Draw (Get (This.Widget));
-               else
-                  Delete (Engine, This.all'Unchecked_Access);
-                  exit when Engine.List = null;
-               end if;
-               exit when Next = Engine.List;
-               This := Next;
-            end loop;
-         end;
-         Engine.Active := False;
-      end if;
+      Refresh (Engine);
       return 1;
    end Timer;
 

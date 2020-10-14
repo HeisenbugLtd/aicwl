@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Rectangular_70s_Slanted           Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,9 +26,10 @@
 --____________________________________________________________________--
 
 with Ada.Numerics;              use Ada.Numerics;
+with Cairo;                     use Cairo;
+with Gdk.Color;                 use Gdk.Color;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Types;                use GLib.Types;
-with GtkAda.Types;              use GtkAda.Types;
 with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Missed;                use Gtk.Missed;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;

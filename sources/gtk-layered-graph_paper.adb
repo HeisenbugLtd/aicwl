@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper                     Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,6 +30,7 @@ with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
 with GLib.Messages;             use GLib.Messages;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with Gtk.Layered.Stream_IO;     use Gtk.Layered.Stream_IO;
+with Interfaces.C;              use Interfaces.C;
 
 with Cairo.Line_Cap_Property;
 

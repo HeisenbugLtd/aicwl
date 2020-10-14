@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>ADA INDUSTRIAL CONTROL WIDGET LIBRARY</b></font><BIG><br>
-<EM>version 3.20</EM></BIG><br>
+<EM>version 3.21</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -120,12 +120,12 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">
-		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_20.tgz">aicwl_3_20.tgz</a> (<b>tar</b> +
+		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_21.tgz">aicwl_3_21.tgz</a> (<b>tar</b> +
 		<b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td>&nbsp;</td>
 		<td align="center">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_20.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_21.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td align="center">&nbsp;</td>
 	</tr>
 	</table>
@@ -227,7 +227,7 @@ straightforward and can be used as templates for customization.</p>
 	</tr>
 	<tr>
 		<td align="center">
-		<img border="0" src="gtk_valve_round_90.png"><br>
+		<img border="0" src="gtk_valve_round_90.png" alt="valve round 90"><br>
 		<a href="#Gtk.Valve.Round_90">Gtk_Valve_Round_90</a></td>
 		<td align="center">
 		&nbsp;</td>
@@ -1634,6 +1634,13 @@ Layered_Refresh_Engine)<br>
 &nbsp;&nbsp; <font color="#0000FF">return</font> Duration;</tt></p>
 </blockquote>
 <p>This function returns the refresh period of the engine.</p>
+
+		<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Refresh (<b>Engine</b> :
+<font color="#0000FF">in out</font> Layered_Refresh_Engine);</tt></p>
+</blockquote>
+<p>This procedure performs actions driven by the engine. When overridden it must 
+be called from the override..</p>
 
 		<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Set_Period<br>
@@ -4351,7 +4358,7 @@ valve position indicators. The needle is a rotating disk consisting of two halve
 sectors of interleaving colors. One color indicates open state, another does 
 closed state:</p>
 		<blockquote>
-<p><img border="0" src="disk_needle.png"></p>
+<p><img border="0" src="disk_needle.png" alt="disk needle"></p>
 </blockquote>
 <p>The layer type is:</p>
 <blockquote>
@@ -5553,7 +5560,7 @@ specialized interfaces for the amplifier and sweeper. The amplifier interface
 Waveform_Amplifier supports the auto-scaling mode to making the waveform fit the 
 vertical range of the box. The sweeper interface Waveform_Sweeper supports 
 freezing/running mode and setting the adjustment using time stamps directly.</p>
-<p><b><u>Quick reference</u></b>:</p>
+<p><u><b>Quick reference</b></u>:</p>
 <ul>
 	<li><a href="#data_source">Data sources and scanners</a></li>
 	<li><a href="#amplifier">Waveform amplifiers</a></li>
@@ -10987,7 +10994,7 @@ emit events. In order to redraw the widget use
 provides a valve position indicator:</p>
 <blockquote>
 	<p><a name="Gtk.Valve.Round_90"></a>
-	<img border="0" src="gtk_valve_round_90.png"></p>
+	<img border="0" src="gtk_valve_round_90.png" alt="valve round 90"></p>
 </blockquote>
 <blockquote>
 <p><tt><font color="#0000FF">type</font> 
@@ -12244,7 +12251,7 @@ Upper_Sweeper</b>&nbsp; : <font color="#0000FF">access</font>
 Gtk_Waveform_Sweeper_Record'Class := <font color="#0000FF">null</font>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Refresh_Engine</b> : <font color="#0000FF">not null access</font> 
-Layered_Refresh_Engine;<br>
+Layered_Refresh_Engine'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Background</b>&nbsp;&nbsp;&nbsp;&nbsp; : Gdk_Color := RGB (<font color="#800000">1.0</font>,
 <font color="#800000">1.0</font>, <font color="#800000">1.0</font>);<br>
@@ -12310,7 +12317,7 @@ Upper_Sweeper</b>&nbsp; : <font color="#0000FF">access</font>
 Gtk_Waveform_Sweeper_Record'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Refresh_Engine</b> : <font color="#0000FF">not null access</font> 
-Layered_Refresh_Engine;<br>
+Layered_Refresh_Engine'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Background</b>&nbsp;&nbsp;&nbsp;&nbsp; : Gdk_Color;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
@@ -15113,6 +15120,11 @@ The following versions were tested with the compilers:</i>
 <ul>
 	<li><i>GtkAda 3.14.15</i></li>
 </ul>
+<P>
+Changes (22 Dec 2018) to the version 3.20:<ul>
+	<li>Procedure Refresh was added to the package Gtk.Layered.Refresh_Engine in 
+	order to provide a way to hook refresh actions.</li>
+	</ul>
 <P>
 Changes (8 Nov 2018) to the version 3.19:<ul>
 	<li>Bug fix in the package Gtk.Layered.Waveform that causes wrong time 

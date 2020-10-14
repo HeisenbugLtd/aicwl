@@ -2,7 +2,7 @@
 --  package GIO.Mount               Copyright (c)  Dmitry A. Kazakov  --
 --  Interface                                      Summer, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,10 +26,9 @@
 --
 --  The interface represents user-visible mounts.
 --
-with GLib;             use GLib;
-with GLib.Object;      use GLib.Object;
-with Glib.Properties;  use Glib.Properties;
-with System;           use System;
+with GLib;         use GLib;
+with GLib.Object;  use GLib.Object;
+with System;       use System;
 
 with Glib.Glist;
 

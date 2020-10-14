@@ -4,7 +4,7 @@ project On_Line_Plotter is
 
    for Main use ("on_line_plotter.adb");
    for Source_Files use ("on_line_plotter.adb", "worker.adb", "worker.ads");
-   for Object_Dir use AICWL.Object_Dir_Path;
+   for Object_Dir use AICWL'Object_Dir;
 
    package Compiler renames AICWL.Compiler;
    package Binder   renames AICWL.Binder;

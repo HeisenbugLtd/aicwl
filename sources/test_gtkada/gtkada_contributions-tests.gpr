@@ -41,7 +41,7 @@ project Gtkada_Contributions.Tests is
       "test_gtk_tasking.adb",
       "test_gtk_tracing.adb"
    );
-   for Object_Dir use GtkAda_Contributions.Object_Dir_Path;
+   for Object_Dir use GtkAda_Contributions'Object_Dir;
 
    package Compiler renames Gtkada_Contributions.Compiler;
    package Binder   renames Gtkada_Contributions.Binder;

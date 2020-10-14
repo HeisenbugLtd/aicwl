@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Keys                     Luebeck            --
 --  Implementation                                 Autumn, 2011       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  18:41 07 Dec 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,6 +27,7 @@
 
 with Ada.Exceptions;     use Ada.Exceptions;
 with Ada.IO_Exceptions;  use Ada.IO_Exceptions;
+with GLib.Error;         use GLib.Error;
 with GLib.Messages;      use GLib.Messages;
 with GLib.Values;        use GLib.Values;
 with Gtk.Missed;         use Gtk.Missed;
@@ -127,25 +128,49 @@ package body Gtk.Recent_Manager_Keys is
                Default : UTF8_String;
                Manager : Gtk_Recent_Manager := Get_Default
             )  return UTF8_String is
-      List : Gtk_Recent_Info_Array renames Get_Items (Manager);
-      Name : constant String := Get_Application_Name;
+      Item : constant Item_Info := Lookup_Item (Manager, Key);
    begin
-      for Index in List'Range loop
-         if (  Has_Application (List (Index), Name)
-            and then
-               Get_URI (List (Index)) = Key
-            )
-         then
-            return Result : constant UTF8_String :=
-                            Get_Display_Name (List (Index)) do
-               for Rest in Index..List'Last loop
-                  Unref (List (Rest));
-               end loop;
-            end return;
-         end if;
-         Unref (List (Index));
-      end loop;
-      return Default;
+      case Item.Status is
+         when Found =>
+            if (  Has_Application (Item.Info, Get_Application_Name)
+               and then
+                  Get_URI (Item.Info) = Key
+               )  then
+               return Result : constant UTF8_String :=
+                               Get_Display_Name (Item.Info) do
+                  Unref (Item.Info);
+               end return;
+            else
+               Unref (Item.Info);
+               return Default;
+            end if;
+         when Not_Found =>
+            return Default;
+         when Gtk.Recent_Manager_Alt.Error =>
+            if Item.Error /= null then
+               Error_Free (Item.Error);
+            end if;
+            return Default;
+      end case;
+--        List : Gtk_Recent_Info_Array renames Get_Items (Manager);
+--        Name : constant String := Get_Application_Name;
+--     begin
+--        for Index in List'Range loop
+--           if (  Has_Application (List (Index), Name)
+--              and then
+--                 Get_URI (List (Index)) = Key
+--              )
+--           then
+--              return Result : constant UTF8_String :=
+--                              Get_Display_Name (List (Index)) do
+--                 for Rest in Index..List'Last loop
+--                    Unref (List (Rest));
+--                 end loop;
+--              end return;
+--           end if;
+--           Unref (List (Index));
+--        end loop;
+--        return Default;
    exception
       when Error : others =>
          Log

@@ -5,7 +5,7 @@ project Components.GTK.Tests is
 
    for Source_Files use ("test_gtk_directory_browser.adb");
    for Main use ("test_gtk_directory_browser.adb");
-   for Object_Dir use GtkAda_Contributions.Object_Dir_Path;
+   for Object_Dir use GtkAda_Contributions'Object_Dir;
 
    package Binder is
       for Default_Switches ("ada") use

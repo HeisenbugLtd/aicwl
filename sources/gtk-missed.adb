@@ -26,6 +26,7 @@
 
 with Ada.Exceptions;        use Ada.Exceptions;
 with Ada.IO_Exceptions;     use Ada.IO_Exceptions;
+with Gdk.Cursor;            use Gdk.Cursor;
 with Gdk.Window;            use Gdk.Window;
 with GLib.Messages;         use GLib.Messages;
 with GLib.Properties;       use GLib.Properties;
@@ -40,13 +41,14 @@ with Gtk.Icon_Theme;        use Gtk.Icon_Theme;
 with Gtk.Image;             use Gtk.Image;
 with Gtk.Label;             use Gtk.Label;
 with Gtk.Style_Provider;    use Gtk.Style_Provider;
+with Gtk.Window;            use Gtk.Window;
 with Interfaces.C;          use Interfaces.C;
 with Interfaces.C.Strings;  use Interfaces.C.Strings;
 with System;                use System;
 
 with Ada.Unchecked_Conversion;
 with GLib.Object.Checked_Destroy;
-with Gtk.Adjustment;
+with Glib.Wrappers;
 
 package body Gtk.Missed is
    use Gtk.Cell_Renderer;

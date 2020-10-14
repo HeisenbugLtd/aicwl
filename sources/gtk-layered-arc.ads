@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,6 +26,7 @@
 --____________________________________________________________________--
 
 with Ada.Numerics;  use Ada.Numerics;
+with Gtk.Missed;    use Gtk.Missed;
 
 package Gtk.Layered.Arc is
 --

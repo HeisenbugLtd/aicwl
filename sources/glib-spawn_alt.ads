@@ -1,9 +1,9 @@
 --                                                                    --
---  package GLib.Spawn              Copyright (c)  Dmitry A. Kazakov  --
+--  package GLib.Spawn_Alt          Copyright (c)  Dmitry A. Kazakov  --
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  20:53 22 May 2009  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -33,7 +33,7 @@ with System;                use System;
 
 with Interfaces.C.Pointers;
 
-package GLib.Spawn is
+package GLib.Spawn_Alt is
 
    type GSpawnFlags is new GUInt;
 
@@ -280,4 +280,4 @@ private
    pragma Import (C, Child_Watch_Add, "g_child_watch_add");
    pragma Import (C, Close_PID, "g_spawn_close_pid");
 
-end GLib.Spawn;
+end GLib.Spawn_Alt;

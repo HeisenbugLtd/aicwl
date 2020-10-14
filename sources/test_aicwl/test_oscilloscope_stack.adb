@@ -3,7 +3,7 @@
 --      Test_Oscilloscope_Stacked                  Luebeck            --
 --  Test oscilloscopes stacked up                  Summer, 2011       --
 --  into a rack                                                       --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,7 +30,6 @@ with Ada.Numerics.Float_Random;   use Ada.Numerics.Float_Random;
 with Ada.Text_IO;                 use Ada.Text_IO;
 with Gdk.Color;                   use Gdk.Color;
 with Gdk.Color.IHLS;              use Gdk.Color.IHLS;
-with Gdk.Event;                   use Gdk.Event;
 with GLib;                        use GLib;
 with Gtk.Box;                     use Gtk.Box;
 with Gtk.Drawing_Area;            use Gtk.Drawing_Area;
@@ -45,8 +44,6 @@ with Gtk.Widget;                  use Gtk.Widget;
 with Gtk.Window;                  use Gtk.Window;
 with Test_Generator;              use Test_Generator;
 
-with Gtk.Layered.Waveform;
-with Gtk.Handlers;
 with Gtk.Main.Router.GNAT_Stack;
 
 procedure Test_Oscilloscope_Stack is

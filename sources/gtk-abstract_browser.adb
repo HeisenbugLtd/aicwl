@@ -3,7 +3,7 @@
 --     Gtk.Abstract_Browser                        Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,26 +25,23 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Exceptions;            use Ada.Exceptions;
-with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
-with Ada.Strings.Fixed;         use Ada.Strings.Fixed;
-with Gdk;                       use Gdk;
-with Gdk.RGBA;                  use Gdk.RGBA;
-with Gdk.Rectangle;             use Gdk.Rectangle;
-with Gdk.Types.Keysyms;         use Gdk.Types.Keysyms;
-with Gdk.Window;                use Gdk.Window;
-with GIO.Content_Type;          use GIO.Content_Type;
-with GLib.Properties;           use GLib.Properties;
-with GLib.Messages;             use GLib.Messages;
-with GLib.Values.Handling;      use GLib.Values.Handling;
-with GLib.Unicode;              use GLib.Unicode;
-with Gtk.Main.Router;           use Gtk.Main.Router;
-with Gtk.Scrolled_Window;       use Gtk.Scrolled_Window;
-with Gtk.Stock;                 use Gtk.Stock;
-with Gtk.Style;                 use Gtk.Style;
-with Gtk.Style_Context;         use Gtk.Style_Context;
+with Ada.Exceptions;     use Ada.Exceptions;
+with Ada.IO_Exceptions;  use Ada.IO_Exceptions;
+with Ada.Strings.Fixed;  use Ada.Strings.Fixed;
+with Gdk;                use Gdk;
+with Gdk.RGBA;           use Gdk.RGBA;
+with Gdk.Rectangle;      use Gdk.Rectangle;
+with Gdk.Types.Keysyms;  use Gdk.Types.Keysyms;
+with Gdk.Window;         use Gdk.Window;
+with GLib.Properties;    use GLib.Properties;
+with GLib.Messages;      use GLib.Messages;
+with GLib.Unicode;       use GLib.Unicode;
+with Gtk.Main.Router;    use Gtk.Main.Router;
+with Gtk.Stock;          use Gtk.Stock;
+with Gtk.Style_Context;  use Gtk.Style_Context;
 
 with Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
 with Gdk.Pixbuf.Conversions;
 with GtkAda.Types;
 with GLib.Object.Checked_Destroy;

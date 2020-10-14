@@ -3,7 +3,7 @@
 --     Test_Gtk_Directory_Browser                  Luebeck            --
 --  Test for                                       Autumn, 2007       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,7 +31,6 @@
 with Ada.Exceptions;            use Ada.Exceptions;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO;               use Ada.Text_IO;
-with Gdk.Event;                 use Gdk.Event;
 with GIO.Drive;                 use GIO.Drive;
 with GIO.Mount;                 use GIO.Mount;
 with GIO.Volume;                use GIO.Volume;
@@ -49,7 +48,6 @@ with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Frame;                 use Gtk.Frame;
 with Gtk.GEntry;                use Gtk.GEntry;
 with Gtk.Editable;              use Gtk.Editable;
-with Gtk.Entry_Buffer;          use Gtk.Entry_Buffer;
 with Gtk.Box;                   use Gtk.Box;
 with Gtk.Radio_Button;          use Gtk.Radio_Button;
 with Gtk.Image_Button;          use Gtk.Image_Button;

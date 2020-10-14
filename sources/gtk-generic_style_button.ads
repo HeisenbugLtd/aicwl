@@ -3,7 +3,7 @@
 --     Gtk.Generic_Style_Button                    Luebeck            --
 --  Interface                                      Spring, 2007       --
 --                                                                    --
---                                Last revision :  10:30 31 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -53,7 +53,6 @@ with Gtk.Image;   use Gtk.Image;
 with Gtk.Label;   use Gtk.Label;
 with Gtk.Widget;  use Gtk.Widget;
 
-with Ada.Finalization;
 with Gtk.Handlers;
 
 generic

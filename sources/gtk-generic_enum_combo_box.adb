@@ -33,7 +33,6 @@ with GLib;
 with GLib.Object.Checked_Destroy;
 
 package body Gtk.Generic_Enum_Combo_Box is
-   use Gtk.Combo_Box_Text;
 
    To_Space_Mapping : constant Ada.Strings.Maps.Character_Mapping :=
                                Ada.Strings.Maps.To_Mapping ("_", " ");

@@ -3,7 +3,7 @@
 --     Gtk.Generic_Style_Button                    Luebeck            --
 --  Implementation                                 Spring, 2007       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with GLib.Properties.Creation;     use GLib.Properties.Creation;
 with GLib.Properties.Icon_Size;    use GLib.Properties.Icon_Size;
-with GtkAda.Types;                 use GtkAda.Types;
 with Gtk.Widget.Styles;            use Gtk.Widget.Styles;
 with Gtk.Widget.Styles.Icon_Size;  use Gtk.Widget.Styles.Icon_Size;
 

@@ -3,7 +3,7 @@
 --     Gtk.Layered.Label.Digital                   Luebeck            --
 --  Interface                                      Summer, 2012       --
 --                                                                    --
---                                Last revision :  09:08 27 Jun 2015  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,7 +25,6 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Numerics;       use Ada.Numerics;
 with Gtk.Handlers;       use Gtk.Handlers;
 with Pango.Cairo.Fonts;  use Pango.Cairo.Fonts;
 with Strings_Edit;       use Strings_Edit;

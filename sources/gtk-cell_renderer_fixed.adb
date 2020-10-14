@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer_Fixed                     Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,11 +28,8 @@
 with Ada.Strings.Fixed;  use Ada.Strings.Fixed;
 with GLib.Properties;    use GLib.Properties;
 with Gtk.Enums;          use Gtk.Enums;
-with Gtk.Style;          use Gtk.Style;
 with Gtk.Style_Context;  use Gtk.Style_Context;
-with Pango.Cairo;        use Pango.Cairo;
 with Pango.Enums;        use Pango.Enums;
-with Pango.Font;         use Pango.Font;
 
 with Ada.Text_IO;
 

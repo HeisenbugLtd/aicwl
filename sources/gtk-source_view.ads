@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,7 +26,6 @@
 --____________________________________________________________________--
 
 with Gdk.Color;                   use Gdk.Color;
-with Gdk.Pixbuf;                  use Gdk.Pixbuf;
 with Gtk.Source_Buffer;           use Gtk.Source_Buffer;
 with Gtk.Source_Mark_Attributes;  use Gtk.Source_Mark_Attributes;
 with Gtk.Text_View;               use Gtk.Text_View;

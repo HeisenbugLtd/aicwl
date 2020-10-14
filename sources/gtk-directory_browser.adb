@@ -3,7 +3,7 @@
 --     Gtk.Directory_Browser                       Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -34,7 +34,6 @@ with Glib.Messages;              use Glib.Messages;
 with Gtk.Enums;                  use Gtk.Enums;
 with Gtk.Scrolled_Window;        use Gtk.Scrolled_Window;
 with Gtk.Stock;                  use Gtk.Stock;
-with Gtk.Tree_View;              use Gtk.Tree_View;
 with Strings_Edit.UTF8;          use Strings_Edit.UTF8;
 with Strings_Edit.UTF8.Mapping;  use Strings_Edit.UTF8.Mapping;
 

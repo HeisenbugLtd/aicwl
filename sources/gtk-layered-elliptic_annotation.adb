@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Annotation             Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
-with Gtk.Layered.Label;           use Gtk.Layered.Label;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
 
 with Ada.Unchecked_Deallocation;

@@ -3,7 +3,7 @@
 --     Gtk.Handlers.Generic_Callback               Luebeck            --
 --  Implementation                                 Autumn, 2011       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,8 +26,6 @@
 --____________________________________________________________________--
 
 with Ada.Unchecked_Deallocation;
-
-with Ada.Exceptions;  use Ada.Exceptions;
 
 package body Gtk.Handlers.Generic_Callback is
 --

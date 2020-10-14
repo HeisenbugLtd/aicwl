@@ -3,7 +3,7 @@
 --     Test_Gtk_Asynchronous_Spawn                 Luebeck            --
 --  Test for Gtk.Spawn.Asynchronous                Spring, 2009       --
 --                                                                    --
---                                Last revision :  09:44 08 Oct 2016  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,22 +25,22 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Glib;                       use Glib;
-with Glib.Error;                 use Glib.Error;
-with GLib.Spawn.Asynchronous;    use GLib.Spawn.Asynchronous;
-with GLib.Spawn.Text_Bufferred;  use GLib.Spawn.Text_Bufferred;
-with GtkAda.Handlers;            use GtkAda.Handlers;
-with Gtk.Button;                 use Gtk.Button;
-with Gtk.Enums;                  use Gtk.Enums;
-with Gtk.GEntry;                 use Gtk.GEntry;
-with Gtk.Label;                  use Gtk.Label;
-with Gtk.Scrolled_Window;        use Gtk.Scrolled_Window;
-with Gtk.Table;                  use Gtk.Table;
-with Gtk.Text_Buffer;            use Gtk.Text_Buffer;
-with Gtk.Text_Iter;              use Gtk.Text_Iter;
-with Gtk.Text_View;              use Gtk.Text_View;
-with Gtk.Window;                 use Gtk.Window;
-with Gtk.Widget;                 use Gtk.Widget;
+with Glib;                           use Glib;
+with Glib.Error;                     use Glib.Error;
+with GLib.Spawn_Alt.Asynchronous;    use GLib.Spawn_Alt.Asynchronous;
+with GLib.Spawn_Alt.Text_Bufferred;  use GLib.Spawn_Alt.Text_Bufferred;
+with GtkAda.Handlers;                use GtkAda.Handlers;
+with Gtk.Button;                     use Gtk.Button;
+with Gtk.Enums;                      use Gtk.Enums;
+with Gtk.GEntry;                     use Gtk.GEntry;
+with Gtk.Label;                      use Gtk.Label;
+with Gtk.Scrolled_Window;            use Gtk.Scrolled_Window;
+with Gtk.Table;                      use Gtk.Table;
+with Gtk.Text_Buffer;                use Gtk.Text_Buffer;
+with Gtk.Text_Iter;                  use Gtk.Text_Iter;
+with Gtk.Text_View;                  use Gtk.Text_View;
+with Gtk.Window;                     use Gtk.Window;
+with Gtk.Widget;                     use Gtk.Widget;
 
 with Ada.Unchecked_Conversion;
 with Gtk.Main.Router;

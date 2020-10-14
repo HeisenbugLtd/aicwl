@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.Sweeper                Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  11:46 29 Jul 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,12 +25,6 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Exceptions;        use Ada.Exceptions;
-with GLib.Types;            use GLib.Types;
-with GLib.Values.Handling;  use GLib.Values.Handling;
-
-with GtkAda.Handlers;
-with GtkAda.Types;
 with Interfaces.C.Strings;
 
 package body Gtk.Layered.Waveform.Sweeper is

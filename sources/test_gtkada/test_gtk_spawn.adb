@@ -3,7 +3,7 @@
 --  Test for Gtk.Spawn                             Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  07:53 21 Jul 2016  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,7 @@
 
 with Interfaces.C.Strings;  use Interfaces.C.Strings;
 with GLib.Error;            use GLib.Error;
-with GLib.Spawn;            use GLib.Spawn;
+with GLib.Spawn_Alt;        use GLib.Spawn_Alt;
 with Gtk.Button;            use Gtk.Button;
 with Gtk.Enums;             use Gtk.Enums;
 with Gtk.GEntry;            use Gtk.GEntry;

@@ -1,9 +1,9 @@
 --                                                                    --
 --  package                         Copyright (c)  Dmitry A. Kazakov  --
---     GLib.Spawn.Text_Bufferred                   Luebeck            --
+--     GLib.Spawn_Alt.Text_Bufferred               Luebeck            --
 --  Implementation                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  15:24 01 Apr 2015  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -29,7 +29,7 @@ with Gtk.Missed;  use Gtk.Missed;
 
 with System.Address_To_Access_Conversions;
 
-package body GLib.Spawn.Text_Bufferred is
+package body GLib.Spawn_Alt.Text_Bufferred is
 
    procedure Error
              (  Process : in out Text_Bufferred_Process;
@@ -356,4 +356,4 @@ package body GLib.Spawn.Text_Bufferred is
       end if;
    end Service;
 
-end GLib.Spawn.Text_Bufferred;
+end GLib.Spawn_Alt.Text_Bufferred;

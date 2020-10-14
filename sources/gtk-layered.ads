@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,15 +30,12 @@ with Ada.Streams;             use Ada.Streams;
 with Cairo;                   use Cairo;
 with Cairo.Ellipses;          use Cairo.Ellipses;
 with Glib.Values;             use Glib.Values;
-with Gdk.Event;               use Gdk.Event;
 with Gdk.Color;               use Gdk.Color;
 with Gdk.Rectangle;           use Gdk.Rectangle;
 with Gtk.Adjustment;          use Gtk.Adjustment;
 with Gtk.Drawing_Area;        use Gtk.Drawing_Area;
 with Gtk.Enums.String_Lists;  use Gtk.Enums.String_Lists;
-with Gtk.Missed;              use Gtk.Missed;
 with Gtk.Widget;              use Gtk.Widget;
-with Interfaces.C;            use Interfaces.C;
 with Pango.Cairo.Fonts;       use Pango.Cairo.Fonts;
 with System;                  use System;
 

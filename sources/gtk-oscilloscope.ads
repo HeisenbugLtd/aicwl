@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -37,14 +37,11 @@ with Cairo;                         use Cairo;
 with Cairo.Ellipses;                use Cairo.Ellipses;
 with Gdk.Color;                     use Gdk.Color;
 with Gdk.Event;                     use Gdk.Event;
-with Gdk.Rectangle;                 use Gdk.Rectangle;
 with GLib.Values;                   use GLib.Values;
-with Gtk.Adjustment;                use Gtk.Adjustment;
 with Gtk.Box;                       use Gtk.Box;
 with Gtk.Fixed;                     use Gtk.Fixed;
 with Gtk.Grid;                      use Gtk.Grid;
 with Gtk.Handlers.References;       use Gtk.Handlers.References;
-with Gtk.Image_Menu_Item;           use Gtk.Image_Menu_Item;
 with Gtk.Layered.Graph_Paper;       use Gtk.Layered.Graph_Paper;
 with Gtk.Layered.Line;              use Gtk.Layered.Line;
 with Gtk.Layered.Rectangle;         use Gtk.Layered.Rectangle;
@@ -53,12 +50,9 @@ with Gtk.Layered.Waveform.Sweeper;  use Gtk.Layered.Waveform.Sweeper;
 with Gtk.Layered.Waveform;          use Gtk.Layered.Waveform;
 with Gtk.Layered;                   use Gtk.Layered;
 with Gtk.List_Store;                use Gtk.List_Store;
-with Gtk.Menu;                      use Gtk.Menu;
 with Gtk.Missed;                    use Gtk.Missed;
-with Gtk.Page_Setup;                use Gtk.Page_Setup;
 with Gtk.Scale;                     use Gtk.Scale;
 with Gtk.Widget;                    use Gtk.Widget;
-with Interfaces.C;                  use Interfaces.C;
 with Pango.Cairo.Fonts;             use Pango.Cairo.Fonts;
 
 with Ada.Calendar;
@@ -1597,7 +1591,8 @@ package Gtk.Oscilloscope is
                              Gtk_Waveform_Sweeper_Record'Class := null;
                 Upper_Sweeper  : access
                              Gtk_Waveform_Sweeper_Record'Class := null;
-                Refresh_Engine : not null access Layered_Refresh_Engine;
+                Refresh_Engine : not null access
+                             Layered_Refresh_Engine'Class;
                 Background     : Gdk_Color := RGB (1.0, 1.0, 1.0);
                 Buffer_Size    : Positive  := 1024 * 60;
                 Max_Channels   : Channel_Number := 64
@@ -1644,7 +1639,8 @@ package Gtk.Oscilloscope is
                                     Gtk_Waveform_Sweeper_Record'Class;
                 Upper_Sweeper  : access
                                     Gtk_Waveform_Sweeper_Record'Class;
-                Refresh_Engine : not null access Layered_Refresh_Engine;
+                Refresh_Engine : not null access
+                                    Layered_Refresh_Engine'Class;
                 Background     : Gdk_Color;
                 Buffer_Size    : Positive
              );

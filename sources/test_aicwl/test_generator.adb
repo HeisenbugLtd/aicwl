@@ -3,7 +3,7 @@
 --  Test waveform generator                        Luebeck            --
 --                                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  09:44 08 Oct 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -32,7 +32,6 @@ with Gtk.Enums;             use Gtk.Enums;
 with Gtk.Label;             use Gtk.Label;
 with Gtk.Layered.Waveform;  use Gtk.Layered.Waveform;
 with Gtk.Missed;            use Gtk.Missed;
-with Interfaces.C;          use Interfaces.C;
 with Strings_Edit.Floats;   use Strings_Edit.Floats;
 
 with Ada.Numerics.Long_Elementary_Functions;

@@ -3,7 +3,7 @@
 --     Gtk.Abstract_Browser                        Luebeck            --
 --  Interface                                      Autumn, 2007       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -64,8 +64,6 @@ with Gdk.Event;                      use Gdk.Event;
 with Gdk.Pixbuf;                     use Gdk.Pixbuf;
 with Gdk.Types;                      use Gdk.Types;
 with GLib.Values;                    use GLib.Values;
-with Gtk.Paned;                      use Gtk.Paned;
-with Gtk.Cell_Layout;                use Gtk.Cell_Layout;
 with Gtk.Cell_Renderer;              use Gtk.Cell_Renderer;
 with Gtk.Cell_Renderer_Pixbuf;       use Gtk.Cell_Renderer_Pixbuf;
 with Gtk.Cell_Renderer_Text;         use Gtk.Cell_Renderer_Text;
@@ -76,7 +74,6 @@ with Gtk.Tree_Model.Abstract_Store;  use Gtk.Tree_Model.Abstract_Store;
 with Gtk.Tree_Model.Columned_Store;  use Gtk.Tree_Model.Columned_Store;
 with Gtk.Tree_Model.Extension_Store; use Gtk.Tree_Model.Extension_Store;
 with Gtk.Tree_Selection;             use Gtk.Tree_Selection;
-with Gtk.Tree_Sortable;              use Gtk.Tree_Sortable;
 with Gtk.Tree_Store;                 use Gtk.Tree_Store;
 with Gtk.Tree_View;                  use Gtk.Tree_View;
 with Gtk.Tree_View_Column;           use Gtk.Tree_View_Column;
@@ -84,7 +81,6 @@ with Gtk.Widget;                     use Gtk.Widget;
 
 with Ada.Finalization;
 with Ada.Unchecked_Conversion;
-with Ada.Unchecked_Deallocation;
 with Gtk.Handlers;
 
 package Gtk.Abstract_Browser is

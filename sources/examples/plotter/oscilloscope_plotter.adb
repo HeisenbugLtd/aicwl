@@ -29,13 +29,12 @@ with Ada.Exceptions;        use Ada.Exceptions;
 with Ada.Text_IO;           use Ada.Text_IO;
 with Glib;                  use Glib;
 with Gtk.Missed;            use Gtk.Missed;
-with Gdk.Event;             use Gdk.Event;
-with Gtk.Layered.Waveform;  use Gtk.Layered.Waveform;
 with Gtk.Oscilloscope;      use Gtk.Oscilloscope;
 with Gtk.Widget;            use Gtk.Widget;
 with Gtk.Window;            use Gtk.Window;
 
 with Ada.Numerics.Elementary_Functions;
+with Gtk.Layered;
 with Gtk.Main;
 
 procedure Oscilloscope_Plotter is

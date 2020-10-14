@@ -1,9 +1,9 @@
 --                                                                    --
---  package GLib.Spawn              Copyright (c)  Dmitry A. Kazakov  --
+--  package GLib.Spawn_Alt          Copyright (c)  Dmitry A. Kazakov  --
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,7 +28,7 @@
 with GLib.Wrappers;
 with System.Address_To_Access_Conversions;
 
-package body GLib.Spawn is
+package body GLib.Spawn_Alt is
    use Interfaces.C;
 
    function G_Spawn_Command_Line_Async_UTF8
@@ -395,4 +395,4 @@ package body GLib.Spawn is
       end if;
    end Sync;
 
-end GLib.Spawn;
+end GLib.Spawn_Alt;

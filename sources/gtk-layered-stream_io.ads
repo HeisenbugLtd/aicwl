@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,10 +25,9 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Strings;      use Ada.Strings;
-with Cairo.Font_Face;  use Cairo.Font_Face;
-with Gdk.RGBA;         use Gdk.RGBA;
-with Gtk.Enums;        use Gtk.Enums;
+with Ada.Strings;  use Ada.Strings;
+with Gdk.RGBA;     use Gdk.RGBA;
+with Gtk.Enums;    use Gtk.Enums;
 
 package Gtk.Layered.Stream_IO is
    type Bit_Array is array (Positive range <>) of Boolean;

@@ -8,7 +8,7 @@ project Gtkada_Contributions.RSVG is
           "rsvg-handle.adb",
           "rsvg-handle.ads"
        );
-   for Object_Dir use GtkAda_Contributions.Object_Dir_Path;
+   for Object_Dir use GTKAda_Contributions'Object_Dir;
 
    package Binder   renames Gtkada_Contributions.Binder;
    package Builder  renames Gtkada_Contributions.Builder;

@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  11:46 29 Jul 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,9 +28,9 @@
 with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
 with Ada.Tags;                    use Ada.Tags;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
+with Cairo.Font_Face;             use Cairo.Font_Face;
 with Interfaces;                  use Interfaces;
 
-with Gtkada.Bindings;
 with GtkAda.Types;
 with Gtk.Layered.Arc;
 with Gtk.Layered.Bar;
@@ -49,7 +49,6 @@ with Gtk.Layered.Needle;
 with Gtk.Layered.Rectangular_Background;
 with Gtk.Layered.Rectangular_Clip_Region;
 with Gtk.Layered.Sector_Needle;
-with Interfaces.C.Strings;
 
 package body Gtk.Layered.Stream_IO is
 

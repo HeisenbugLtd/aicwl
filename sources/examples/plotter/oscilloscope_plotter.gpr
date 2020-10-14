@@ -4,7 +4,7 @@ project Oscilloscope_Plotter is
 
    for Main use ("oscilloscope_plotter.adb");
    for Source_Files use ("oscilloscope_plotter.adb");
-   for Object_Dir use AICWL.Object_Dir_Path;
+   for Object_Dir use AICWL'Object_Dir;
 
    package Compiler renames AICWL.Compiler;
    package Binder   renames AICWL.Binder;

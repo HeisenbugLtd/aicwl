@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Channels_Panel             Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -32,23 +32,21 @@ with GLib.Properties;             use GLib.Properties;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
 with GLib.Types;                  use GLib.Types;
 with Gtk.Dialog;                  use Gtk.Dialog;
-with Gtk.Cell_Layout;             use Gtk.Cell_Layout;
 with Gtk.Cell_Renderer_Text;      use Gtk.Cell_Renderer_Text;
 with Gtk.Cell_Renderer_Toggle;    use Gtk.Cell_Renderer_Toggle;
 with Gtk.Color_Selection_Dialog;  use Gtk.Color_Selection_Dialog;
 with Gtk.Enums;                   use Gtk.Enums;
 with Gtk.Image;                   use Gtk.Image;
+with Gtk.Image_Menu_Item;         use Gtk.Image_Menu_Item;
+with Gtk.Menu;                    use Gtk.Menu;
 with Gtk.Separator_Menu_Item;     use Gtk.Separator_Menu_Item;
 with Gtk.Stock;                   use Gtk.Stock;
 with Gtk.Tree_Selection;          use Gtk.Tree_Selection;
 with Gtk.Widget.Styles;           use Gtk.Widget.Styles;
-with GtkAda.Types;                use GtkAda.Types;
-with Strings_Edit.Integers;       use Strings_Edit.Integers;
 
 with GLib.Object.Checked_Destroy;
 
 package body Gtk.Oscilloscope.Channels_Panel is
-   use Gtk.Layered.Waveform.Edit;
 
    Class_Record : aliased Ada_GObject_Class := Uninitialized_Class;
 
@@ -244,7 +242,6 @@ package body Gtk.Oscilloscope.Channels_Panel is
                Event  : Gdk_Event;
                Panel  : Gtk_Oscilloscope_Channels_Panel
             )  return Boolean is
-      use Menu_Handlers;
       Menu      : Gtk_Menu;
       Model     : Gtk_Tree_Model;
       Item      : Gtk_Image_Menu_Item;

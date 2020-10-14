@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --        Do_Init                                  Summer, 2011       --
 --  Separate body                                                     --
---                                Last revision :  07:54 21 Jul 2016  --
+--                                Last revision :  16:44 20 Dec 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,7 +30,7 @@ separate (Gtk.Oscilloscope)
              (  Widget : not null access Gtk_Oscilloscope_Record'Class;
                 Lower_Sweeper, Upper_Sweeper :
                          access Gtk_Waveform_Sweeper_Record'Class;
-                Refresh_Engine : access Layered_Refresh_Engine;
+                Refresh_Engine : access Layered_Refresh_Engine'Class;
                 Refresh_Period : Duration;
                 Background     : Gdk_Color;
                 Buffer_Size    : Positive

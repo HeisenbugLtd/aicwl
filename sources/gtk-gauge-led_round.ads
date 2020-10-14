@@ -3,7 +3,7 @@
 --     Gtk.Gauge.LED_Round                         Luebeck            --
 --  Interface                                      Summer, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,7 +27,6 @@
 
 with Cairo;              use Cairo;
 with Gdk.Color;          use Gdk.Color;
-with Gdk.Rectangle;      use Gdk.Rectangle;
 with Gtk.Enums;          use Gtk.Enums;
 with Gtk.Layered;        use Gtk.Layered;
 with Gtk.Layered.Cache;  use Gtk.Layered.Cache;

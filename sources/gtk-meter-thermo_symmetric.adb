@@ -3,7 +3,7 @@
 --     Gtk.Meter.Thermo_Symmetric                  Luebeck            --
 --  Implementation                                 Summer, 2012       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -32,7 +32,6 @@ with Cairo.Line_Cap_Property;   use Cairo.Line_Cap_Property;
 with Gdk.Color.IHLS;            use Gdk.Color.IHLS;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Types;                use GLib.Types;
-with GtkAda.Types;              use GtkAda.Types;
 with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
 with Pango.Cairo.Fonts;         use Pango.Cairo.Fonts;

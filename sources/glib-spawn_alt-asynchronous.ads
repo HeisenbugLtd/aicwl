@@ -1,9 +1,9 @@
 --                                                                    --
---  package GLib.Spawn.Asynchronous Copyright (c)  Dmitry A. Kazakov  --
---  Interface                                      Luebeck            --
---                                                 Spring, 2009       --
+--  package  Copyright (c)                         Dmitry A. Kazakov  --
+--     GLib.Spawn_Alt.Asynchronous                 Luebeck            --
+--  Interface                                      Spring, 2009       --
 --                                                                    --
---                                Last revision :  09:38 09 Apr 2010  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -44,7 +44,7 @@ with Interfaces.C;     use Interfaces.C;
 
 with Ada.Finalization;
 
-package GLib.Spawn.Asynchronous is
+package GLib.Spawn_Alt.Asynchronous is
 --
 -- Process_State
 --
@@ -299,4 +299,4 @@ private
 
    procedure Service_Exit (Process : in out Asynchronous_Process_Ptr);
 
-end GLib.Spawn.Asynchronous;
+end GLib.Spawn_Alt.Asynchronous;

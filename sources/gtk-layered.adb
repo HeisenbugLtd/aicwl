@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  11:46 29 Jul 2018  --
+--                                Last revision :  22:38 18 Nov 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,20 +26,15 @@
 --____________________________________________________________________--
 
 with Ada.Exceptions;            use Ada.Exceptions;
-with Ada.Tags;                  use Ada.Tags;
 with Ada.Text_IO;               use Ada.Text_IO;
-with Gdk.Cairo;                 use Gdk.Cairo;
 with GLib.Messages;             use GLib.Messages;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Object;               use GLib.Object;
-with GtkAda.Types;              use GtkAda.Types;
+with Gtk.Missed;                use Gtk.Missed;
 with Interfaces.C.Strings;      use Interfaces.C;
-with Strings_Edit.Integers;     use Strings_Edit.Integers;
 with System.Storage_Elements;   use System.Storage_Elements;
 
-with Cairo.Region;
 with GLib.Object.Checked_Destroy;
-with Gtk.Main;
 
 package body Gtk.Layered is
 
@@ -515,11 +510,11 @@ package body Gtk.Layered is
    end Get_Widget;
 
    procedure Gtk_New (Widget : out Gtk_Layered) is
-      procedure Free is
-         new Ada.Unchecked_Deallocation
-             (  Gtk_Layered_Record'Class,
-                Gtk_Layered
-             );
+--        procedure Free is
+--           new Ada.Unchecked_Deallocation
+--               (  Gtk_Layered_Record'Class,
+--                  Gtk_Layered
+--               );
    begin
       Widget := new Gtk_Layered_Record;
       Gtk.Layered.Initialize (Widget);

@@ -1,9 +1,9 @@
 --                                                                    --
 --  package                         Copyright (c)  Dmitry A. Kazakov  --
---     GLib.Spawn.Text_Bufferred                   Luebeck            --
+--     GLib.Spawn_Alt.Text_Bufferred               Luebeck            --
 --  Interface                                      Spring, 2009       --
 --                                                                    --
---                                Last revision :  20:53 22 May 2009  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,15 +25,15 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with GLib;                     use GLib;
-with GLib.Spawn.Asynchronous;  use GLib.Spawn.Asynchronous;
-with Gtk.Enums;                use Gtk.Enums.String_List;
-with Gtk.Main.Router;          use Gtk.Main.Router;
-with Gtk.Text_Buffer;          use Gtk.Text_Buffer;
-with Gtk.Text_Iter;            use Gtk.Text_Iter;
-with Interfaces.C;             use Interfaces.C;
+with GLib;                         use GLib;
+with GLib.Spawn_Alt.Asynchronous;  use GLib.Spawn_Alt.Asynchronous;
+with Gtk.Enums;                    use Gtk.Enums.String_List;
+with Gtk.Main.Router;              use Gtk.Main.Router;
+with Gtk.Text_Buffer;              use Gtk.Text_Buffer;
+with Gtk.Text_Iter;                use Gtk.Text_Iter;
+with Interfaces.C;                 use Interfaces.C;
 
-package GLib.Spawn.Text_Bufferred is
+package GLib.Spawn_Alt.Text_Bufferred is
 --
 -- Text_Bufferred_Process -- Asynchronous process with input, output and
 --                           error assigned to text buffers
@@ -172,7 +172,6 @@ package GLib.Spawn.Text_Bufferred is
              );
 
 private
-
    type Request_Read
         (  Process : access Text_Bufferred_Process'Class;
            Length  : Positive
@@ -200,4 +199,4 @@ private
       Position : GInt;
    end record;
 
-end GLib.Spawn.Text_Bufferred;
+end GLib.Spawn_Alt.Text_Bufferred;

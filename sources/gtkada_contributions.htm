@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>GtkAda Contributions</b></font><BIG><br>
-<EM>version 3.23</EM></BIG><br>
+<EM>version 3.27</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -126,10 +126,10 @@ executable file might be covered by the GNU Public License.</P>
 	<tr>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
-		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_23.tgz">gtkada_contributions_3_23.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
+		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_27.tgz">gtkada_contributions_3_27.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium">&nbsp;</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
-		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_23.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_27.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
 	</tr>
 	<tr>
@@ -12267,6 +12267,158 @@ loaded successful, and <i><font color="#800000">false</font></i> if an error
 occurred. In the latter case, the loader will be closed, and will not accept 
 further writes. The error will be set to an error from the RsvgError domain. 
 Errors from GIOErrorEnum are also possible.</p>
+<h3><a name="5.14"></a>5.14. Time_Zone</h3>
+<p> 
+<a name="GLib.Time_Zone"></a>The package <a href="#GLib.Time_Zone">
+GLib.Time_Zone</a> provides bindings to Glib time zone operations.It declares the following types:</p>
+		<blockquote>
+<p><tt><font color="#0000FF">type</font> 
+GTime_Type is<br>
+&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; G_TIME_TYPE_STANDARD,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; G_TIME_TYPE_DAYLIGHT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; G_TIME_TYPE_UNIVERSAL<br>
+&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This type defines types of time.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="GLib.Time_Zone.GTime_Zone"></a>type</font> 
+GTime_Zone (&lt;&gt;) <font color="#0000FF">is limited private</font>;</tt></p>
+</blockquote>
+<p>This type is an opaque object kept by GLib that represent a time zone.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Adjust_Time<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Time_Type</b>&nbsp; 
+: GTime_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Time_Stamp</b> 
+: GInt64<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> GInt;<br>
+<font color="#0000FF">function</font> Adjust_Time<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Time_Stamp</b> 
+: Time<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> GInt;</tt></p>
+</blockquote>
+<p>This function searches for a time zone interval corresponding to <b>
+Time_Stamp</b>. When integer <b>Time_Stamp </b>is the number of seconds from 
+January 1, 1970. The time can be adjusted if necessary. The result is negative 
+when no interval found.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Find_Interval<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Time_Type</b>&nbsp; 
+: GTime_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Time_Stamp</b> 
+: GInt64<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> GInt;<br>
+<font color="#0000FF">function</font> Find_Interval<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Time_Stamp</b> 
+: Time<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> GInt;</tt></p>
+</blockquote>
+<p>This function searches for a time zone interval corresponding to <b>
+Time_Stamp</b>. When integer <b>Time_Stamp </b>is the number of seconds from 
+January 1, 1970. The result is negative when no interval found.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Get_Abbreviation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Interval</b> 
+: GInt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> UTF8_String;</tt></p>
+</blockquote>
+<p>This function returns abbreviation of the time corresponding to the interval. 
+Note that the result is what expected, e.g. something like <i>CET</i>. It is 
+OS-dependent and might be something like <i>W.Standard European Time</i> under 
+Windows.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Get_Identifier<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<b>&nbsp; TZ</b> : GTime_Zone<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) <font color="#0000FF">&nbsp;return</font> 
+UTF8_String;</tt></p>
+</blockquote>
+<p>This function returns the time zone description. The description is same as 
+in <a href="#GLib.Time_Zone.Gtk_New">Gtk_New</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Get_Offset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Interval</b> 
+: GInt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Duration;</tt></p>
+</blockquote>
+<p>This function returns the UTC offset of the time corresponding to the 
+interval.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="GLib.Time_Zone.Gtk_New"></a>function</font> 
+Gtk_New (<b>Identifier</b> : String) <font color="#0000FF">return access</font> 
+GTime_Zone;</tt></p>
+</blockquote>
+<p>This function creates a time zone corresponding to the description. If 
+successful the object must be released by calling
+<a href="#GLib.Time_Zone.Unref">Unref</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Gtk_New_Local <font color="#0000FF">return access</font> GTime_Zone;</tt></p>
+</blockquote>
+<p>This function creates a time zone corresponding to the local time used by the 
+OS. If successful the object must be released by calling
+<a href="#GLib.Time_Zone.Unref">Unref</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Gtk_New_Offset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<b>&nbsp; Offset</b> : 
+Duration<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )<font color="#0000FF">&nbsp; 
+return access</font> GTime_Zone;</tt></p>
+</blockquote>
+<p>This function creates a time zone corresponding to the UTC offset specified 
+by <b>Offset</b>. If successful the object must be released by calling
+<a href="#GLib.Time_Zone.Unref">Unref</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Gtk_New_UTC<font color="#0000FF"> return access</font> GTime_Zone;</tt></p>
+</blockquote>
+<p>This function creates a time zone corresponding to the UTC time. If 
+successful the object must be released by calling
+<a href="#GLib.Time_Zone.Unref">Unref</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> 
+Is_DST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>TZ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GTime_Zone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Interval</b> 
+: GInt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function returns <font color="#800000"><i>true</i></font> if the time 
+corresponding to the interval is daylight saving time.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Ref (<b>TZ</b> : GTime_Zone);</tt></p>
+</blockquote>
+<p>This procedure increases the reference count of the time zone object.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="GLib.Time_Zone.Unref"></a>procedure</font> 
+Unref (<b>TZ</b> : GTime_Zone);</tt></p>
+</blockquote>
+<p>This procedure decreases the reference count of the time zone object.</p>
 <hr>
 <p align="right">
   <a name="6"></a><a href="#5"><IMG src="prev.gif" alt="[Back]" width="29"
@@ -13686,6 +13838,38 @@ Ada</a> and native ODBC bindings </TD>
 The following versions were tested with the compilers:</i>
 <ul>
   <li>
+<i>GNAT Community 2019 (20190517-83)</i></li>
+  <li>
+<i>GNAT Community 2018 (20180523-73)</i></li>
+	<li>
+<i>GNAT 8</i></li>
+	<li>
+<i>GNAT 9</i></li>
+  </ul>
+<P><i>and the GtkAda versions:</i></p>
+<ul>
+	<li><i>GtkAda 3.14.15</i></li>
+	<li><i>GtkAda 2019</i></li>
+</ul>
+<P>
+Changes (10 December 2019) to the version 3.26:<ul>
+	<li>Bug fix in the package Glib.Time_Zone (caused faults on 32-bit systems).</li>
+	</ul>
+<P>
+Changes (7 December 2019) to the version 3.25:<ul>
+	<li>The implementation of the procedure Restore from Gtk.Recent_Manager_Keys 
+	was optimized to use key look up instead of keys enumeration.</li>
+	</ul>
+<P>
+Changes (5 August 2019) to the version 3.24:<ul>
+	<li>The package GLib.Spawn and its children are renamed to GLib.Spawn_Alt 
+	since GtkAda contains its own version of GLib.Spawn.</li>
+	</ul>
+<P>
+<i>
+The following versions were tested with the compilers:</i>
+<ul>
+  <li>
 <i>GNAT Community 2018 (20180523-73)</i></li>
 	<li><i>GNAT 8</i></li>
   </ul>
@@ -13693,6 +13877,10 @@ The following versions were tested with the compilers:</i>
 <ul>
 	<li><i>GtkAda 3.14.15</i></li>
 </ul>
+<P>
+Changes (13 May 2019) to the version 3.23:<ul>
+	<li>The package GLib.Time_Zone was added.</li>
+	</ul>
 <P>
 Changes (5 Aug 2018) to the version 3.22:<ul>
 	<li>Compatibility with GtkAda 3.14.15;</li>
@@ -14369,7 +14557,8 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#5.10">5.10. Volume monitor (GVolumeMonitor)</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#5.11">5.11. Generic signal handlers</A><br>
 &nbsp;&nbsp;&nbsp; <A href="#5.12">5.12. Stock items backward compatibility</A><br>
-&nbsp;&nbsp;&nbsp; <A href="#5.13">5.13. RSVG bindings</A><hr>
+&nbsp;&nbsp;&nbsp; <A href="#5.13">5.13. RSVG bindings</A><br>
+&nbsp;&nbsp;&nbsp; <A href="#5.14">5.14. Time zone</A><hr>
 <b><big><big>6</big></big></b>&nbsp;<A href="#6"><big>Handles as GTK+ values</big></A><hr>
 <b><big><big>7</big></big></b>&nbsp;<A href="#7"><big>Unit selection widget and dialogs</big></A><hr>
 <b><big><big>8</big></big></b>&nbsp;<A href="#8"><big>Improved HLS color model</big></A><hr>

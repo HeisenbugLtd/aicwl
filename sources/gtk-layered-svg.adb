@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2017       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,10 +25,10 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
-with GLib.Messages;               use GLib.Messages;
-with GLib.Properties.Creation;    use GLib.Properties.Creation;
-with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
+with GLib.Messages;             use GLib.Messages;
+with GLib.Properties.Creation;  use GLib.Properties.Creation;
+with Gtk.Layered.Stream_IO;     use Gtk.Layered.Stream_IO;
+with Gtk.Missed;                use Gtk.Missed;
 
 with Ada.Unchecked_Deallocation;
 

@@ -18,12 +18,16 @@ project Components.GTK is
           "gtk-wildcard_directory_browser.adb",
           "gtk-wildcard_directory_browser.ads"
        );
-   for Object_Dir use Components.Object_Dir_Path;
+   for Object_Dir use GTKAda_Contributions'Object_Dir;
 
    package Binder   renames GTKAda_Contributions.Binder;
    package Builder  renames GTKAda_Contributions.Builder;
    package Compiler renames GTKAda_Contributions.Compiler;
-   package Linker   renames GTKAda_Contributions.Linker;
+   package Linker is
+      for Default_Switches ("Ada") use
+         Components.Linker'Default_Switches ("Ada") &
+         GTKAda_Contributions.Linker'Default_Switches ("Ada");
+   end Linker;
 
 end Components.GTK;
 

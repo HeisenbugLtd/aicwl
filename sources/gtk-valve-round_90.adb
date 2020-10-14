@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Round_90                          Luebeck            --
 --  Implementation                                 Winter, 2017       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,11 +26,12 @@
 --____________________________________________________________________--
 
 with Ada.Numerics;              use Ada.Numerics;
+with Cairo;                     use Cairo;
 with Cairo.Ellipses;            use Cairo.Ellipses;
 with Cairo.Line_Cap_Property;   use Cairo.Line_Cap_Property;
+with Gdk.Color;                 use Gdk.Color;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with GLib.Types;                use GLib.Types;
-with GtkAda.Types;              use GtkAda.Types;
 with Gtk.Enums;                 use Gtk.Enums;
 with Gtk.Missed;                use Gtk.Missed;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
@@ -48,14 +49,14 @@ package body Gtk.Valve.Round_90 is
    R3 : constant GDouble := 0.40;
    R4 : constant GDouble := 0.43;
 
-   Reflection_X1     : constant := -0.2;
-   Reflection_X2     : constant := -0.2;
-   Reflection_Y1     : constant := -0.2;
-   Reflection_Y2     : constant := -0.2;
-   Reflection_Width  : constant := 0.25;
+   Reflection_X1       : constant := -0.2;
+   Reflection_X2       : constant := -0.2;
+   Reflection_Y1       : constant := -0.2;
+   Reflection_Y2       : constant := -0.2;
+   Reflection_Width    : constant := 0.25;
    Reflection_Opacity  : constant := 0.5;
-   Reflection_Color  : constant Gdk_Color := RGB (1.0, 1.0, 1.0);
 
+   Reflection_Color  : constant Gdk_Color := RGB (1.0, 1.0, 1.0);
    Cover_Color       : constant Gdk_Color := RGB (0.1, 0.1, 0.1);
    Pin_Color         : constant Gdk_Color := RGB (0.2, 0.2, 0.2);
    Background_Color  : constant Gdk_Color := RGB (1.0, 1.0, 1.0);

@@ -1,9 +1,9 @@
 --                                                                    --
---  package GLib.Spawn.Asynchronous Copyright (c)  Dmitry A. Kazakov  --
---  Implementation                                 Luebeck            --
---                                                 Spring, 2009       --
+--  package                         Copyright (c)  Dmitry A. Kazakov  --
+--     GLib.Spawn_Alt.Asynchronous                 Luebeck            --
+--  Implementation                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  21:51 06 Jun 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -37,11 +37,11 @@ with GNAT.Traceback.Symbolic;
 with Interfaces.C.Strings;
 with System.Address_To_Access_Conversions;
 
-package body GLib.Spawn.Asynchronous is
+package body GLib.Spawn_Alt.Asynchronous is
 
    function Where (Text : String) return String is
    begin
-      return " in GLib.Spawn.Asynchronous." & Text;
+      return " in GLib.Spawn_Alt.Asynchronous." & Text;
    end Where;
 
    procedure Free is
@@ -654,4 +654,4 @@ package body GLib.Spawn.Asynchronous is
       Send (Service_Exit'Access, Process.all'Unchecked_Access);
    end Writer;
 
-end GLib.Spawn.Asynchronous;
+end GLib.Spawn_Alt.Asynchronous;

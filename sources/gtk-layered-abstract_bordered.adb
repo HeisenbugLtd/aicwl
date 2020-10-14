@@ -3,7 +3,7 @@
 --     Gtk.Layered.Abstract_Bordered               Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,18 +25,15 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Exceptions;              use Ada.Exceptions;
-with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
 with Cairo.Pattern;               use Cairo.Pattern;
 with Gdk.Color.IHLS;              use Gdk.Color.IHLS;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
+with Gtk.Missed;                  use Gtk.Missed;
 with Gtk.Style_Context;           use Gtk.Style_Context;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
-with Gtk.Style;                   use Gtk.Style;
 
 with Gtk.Enums.Shadow_Property;
-with Gtk.Main.Router;
 
 package body Gtk.Layered.Abstract_Bordered is
 

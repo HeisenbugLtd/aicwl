@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  19:18 30 Apr 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -29,6 +29,7 @@ with Ada.Characters.Handling;  use Ada.Characters.Handling;
 with Ada.Characters.Latin_1;   use Ada.Characters.Latin_1;
 with Ada.Streams;              use Ada.Streams;
 with Ada.Strings.Fixed;        use Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;    use Ada.Strings.Unbounded;
 with Ada.Task_Identification;  use Ada.Task_Identification;
 with Gdk.Color.IHLS;           use Gdk.Color.IHLS;
 with GLib.Main;                use GLib.Main;
@@ -41,8 +42,10 @@ with Gtk.Box;                  use Gtk.Box;
 with Gtk.Button;               use Gtk.Button;
 with Gtk.Check_Button;         use Gtk.Check_Button;
 with Gtk.Clipboard;            use Gtk.Clipboard;
+with Gtk.Dialog;               use Gtk.Dialog;
 with Gtk.Image;                use Gtk.Image;
 with Gtk.Image_Menu_Item;      use Gtk.Image_Menu_Item;
+with Gtk.Label;                use Gtk.Label;
 with Gtk.Menu;                 use Gtk.Menu;
 with Gtk.Missed;               use Gtk.Missed;
 with Gtk.Scrolled_Window;      use Gtk.Scrolled_Window;
@@ -51,18 +54,13 @@ with Gtk.Text_Buffer;          use Gtk.Text_Buffer;
 with Gtk.Text_Iter;            use Gtk.Text_Iter;
 with Gtk.Text_Tag;             use Gtk.Text_Tag;
 with Gtk.Text_View;            use Gtk.Text_View;
-with Gtk.Toggle_Button;        use Gtk.Toggle_Button;
 with Gtk.Widget;               use Gtk.Widget;
 with Pango.Font;               use Pango.Font;
 with System;                   use System;
 with System.Storage_Elements;  use System.Storage_Elements;
 
-with Ada.Tags;
 with Ada.Unchecked_Deallocation;
 with Ada.Unchecked_Conversion;
-with Gdk.Event;
-with Gdk.Device_Manager;
-with Gtk.Generic_Style_Button;
 with Gtk.Handlers;
 
 package body Gtk.Main.Router is
@@ -192,6 +190,7 @@ package body Gtk.Main.Router is
                 (  Item  : in out Request_Item_Ptr;
                    Error : Exception_Occurrence
                 );
+      procedure Allocated_New;
       procedure Clean_Up         (Item : out Request_Item_Ptr);
       procedure Complete_Service (Item : in out Request_Item_Ptr);
       procedure Get_Free_Item    (Item : out Request_Item_Ptr);
@@ -209,6 +208,7 @@ package body Gtk.Main.Router is
       Current   : Boolean  := Standard.False;
       Async     : Natural  := 0;   -- Number of asynchronous requests
       Max_Async : Positive := 100; -- Maximum number of such requests
+      Allocated : Natural  := 0;   -- Total allocated items
       Queued    : aliased Request_Item;
       Ready     : aliased Request_Item;
       Free      : aliased Request_Item;
@@ -262,6 +262,11 @@ package body Gtk.Main.Router is
          end if;
       end Abort_Service;
 
+      procedure Allocated_New is
+      begin
+         Allocated := Allocated + 1;
+      end Allocated_New;
+
       procedure Clean_Up (Item : out Request_Item_Ptr) is
       begin
          Item := Get (Ready);
@@ -307,6 +312,8 @@ package body Gtk.Main.Router is
          (  "requests: pending" & Integer'Image (Length (Queued))
          &  ", ready"           & Integer'Image (Length (Ready ))
          &  ", free"            & Integer'Image (Length (Free  ))
+         &  ", allocated"       & Integer'Image (Allocated)
+         &  ", max async"       & Integer'Image (Max_Async)
          &  Is_Quitted
          );
       end Get_Request_Info;
@@ -431,6 +438,7 @@ package body Gtk.Main.Router is
             Gateway.Get_Free_Item (Item);
             if Item = null then
                Item := new Request_Item;
+               Gateway.Allocated_New;
             end if;
             Item.Synchronous := Standard.False;
             Item.Data        := Message.all'Unchecked_Access;
@@ -692,6 +700,7 @@ package body Gtk.Main.Router is
             Gateway.Get_Free_Item (Item);
             if Item = null then
                Item := new Request_Item;
+               Gateway.Allocated_New;
             end if;
             Item.Data := Data'Unchecked_Access;
             Gateway.Request_Synchronous (Item);
@@ -988,7 +997,6 @@ package body Gtk.Main.Router is
          end if;
          if Main /= Null_Task_ID then -- Go to the location item
             declare
-               use Gdk.Device_Manager;
                use type Gdk.Gdk_Window;
                Buffer_X : GInt;
                Buffer_Y : GInt;

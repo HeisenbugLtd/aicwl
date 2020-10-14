@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -49,8 +49,7 @@
 --                                       |
 --                                  glibc-x.xx.a (Linux)
 --
-with System;        use System;
-with Interfaces.C;  use Interfaces.C;
+with System;  use System;
 
 package GLib.Wrappers is
 

@@ -3,7 +3,7 @@
 --  Test oscilloscope                              Luebeck            --
 --                                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  18:50 05 Apr 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,19 +27,16 @@
 
 with Ada.Exceptions;    use Ada.Exceptions;
 with Ada.Text_IO;       use Ada.Text_IO;
-with Gdk.Event;         use Gdk.Event;
 with Gtk.Box;           use Gtk.Box;
 with Gtk.Enums;         use Gtk.Enums;
 with Gtk.Frame;         use Gtk.Frame;
 with Gtk.Oscilloscope;  use Gtk.Oscilloscope;
-with Gtk.Paned;         use Gtk.Paned;
 with Gtk.Table;         use Gtk.Table;
 with Gtk.Widget;        use Gtk.Widget;
 with Gtk.Window;        use Gtk.Window;
 with Test_Generator;    use Test_Generator;
 
-with Gtk.Layered.Waveform;
-with Gtk.Handlers;
+with Gtk.Layered;
 with Gtk.Main.Router.GNAT_Stack;
 with Gtk.Missed;
 with Gtk.Oscilloscope.Amplifier_Panel;

@@ -3,7 +3,7 @@
 --     Gtk.Layered.Sector_Needle                   Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  22:38 18 Nov 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -34,7 +34,7 @@ with Gtk.Layered.Elliptic_Shape_Property;
 
 package body Gtk.Layered.Sector_Needle is
 
-   Sqrt_2 : constant GDouble := sqrt (2.0);
+--     Sqrt_2 : constant GDouble := sqrt (2.0);
 
    type Needle_Ptr is access all Sector_Needle_Layer;
 

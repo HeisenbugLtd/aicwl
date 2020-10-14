@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Channels_Panel             Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,15 +26,9 @@
 --____________________________________________________________________--
 
 with GLib.Values;           use GLib.Values;
-with Gtk.Box;               use Gtk.Box;
 with Gtk.Cell_Renderer;     use Gtk.Cell_Renderer;
-with Gtk.Check_Button;      use Gtk.Check_Button;
-with Gtk.Combo_Box;         use Gtk.Combo_Box;
-with Gtk.GEntry;            use Gtk.GEntry;
 with Gtk.Handlers;          use Gtk.Handlers;
-with Gtk.Label;             use Gtk.Label;
 with Gtk.Missed;            use Gtk.Missed;
-with Gtk.Scale;             use Gtk.Scale;
 with Gtk.Tree_Model;        use Gtk.Tree_Model;
 with Gtk.Tree_View;         use Gtk.Tree_View;
 with Gtk.Tree_View_Column;  use Gtk.Tree_View_Column;

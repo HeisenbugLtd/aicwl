@@ -3,7 +3,7 @@
 --     Gtk.Source_View                             Luebeck            --
 --  Implementation                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -29,7 +29,6 @@ with Interfaces.C;  use Interfaces.C;
 with System;        use System;
 
 with Ada.Unchecked_Deallocation;
-with Gdk.Pixbuf.Conversions;
 
 package body Gtk.Source_View is
 

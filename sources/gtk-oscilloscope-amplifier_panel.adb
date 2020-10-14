@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Amplifier_Panel            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  21:30 08 Aug 2015  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -34,11 +34,8 @@ with Gtk.Cell_Layout;           use Gtk.Cell_Layout;
 with Gtk.Cell_Renderer_Text;    use Gtk.Cell_Renderer_Text;
 with Gtk.Tree_Model;            use Gtk.Tree_Model;
 with Gtk.Enums;                 use Gtk.Enums;
-with GtkAda.Types;              use GtkAda.Types;
-with Strings_Edit.Integers;     use Strings_Edit.Integers;
 with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
 
-with Ada.Calendar;
 with GLib.Object.Checked_Destroy;
 
 package body Gtk.Oscilloscope.Amplifier_Panel is

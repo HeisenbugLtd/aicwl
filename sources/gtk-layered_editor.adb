@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  21:20 09 Feb 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -38,6 +38,8 @@ with Gtk.Adjustment;            use Gtk.Adjustment;
 with Gtk.Cell_Renderer_Text;    use Gtk.Cell_Renderer_Text;
 with Gtk.Frame;                 use Gtk.Frame;
 with Gtk.Missed;                use Gtk.Missed;
+with Gtk.Paned;                 use Gtk.Paned;
+with Gtk.Scrolled_Window;       use Gtk.Scrolled_Window;
 with Gtk.Separator;             use Gtk.Separator;
 with Gtk.Tree_Model;            use Gtk.Tree_Model;
 with Gtk.Tree_Selection;        use Gtk.Tree_Selection;

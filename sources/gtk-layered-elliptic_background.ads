@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Background             Luebeck            --
 --  Interface                                      Winter, 2010       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -29,6 +29,7 @@ with Ada.Numerics;                   use Ada.Numerics;
 with Gdk.RGBA;                       use Gdk.RGBA;
 with Gtk.Enums;                      use Gtk.Enums;
 with Gtk.Layered.Abstract_Bordered;  use Gtk.Layered.Abstract_Bordered;
+with Gtk.Missed;                     use Gtk.Missed;
 
 package Gtk.Layered.Elliptic_Background is
 --

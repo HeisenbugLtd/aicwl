@@ -3,7 +3,7 @@
 --     Gtk.Gauge.LED_Round                         Luebeck            --
 --  Implementation                                 Summer, 2012       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,12 +25,8 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Numerics;              use Ada.Numerics;
-with Gdk.Color.IHLS;            use Gdk.Color.IHLS;
-with GLib.Properties.Creation;  use GLib.Properties.Creation;
-with GtkAda.Types;              use GtkAda.Types;
-with Gtk.Widget.Styles;         use Gtk.Widget.Styles;
-with Interfaces.C;              use Interfaces.C;
+with Gdk.Color.IHLS;  use Gdk.Color.IHLS;
+with Gtk.Missed;      use Gtk.Missed;
 
 with GLib.Object.Checked_Destroy;
 

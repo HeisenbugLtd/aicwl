@@ -32,7 +32,6 @@ with Gtk.Style;                 use Gtk.Style;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with System;                    use System;
 
-with Gtk.RC;
 with System.Address_To_Access_Conversions;
 
 package body Gtk.Widget.Styles.CSS_Store is

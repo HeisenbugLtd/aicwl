@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Background             Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,7 +26,6 @@
 --____________________________________________________________________--
 
 with Cairo;                     use Cairo;
-with Gdk.Color.IHLS;            use Gdk.Color.IHLS;
 with GLib.Properties.Creation;  use GLib.Properties.Creation;
 with Gtk.Layered.Stream_IO;     use Gtk.Layered.Stream_IO;
 

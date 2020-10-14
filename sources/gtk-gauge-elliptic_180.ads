@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Elliptic_180                      Luebeck            --
 --  Interface                                      Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,17 +25,14 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Gdk.Color;               use Gdk.Color;
 with Gtk.Adjustment;          use Gtk.Adjustment;
 with Gtk.Enums.String_Lists;  use Gtk.Enums.String_Lists;
 with Gtk.Layered;             use Gtk.Layered;
 with Gtk.Layered.Needle;      use Gtk.Layered.Needle;
 with Gtk.Layered.Cache;       use Gtk.Layered.Cache;
 with Gtk.Widget;              use Gtk.Widget;
-with Interfaces.C;            use Interfaces.C;
 
 with Gtk.Enums;
-with Gtk.Layered.Arc;
 with Gtk.Layered.Elliptic_Scale;
 
 with Gtk.Layered.Elliptic_Annotation;
@@ -202,7 +199,6 @@ package Gtk.Gauge.Elliptic_180 is
                 );
 
 private
-   use Gtk.Layered.Arc;
    use Gtk.Layered.Cache;
    use Gtk.Layered.Elliptic_Scale;
 

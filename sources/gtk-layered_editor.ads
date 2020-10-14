@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -37,8 +37,6 @@ with Gtk.Handlers.References;  use Gtk.Handlers.References;
 with Gtk.Layered;              use Gtk.Layered;
 with Gtk.Label;                use Gtk.Label;
 with Gtk.List_Store;           use Gtk.List_Store;
-with Gtk.Paned;                use Gtk.Paned;
-with Gtk.Scrolled_Window;      use Gtk.Scrolled_Window;
 with Gtk.Spin_Button;          use Gtk.Spin_Button;
 with Gtk.Table;                use Gtk.Table;
 with Gtk.Toggle_Button;        use Gtk.Toggle_Button;

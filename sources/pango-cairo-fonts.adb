@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2012       --
 --                                                                    --
---                                Last revision :  11:46 29 Jul 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,6 +26,8 @@
 --____________________________________________________________________--
 
 with Ada.Exceptions;         use Ada.Exceptions;
+with Cairo;                  use Cairo;
+with Cairo.Font_Face;        use Cairo.Font_Face;
 with GLib.Messages;          use GLib.Messages;
 with GLib.Object;            use GLib.Object;
 with Gtk.Layered;            use Gtk.Layered;
@@ -33,7 +35,6 @@ with Gtk.Layered.Stream_IO;  use Gtk.Layered.Stream_IO;
 with Gtk.Missed;             use Gtk.Missed;
 with GtkAda.Types;           use GtkAda.Types;
 with Interfaces.C;           use Interfaces.C;
-with Interfaces.C.Strings;   use Interfaces.C.Strings;
 with Pango.Layout;           use Pango.Layout;
 with System;                 use System;
 

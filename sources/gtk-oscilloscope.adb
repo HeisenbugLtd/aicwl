@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  18:53 28 Oct 2018  --
+--                                Last revision :  22:38 18 Nov 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,42 +25,32 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Numerics;                use Ada.Numerics;
 with Ada.Exceptions;              use Ada.Exceptions;
 with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
-with Cairo.Font_Face;             use Cairo.Font_Face;
 with Cairo.Line_Cap_Property;     use Cairo.Line_Cap_Property;
-with Cairo.Region;                use Cairo.Region;
 with Gdk.Color.IHLS;              use Gdk.Color.IHLS;
 with Gdk.Types;                   use Gdk.Types;
 with Gdk.Window;                  use Gdk.Window;
-with Glib.Error;                  use Glib.Error;
 with GLib.Messages;               use GLib.Messages;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
-with GtkAda.Types;                use GtkAda.Types;
-with Gtk.Dialog;                  use Gtk.Dialog;
-with Gtk.Message_Dialog;          use Gtk.Message_Dialog;
+with Gtk.Adjustment;              use Gtk.Adjustment;
 with Gtk.Enums;                   use Gtk.Enums;
 with Gtk.Image;                   use Gtk.Image;
 with Gtk.Separator_Menu_Item;     use Gtk.Separator_Menu_Item;
 with Gtk.Stock;                   use Gtk.Stock;
 with Gtk.Tree_Model;              use Gtk.Tree_Model;
 with Gtk.Widget.Styles;           use Gtk.Widget.Styles;
-with Gtk.Window;                  use Gtk.Window;
 with Strings_Edit.Integers;       use Strings_Edit.Integers;
 
 with Ada.Unchecked_Conversion;
 with Ada.Unchecked_Deallocation;
 with Cairo.PDF;
-with Cairo.PNG;
 with Cairo.SVG;
-with Gdk.Device_Manager;
 with GLib.Object.Checked_Destroy;
 with Gtk.Widget.Styles.Line_Cap_Property;
 with Interfaces.C.Strings;
 with Strings_Edit.UTF8.Wildcards.Case_Insensitive;
-with Strings_Edit.Integers.Superscript;
 
 package body Gtk.Oscilloscope is
    use Gtk.Widget.Styles.Line_Cap_Property;
@@ -161,7 +151,7 @@ package body Gtk.Oscilloscope is
              (  Widget : not null access Gtk_Oscilloscope_Record'Class;
                 Lower_Sweeper, Upper_Sweeper :
                          access Gtk_Waveform_Sweeper_Record'Class;
-                Refresh_Engine : access Layered_Refresh_Engine;
+                Refresh_Engine : access Layered_Refresh_Engine'Class;
                 Refresh_Period : Duration;
                 Background     : Gdk_Color;
                 Buffer_Size    : Positive
@@ -1033,9 +1023,8 @@ package body Gtk.Oscilloscope is
              (  Waveform_Layer,
                 Waveform_Layer_Ptr
              );
-      This   : Channel_Data;
-      Remove : Boolean := False;
-      Row    : Gtk_Tree_Iter;
+      This : Channel_Data;
+      Row  : Gtk_Tree_Iter;
    begin
       if Channel > Widget.Channels_Number then
          raise Constraint_Error with
@@ -2308,7 +2297,8 @@ package body Gtk.Oscilloscope is
                              Gtk_Waveform_Sweeper_Record'Class := null;
                 Upper_Sweeper  : access
                              Gtk_Waveform_Sweeper_Record'Class := null;
-                Refresh_Engine : not null access Layered_Refresh_Engine;
+                Refresh_Engine : not null access
+                             Layered_Refresh_Engine'Class;
                 Background     : Gdk_Color := RGB (1.0, 1.0, 1.0);
                 Buffer_Size    : Positive  := 1024 * 60;
                 Max_Channels   : Channel_Number := 64
@@ -2375,7 +2365,8 @@ package body Gtk.Oscilloscope is
                                  Gtk_Waveform_Sweeper_Record'Class;
                 Upper_Sweeper  : access
                                  Gtk_Waveform_Sweeper_Record'Class;
-                Refresh_Engine : not null access Layered_Refresh_Engine;
+                Refresh_Engine : not null access
+                                 Layered_Refresh_Engine'Class;
                 Background     : Gdk_Color;
                 Buffer_Size    : Positive
              )  is

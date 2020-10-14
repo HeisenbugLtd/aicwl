@@ -2,7 +2,7 @@
 --  package Gtk.Missed              Copyright (c)  Maxim Reznik       --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  11:45 29 Jul 2018  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,7 +26,6 @@
 
 with Cairo;                     use Cairo;
 with Gdk.Color;                 use Gdk.Color;
-with Gdk.Cursor;                use Gdk.Cursor;
 with Gdk.Rectangle;             use Gdk.Rectangle;
 with Gdk.Pixbuf;                use Gdk.Pixbuf;
 with Gdk.RGBA;                  use Gdk.RGBA;
@@ -49,15 +48,12 @@ with Gtk.Tree_Store;            use Gtk.Tree_Store;
 with Gtk.Tree_View;             use Gtk.Tree_View;
 with Gtk.Tree_View_Column;      use Gtk.Tree_View_Column;
 with Gtk.Widget;                use Gtk.Widget;
-with Gtk.Window;                use Gtk.Window;
 
 with Ada.Finalization;
 with Gdk.Event;
-with Gdk.Window;
 with Glib;
 with Glib.Object;
 with Glib.Properties;
-with Glib.Wrappers;
 with Gtk.Cell_Renderer;
 
 package Gtk.Missed is

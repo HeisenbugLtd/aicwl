@@ -3,7 +3,7 @@
 --     Gtk.Cell_Renderer.Abstract_Renderer         Luebeck            --
 --  Implementation                                 Summer, 2006       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -37,7 +37,6 @@ with Interfaces.C.Strings;  use Interfaces.C.Strings;
 
 with Ada.Unchecked_Conversion;
 with Ada.Unchecked_Deallocation;
-with System.Address_To_Access_Conversions;
 
 package body Gtk.Cell_Renderer.Abstract_Renderer is
 

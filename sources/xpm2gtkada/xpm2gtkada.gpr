@@ -5,6 +5,7 @@ project XPM2GTKAda is
    for Main use ("xpm2gtkada.adb");
    for Source_Files use ("xpm2gtkada.adb");
    for Exec_Dir use ".";
+   for Object_Dir use XPM_Parser'Object_Dir;
 
 end XPM2GTKAda;
 

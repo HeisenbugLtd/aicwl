@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper_Annotation          Luebeck            --
 -- Implementation                                  Summer, 2011       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  22:38 18 Nov 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,12 +27,11 @@
 
 with Ada.Exceptions;              use Ada.Exceptions;
 with Ada.Numerics;                use Ada.Numerics;
-with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
 with GLib.Messages;               use GLib.Messages;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
-with Gtk.Layered.Label;           use Gtk.Layered.Label;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
+with Interfaces.C;                use Interfaces.C;
 with Strings_Edit.Integers;       use Strings_Edit.Integers;
 
 with Cairo.Font_Slant_Property;
@@ -790,8 +789,6 @@ package body Gtk.Layered.Graph_Paper_Annotation is
          end if;
       end Draw_Y;
 
-      use Gtk.Layered.Waveform.Rasters;
-
       function Set_X return Boolean is
       begin
          if dT <= 0.0 then
@@ -1539,7 +1536,6 @@ package body Gtk.Layered.Graph_Paper_Annotation is
    end Image;
 
    function Image (Interval : Duration) return String is
-      use Strings_Edit;
    begin
       if Interval > 10.0 then
          return Image (GDouble (Interval), AbsSmall => 0);

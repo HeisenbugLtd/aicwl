@@ -3,7 +3,7 @@
 --     Gtk.Layered.Refresh_Engine                  Luebeck            --
 --  Interface                                      Winter, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  16:44 20 Dec 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -78,7 +78,7 @@ package Gtk.Layered.Refresh_Engine is
 --
 -- Get_Period -- Get the refresh period
 --
---    Widget - The widget
+--    Engine - The engine
 --
 -- Returns :
 --
@@ -87,9 +87,18 @@ package Gtk.Layered.Refresh_Engine is
    function Get_Period (Engine : Layered_Refresh_Engine)
       return Duration;
 --
+-- Refresh -- Perform refresh
+--
+--    Engine - The engine
+--
+-- This procedure performs actions driven by the engine. When overridden
+-- it must be called from the override.
+--
+   procedure Refresh (Engine : in out Layered_Refresh_Engine);
+--
 -- Set_Period -- Set the refresh period
 --
---    Widget - The widget
+--    Engine - The engine
 --    Period - The period to set
 --
 -- Exceptions :

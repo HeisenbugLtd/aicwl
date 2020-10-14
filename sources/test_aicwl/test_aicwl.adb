@@ -3,7 +3,7 @@
 --  Test                                           Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,19 +30,14 @@ with Ada.Numerics;                 use Ada.Numerics;
 with Cairo;                        use Cairo;
 with Cairo.Ellipses;               use Cairo.Ellipses;
 with Gdk.Color;                    use Gdk.Color;
-with Gdk.Event;                    use Gdk.Event;
-with Gdk.Rectangle;                use Gdk.Rectangle;
 with GLib;                         use GLib;
 with GLib.Error;                   use GLib.Error;
-with GLib.Messages;                use GLib.Messages;
 with GLib.Values;                  use GLib.Values;
 with Gtk.Adjustment;               use Gtk.Adjustment;
 with Gtk.Box;                      use Gtk.Box;
 with Gtk.Button;                   use Gtk.Button;
 with Gtk.Check_Button;             use Gtk.Check_Button;
-with Gtk.Cell_Renderer;            use Gtk.Cell_Renderer;
 with Gtk.Cell_Renderer_Text;       use Gtk.Cell_Renderer_Text;
-with Gtk.Combo_Box;                use Gtk.Combo_Box;
 with Gtk.Dialog;                   use Gtk.Dialog;
 with Gtk.Editable;                 use Gtk.Editable;
 with Gtk.Enums;                    use Gtk.Enums;
@@ -59,7 +54,6 @@ with Gtk.Layered.Bar;              use Gtk.Layered.Bar;
 with Gtk.Layered.Clock_Hand;       use Gtk.Layered.Clock_Hand;
 with Gtk.Layered.Cap;              use Gtk.Layered.Cap;
 with Gtk.Layered.Digital;          use Gtk.Layered.Digital;
-with Gtk.Layered.Disk_Needle;      use Gtk.Layered.Disk_Needle;
 with Gtk.Layered_Editor;           use Gtk.Layered_Editor;
 with Gtk.Layered.Elliptic_Bar;     use Gtk.Layered.Elliptic_Bar;
 with Gtk.Layered.Elliptic_Scale;   use Gtk.Layered.Elliptic_Scale;
@@ -87,7 +81,6 @@ with Gtk.Tree_View;                use Gtk.Tree_View;
 with Gtk.Tree_View_Column;         use Gtk.Tree_View_Column;
 with Gtk.Widget.Styles.CSS_Store;  use Gtk.Widget.Styles.CSS_Store;
 with Pango.Cairo.Fonts;            use Pango.Cairo.Fonts;
-with Pango.Font;                   use Pango.Font;
 with Strings_Edit.Streams;         use Strings_Edit.Streams;
 with Strings_Edit.Floats;          use Strings_Edit.Floats;
 with System;                       use System;
@@ -101,7 +94,6 @@ with Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 with Cairo.PDF;
 with GLib.Object.Checked_Destroy;
-with Gtk.Handlers;
 with Gtk.Gauge.Flat_Horizontal;
 with Gtk.Gauge.Flat_Vertical;
 with Gtk.Gauge.Elliptic_180;

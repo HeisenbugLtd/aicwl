@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope.Sweeper_Panel              Luebeck            --
 --  Interface                                      Summer, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,7 +25,6 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Gtk.Box;           use Gtk.Box;
 with Gtk.Check_Button;  use Gtk.Check_Button;
 with Gtk.GEntry;        use Gtk.GEntry;
 with Gtk.Label;         use Gtk.Label;

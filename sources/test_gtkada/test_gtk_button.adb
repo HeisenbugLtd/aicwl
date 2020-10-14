@@ -3,7 +3,7 @@
 --  Test for                                       Luebeck            --
 --      Gtk.Generic_Style_Button                   Spring, 2007       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  13:14 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,12 +25,10 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with GtkAda.Handlers;         use GtkAda.Handlers;
 with GtkAda.Style;            use GtkAda.Style;
 with Gtk.Window;              use Gtk.Window;
 with Gtk.Widget;              use Gtk.Widget;
 with Gtk.Table;               use Gtk.Table;
-with Gtk.Tooltip;             use Gtk.Tooltip;
 with Test_Gtk_Custom_Button;  use Test_Gtk_Custom_Button;
 
 with Ada.Text_IO;

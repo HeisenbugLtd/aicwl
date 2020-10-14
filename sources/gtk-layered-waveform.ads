@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform                        Luebeck            --
 --  Interface                                      Winter, 2011       --
 --                                                                    --
---                                Last revision :  10:27 26 Mar 2016  --
+--                                Last revision :  13:15 14 Sep 2019  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,6 +27,7 @@
 
 with Ada.Real_Time;            use Ada.Real_Time;
 with Gtk.Handlers.References;  use Gtk.Handlers.References;
+with Gtk.Missed;               use Gtk.Missed;
 
 with Ada.Calendar;
 with Strings_Edit.Float_Edit;
