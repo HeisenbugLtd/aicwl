@@ -3,7 +3,7 @@
 --     Gtk.Source_Style_Scheme                     Luebeck            --
 --  Implementation                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,10 +25,10 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with System;  use System;
+with Interfaces.C;  use Interfaces.C;
+with System;        use System;
 
 with GLib.Chars_Ptr_Vectors;
-with GtkAda.Types;
 
 package body Gtk.Source_Style_Scheme is
 
@@ -114,7 +114,6 @@ package body Gtk.Source_Style_Scheme is
             (  Scheme : not null access Gtk_Source_Style_Scheme_Record;
                Style  : UTF8_String
             )  return Gtk_Source_Style is
-      use Interfaces.C;
       function Internal (Object : Address; Style : Char_Array)
          return Address;
       pragma Import (C, Internal, "gtk_source_style_scheme_get_style");

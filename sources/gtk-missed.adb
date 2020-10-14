@@ -593,7 +593,8 @@ package body Gtk.Missed is
    pragma Import
           (  C,
              G_Find_Program_In_Path_UTF8,
-             "g_find_program_in_path_utf8"
+             "g_find_program_in_path"
+--           "g_find_program_in_path_utf8"
           );
 
    function Find_Program_In_Path (Program : UTF8_String)

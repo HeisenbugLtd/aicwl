@@ -3,7 +3,7 @@
 --     Test_Gtk_Persistent_Directory_Browser       Luebeck            --
 --  Test for                                       Winter, 2008       --
 --                                                                    --
---                                Last revision :  22:06 23 Jul 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -59,7 +59,6 @@ with Ada.Unchecked_Conversion;
 with Glib.Object;
 with GNAT.Traceback.Symbolic;
 with Gtk.Button;
-with Gtk.Main.Router;
 with Gtk.Missed;
 with Gtk.RC;
 with Gtk.Persistent_Storage_Credentials_Dialog.ODBC;
@@ -225,8 +224,8 @@ procedure Test_Gtk_Persistent_Directory_Browser is
              (  Store  : access Glib.Object.GObject_Record'Class;
                 Params : GValues
              )  is
-      Text   : String  := Get_String (Nth (Params, 1));
-      Where  : String  := Get_String (Nth (Params, 2));
+      Text   : constant String  := Get_String (Nth (Params, 1));
+      Where  : constant String  := Get_String (Nth (Params, 2));
    begin
       Set_Text (Errors, Text & " (while reading '" & Where & "')");
    end Error;

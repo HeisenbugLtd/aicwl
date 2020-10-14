@@ -3,7 +3,7 @@
 --     Test_Gtk_Directory_Browser                  Luebeck            --
 --  Test for                                       Autumn, 2007       --
 --                                                                    --
---                                Last revision :  07:53 21 Jul 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

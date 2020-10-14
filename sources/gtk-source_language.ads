@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,9 +25,7 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Interfaces.C.Strings;  use Interfaces.C.Strings;
-
-with Interfaces.C.Pointers;
+with GtkAda.Types;  use GtkAda.Types;
 
 package Gtk.Source_Language is
 --

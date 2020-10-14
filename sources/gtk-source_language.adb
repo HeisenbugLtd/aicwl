@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -29,7 +29,6 @@ with Interfaces.C;  use Interfaces.C;
 with System;        use System;
 
 with GLib.Chars_Ptr_Vectors;
-with GtkAda.Types;
 
 package body Gtk.Source_Language is
 

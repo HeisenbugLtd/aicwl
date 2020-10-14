@@ -3,7 +3,7 @@
 --     Gtk.Recent_Manager_Alt                      Luebeck            --
 --  Implementation                                 Winter, 2008       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,11 +27,10 @@
 
 with Gdk.Pixbuf.Conversions;
 with GLib.Chars_Ptr_Vectors;
-with Interfaces.C.Strings;
 
 package body Gtk.Recent_Manager_Alt is
    use Interfaces.C;
-   use type Interfaces.C.Strings.Chars_Ptr;
+   use GtkAda.Types;
 
    function Add_Full
            (  Manager      : not null access Gtk_Recent_Manager_Record;
@@ -67,14 +66,13 @@ package body Gtk.Recent_Manager_Alt is
       C_App_Exec     : aliased Char_Array := To_C (App_Exec);
       C_Groups       : aliased Chars_Ptr_Array (0..Groups'Length);
       C_Is_Private   : GBoolean;
-      use Interfaces.C.Strings;
    begin
       if Is_Private then
          C_Is_Private := 1;
       else
          C_Is_Private := 0;
       end if;
-      C_Groups (C_Groups'Last) := Interfaces.C.Strings.Null_Ptr;
+      C_Groups (C_Groups'Last) := Null_Ptr;
       if Groups'Length > 0 then
          C_Groups (C_Groups'First..C_Groups'Last - 1) := Groups;
       end if;
@@ -161,8 +159,7 @@ package body Gtk.Recent_Manager_Alt is
             return (True, 0, Count, To_Time (Time), "");
          else
             declare
-               Exec   : constant String :=
-                           Interfaces.C.Strings.Value (App_Exec);
+               Exec   : constant String := Value (App_Exec);
                Result : constant Application_Info :=
                   (True, Exec'Length, Count, To_Time (Time), Exec);
             begin
@@ -205,7 +202,7 @@ package body Gtk.Recent_Manager_Alt is
       if Result = Null_Ptr then
          return "";
       else
-         return Interfaces.C.Strings.Value (Result);
+         return Value (Result);
       end if;
    end Get_Description;
 
@@ -218,7 +215,7 @@ package body Gtk.Recent_Manager_Alt is
       if Result = Null_Ptr then
          return "";
       else
-         return Interfaces.C.Strings.Value (Result);
+         return Value (Result);
       end if;
    end Get_Display_Name;
 
@@ -258,7 +255,7 @@ package body Gtk.Recent_Manager_Alt is
       if Result = Null_Ptr then
          return "";
       else
-         return Interfaces.C.Strings.Value (Result);
+         return Value (Result);
       end if;
    end Get_MIME_Type;
 
@@ -321,7 +318,7 @@ package body Gtk.Recent_Manager_Alt is
       function Internal (Info : Gtk_Recent_Info) return Chars_Ptr;
       pragma Import (C, Internal, "gtk_recent_info_get_short_name");
       Ptr    : constant Chars_Ptr   := Internal (Info);
-      Result : constant UTF8_String := Interfaces.C.Strings.Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -335,7 +332,7 @@ package body Gtk.Recent_Manager_Alt is
       if Result = Null_Ptr then
          return "";
       else
-         return Interfaces.C.Strings.Value (Result);
+         return Value (Result);
       end if;
    end Get_URI;
 
@@ -344,7 +341,7 @@ package body Gtk.Recent_Manager_Alt is
       function Internal (Info : Gtk_Recent_Info) return Chars_Ptr;
       pragma Import (C, Internal, "gtk_recent_info_get_uri_display");
       Ptr    : constant Chars_Ptr   := Internal (Info);
-      Result : constant UTF8_String := Interfaces.C.Strings.Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;
@@ -425,7 +422,7 @@ package body Gtk.Recent_Manager_Alt is
       function Internal (Info : Gtk_Recent_Info) return Chars_Ptr;
       pragma Import (C, Internal, "gtk_recent_info_last_application");
       Ptr    : constant Chars_Ptr   := Internal (Info);
-      Result : constant UTF8_String := Interfaces.C.Strings.Value (Ptr);
+      Result : constant UTF8_String := Value (Ptr);
    begin
       G_Free (Ptr);
       return Result;

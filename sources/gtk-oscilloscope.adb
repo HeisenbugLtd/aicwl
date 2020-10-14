@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  20:05 02 Jan 2018  --
+--                                Last revision :  11:46 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -78,7 +78,7 @@ package body Gtk.Oscilloscope is
    Background_Color : constant Gdk_Color := RGB (1.0, 1.0, 1.0);
 
    Class_Record : aliased Ada_GObject_Class := Uninitialized_Class;
-   Signal_Names : constant GtkAda.Types.Chars_Ptr_Array :=
+   Signal_Names : constant Interfaces.C.Strings.Chars_Ptr_Array :=
       (  0 => Interfaces.C.Strings.New_String ("autoscaling-changed"),
          1 => Interfaces.C.Strings.New_String ("raster-mode-changed"),
          2 => Interfaces.C.Strings.New_String ("freezing-changed"),

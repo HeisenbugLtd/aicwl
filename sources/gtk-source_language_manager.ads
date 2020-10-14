@@ -3,7 +3,7 @@
 --     Gtk.Source_Language_Manager                 Luebeck            --
 --  Interface                                      Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,7 +26,7 @@
 --____________________________________________________________________--
 
 with Gtk.Source_Language;   use Gtk.Source_Language;
-with Interfaces.C.Strings;  use Interfaces.C.Strings;
+with GtkAda.Types;          use GtkAda.Types;
 
 package Gtk.Source_Language_Manager is
 --

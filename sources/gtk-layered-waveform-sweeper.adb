@@ -3,7 +3,7 @@
 --     Gtk.Layered.Waveform.Sweeper                Luebeck            --
 --  Implementation                                 Spring, 2011       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  11:46 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -41,7 +41,7 @@ package body Gtk.Layered.Waveform.Sweeper is
    Def_Page : constant Duration := 20.0;
 
    Class_Record : Ada_GObject_Class := Uninitialized_Class;
-   Signal_Names : constant GtkAda.Types.Chars_Ptr_Array :=
+   Signal_Names : constant Interfaces.C.Strings.Chars_Ptr_Array :=
       (  0 => Interfaces.C.Strings.New_String ("freezing-changed"),
          1 => Interfaces.C.Strings.New_String ("offset-changed")
       );

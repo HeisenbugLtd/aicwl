@@ -2,9 +2,10 @@ with "../../aicwl.gpr";
 
 project On_Line_Plotter is
 
-   for Exec_Dir use ".";
    for Main use ("on_line_plotter.adb");
    for Source_Files use ("on_line_plotter.adb", "worker.adb", "worker.ads");
+   for Object_Dir use AICWL.Object_Dir_Path;
+
    package Compiler renames AICWL.Compiler;
    package Binder   renames AICWL.Binder;
    package Builder  renames AICWL.Builder;

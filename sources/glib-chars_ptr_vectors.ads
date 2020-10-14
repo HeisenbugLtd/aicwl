@@ -3,7 +3,7 @@
 --     GLib.Chars_Ptr_Vectors                      Luebeck            --
 --  Interface                                      Spring, 2009       --
 --                                                                    --
---                                Last revision :  09:26 07 Aug 2009  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,7 +25,7 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Gtkada.Types;  use Gtkada.Types;
+with GtkAda.Types;  use GtkAda.Types;
 
 with Interfaces.C.Pointers;
 
@@ -39,7 +39,7 @@ package GLib.Chars_Ptr_Vectors is
           (  Interfaces.C.Size_t,
              Chars_Ptr,
              Chars_Ptr_Vector,
-             null
+             Null_Ptr
           );
    use Chars_Ptr_Pointers;
    type Chars_Ptr_Ptr is new Pointer;

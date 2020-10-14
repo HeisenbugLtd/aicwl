@@ -3,7 +3,7 @@
 --     Test_Gtk_Recent_Manager                     Luebeck            --
 --  Test for Gtk.Recent_Manager                    Winter, 2008       --
 --                                                                    --
---                                Last revision :  07:53 21 Jul 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -209,10 +209,7 @@ begin
                   if Length (Text) > 0 then
                      Append (Text, ", ");
                   end if;
-                  Append
-                  (  Text,
-                     Interfaces.C.Strings.Value (List (Index))
-                  );
+                  Append (Text, Value (List (Index)));
                end loop;
                Free (List);
                Set (List_Store, Row, 9, To_String (Text));

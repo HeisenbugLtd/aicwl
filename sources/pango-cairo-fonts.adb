@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2012       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  11:46 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -161,17 +161,22 @@ package body Pango.Cairo.Fonts is
                Slant  : Cairo_Font_Slant  := CAIRO_FONT_SLANT_NORMAL;
                Weight : Cairo_Font_Weight := CAIRO_FONT_WEIGHT_NORMAL
             )  return Pango_Cairo_Font is
-      Text : aliased Char_Array := To_C (Family);
+      Text : GtkAda.Types.Chars_Ptr := New_String (Family);
    begin
       return Font : Pango_Cairo_Font (Toy_Font) do
          Font.Toy_Face.Face :=
             Toy_Font_Face_Create -- Reference count is 1+
-            (  Family => To_Chars_Ptr (Text'Unchecked_Access),
+            (  Family => Text,
                Slant  => Slant,
                Weight => Weight
             );
+         Free (Text);
          Font.Toy_Face.Check;
       end return;
+   exception
+      when others =>
+         Free (Text);
+         raise;
    end Create_Toy;
 
    procedure Finalize
@@ -228,7 +233,7 @@ package body Pango.Cairo.Fonts is
    end Get_Family;
 
    function Get_Family (Handle : Cairo_Font_Face_Handle)
-      return Interfaces.C.Strings.Chars_Ptr is
+      return GtkAda.Types.Chars_Ptr is
    begin
       if Handle.Face = Null_Font_Face then
          raise Constraint_Error with "Null toy font";
@@ -249,16 +254,18 @@ package body Pango.Cairo.Fonts is
             Extents := (others => 0.0);
          when Toy_Font =>
             declare
-               Data   : aliased Char_Array := To_C (Strip_Tags (Text));
+               Data   : GtkAda.Types.Chars_Ptr :=
+                           New_String (Strip_Tags (Text));
                Result : aliased Cairo_Text_Extents;
             begin
                Set_Font (Context, Font.Toy_Face);
                Text_Extents
                (  Context,
-                  To_Chars_Ptr (Data'Unchecked_Access),
+                  Data,
                   Result'Access
                );
                Extents := Result;
+               Free (Data);
             exception
                when Error : Data_Error =>
                   Log
@@ -268,6 +275,7 @@ package body Pango.Cairo.Fonts is
                      &  Exception_Message (Error)
                      &  Where ("Get_Markup_Extents")
                   )  );
+                  Free (Data);
                   Extents := (others => 0.0);
             end;
          when Pango_Font =>
@@ -367,16 +375,17 @@ package body Pango.Cairo.Fonts is
             Extents := (others => 0.0);
          when Toy_Font =>
             declare
-               Data   : aliased Char_Array := To_C (Text);
+               Data   : GtkAda.Types.Chars_Ptr := New_String (Text);
                Result : aliased Cairo_Text_Extents;
             begin
                Set_Font (Context, Font.Toy_Face);
-               Text_Extents
-               (  Context,
-                  To_Chars_Ptr (Data'Unchecked_Access),
-                  Result'Access
-               );
+               Text_Extents (Context, Data, Result'Access);
                Extents := Result;
+               Free (Data);
+            exception
+               when others =>
+                  Free (Data);
+                  raise;
             end;
          when Pango_Font =>
             declare
@@ -793,12 +802,12 @@ package body Pango.Cairo.Fonts is
                   Length       : int;
                   Accel_Marker : gunichar := 0;
                   Attr_List    : Address  := Null_Address;
-                  Text         : access Interfaces.C.Strings.Chars_Ptr;
+                  Text         : access GtkAda.Types.Chars_Ptr;
                   Accel_Char   : Address  := Null_Address;
                   Error        : access GError
                )  return GBoolean;
       pragma Import (C, Internal, "pango_parse_markup");
-      Result : aliased Interfaces.C.Strings.Chars_Ptr;
+      Result : aliased GtkAda.Types.Chars_Ptr;
       Error  : aliased GError;
    begin
       if (  0
@@ -812,8 +821,8 @@ package body Pango.Cairo.Fonts is
          return Text;
       else
          return Value : constant String :=
-                        Interfaces.C.Strings.Value (Result) do
-            G_Free (Result);
+                                 GtkAda.Types.Value (Result) do
+            Free (Result);
          end return;
       end if;
    end Strip_Tags;

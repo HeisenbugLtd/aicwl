@@ -8,6 +8,40 @@ project Gtkada_Contributions is
    type Legacy_Type is ("Ada2005", "Ada2012");
    Legacy : Legacy_Type := external ("Legacy", "Ada2012");
 
+   type OS_Type is ("Windows", "Windows_NT", "Linux", "UNIX", "OSX", "FreeBSD");
+   OS : OS_Type := external ("OS", "Windows");
+
+   type Arch_Type is ("x86_64", "i686", "armhf");
+   Arch : Arch_Type := external ("arch", "x86_64");
+
+   type Object_Dir_Scheme_Type is (".", "nested");
+   Object_Dir_Scheme : Object_Dir_Scheme_Type :=
+        external ("Object_Dir", ".");
+
+   for Source_Dirs use (".");
+
+   Object_Dir_Path := "";
+   case Object_Dir_Scheme is
+      when "." =>
+         Object_Dir_Path := ".";
+      when "nested" =>
+         case OS is
+            when "Windows" | "Windows_NT" =>
+               Object_Dir_Path :=
+                  "./obj/windows/" & arch & "/" & Development;
+            when "Linux" | "UNIX" =>
+               Object_Dir_Path :=
+                  "./obj/linux/" & arch & "/" & Development;
+            when "OSX" =>
+               Object_Dir_Path :=
+                  "./obj/osx/" & arch & "/" & Development;
+            when "FreeBSD" =>
+               Object_Dir_Path :=
+                  "./obj/freebsd/" & arch & "/" & Development;
+         end case;
+   end case;
+   for Object_Dir use Object_Dir_Path;
+
    for Source_Dirs use (".");
    for Source_Files use
        (  "gdk-color-ihls.adb",
@@ -96,6 +130,15 @@ project Gtkada_Contributions is
           "gtk-widget-styles.ads"
        );
 
+   GNAT_XX := "";
+
+   case Legacy is
+      when "Ada2005" =>
+         GNAT_XX := "-gnat2005";
+      when "Ada2012" =>
+         GNAT_XX := "-gnat2012";
+   end case;
+
    package Binder is
       case Development is
          when "Debug" =>
@@ -117,38 +160,41 @@ project Gtkada_Contributions is
    package Compiler is
       case Development is
          when "Debug" =>
-            case Legacy is
-               when "Ada2012" =>
-                  for Default_Switches ("ada") use
-                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnato", "-gnatVa", "-gnatf", "-g", "-fstack-check", "-gnat12");
-               when "Ada2005" =>
-                  for Default_Switches ("ada") use
-                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnato", "-gnatVa", "-gnatf", "-g", "-fstack-check", "-gnat05");
-            end case;
+            for Default_Switches ("ada") use
+                (  "-gnatwcikmoprvz.c.p.t.w.x",
+                   "-gnato",
+                   "-gnatVa",
+                   "-gnatf",
+                   "-g",
+                   "-fstack-check"
+                )  & GNAT_XX;
          when "Release" =>
-            case Legacy is
-               when "Ada2012" =>
-                  for Default_Switches ("ada") use
-                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnatp", "-gnatVa", "-gnatf", "-O2", "-gnatn", "-gnat12");
-               when "Ada2005" =>
-                  for Default_Switches ("ada") use
-                     ("-gnatwcikmoprvz.c.p.t.w.x", "-gnatp", "-gnatVa", "-gnatf", "-O2", "-gnatn", "-gnat05");
-            end case;
+            for Default_Switches ("ada") use
+                (  "-gnatwcikmoprvz.c.p.t.w.x",
+                   "-gnatp",
+                   "-gnatVa",
+                   "-gnatf",
+                   "-O2",
+                   "-gnatn"
+                )  & GNAT_XX;
       end case;
    end Compiler;
+
+   Lib_List := ("-lgio-2.0");
+ 
+   case OS is
+      when "Windows" | "Windows_NT" =>
+         Lib_List := Lib_List & "-mwindows";
+      when "Linux" | "UNIX" | "OSX" | "FreeBSD" =>
+         null;
+   end case;
 
    package Linker is
       case Development is
          when "Debug" =>
-            for Default_Switches ("ada") use Gtkada.Linker'Default_Switches ("ada") &
-                                             "-g" &
-                                             "-lgio-2.0" &
-                                             "-mwindows";
+            for Default_Switches ("ada") use Gtkada.Linker'Default_Switches ("ada") & "-g" & Lib_List;
          when "Release" =>
-            for Default_Switches ("ada") use Gtkada.Linker'Default_Switches ("ada") &
-                                             "-O2" &
-                                             "-lgio-2.0" &
-                                             "-mwindows";
+            for Default_Switches ("ada") use Gtkada.Linker'Default_Switches ("ada") & "-O2" & Lib_List;
       end case;
    end Linker;
 

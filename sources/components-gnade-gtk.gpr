@@ -1,3 +1,4 @@
+with "components.gpr";
 with "gtkada_contributions.gpr";
 with "components-gnade.gpr";
 with "components-gtk.gpr";
@@ -9,6 +10,7 @@ project Components.GNADE.GTK is
       (  "gtk-persistent_storage_credentials_dialog-odbc.adb",
          "gtk-persistent_storage_credentials_dialog-odbc.ads"
       );
+   for Object_Dir use Components.Object_Dir_Path;
 
    package Compiler is
       for Default_Switches ("ada") use

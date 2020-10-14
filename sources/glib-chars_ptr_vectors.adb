@@ -3,7 +3,7 @@
 --     GLib.Chars_Ptr_Vectors                      Luebeck            --
 --  Implementation                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  22:06 23 Jul 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,9 +25,8 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Interfaces.C.Strings;  use Interfaces.C;
-
 package body GLib.Chars_Ptr_Vectors is
+   use type Interfaces.C.size_t;
 
    function Convert_And_Free (Vector : Chars_Ptr_Ptr)
       return Chars_Ptr_Array is
@@ -36,7 +35,8 @@ package body GLib.Chars_Ptr_Vectors is
          return Null_Array;
       else
          declare
-            Size : constant Size_T := Size_T (Virtual_Length (Vector));
+            Size : constant Interfaces.C.Size_T :=
+                   Interfaces.C.Size_T (Virtual_Length (Vector));
          begin
             if Size = 0 then
                Free (Vector);
@@ -45,7 +45,6 @@ package body GLib.Chars_Ptr_Vectors is
                declare
                   Result : Chars_Ptr_Array (0..Size - 1);
                   Ptr    : Chars_Ptr_Ptr := Vector;
-                  use Interfaces.C.Strings;
                begin
                   for Index in Result'Range loop
                      Result (Index) := New_String (Value (Ptr.all));
@@ -65,7 +64,8 @@ package body GLib.Chars_Ptr_Vectors is
          return Null_Array;
       else
          declare
-            Size : constant Size_T := Size_T (Virtual_Length (Vector));
+            Size : constant Interfaces.C.size_t :=
+                   Interfaces.C.size_t (Virtual_Length (Vector));
          begin
             if Size = 0 then
                return Null_Array;
@@ -73,7 +73,6 @@ package body GLib.Chars_Ptr_Vectors is
                declare
                   Result : Chars_Ptr_Array (0..Size - 1);
                   Ptr    : Chars_Ptr_Ptr := Vector;
---                  use Interfaces.C.Strings;
                begin
                   for Index in Result'Range loop
                      Result (Index) := Ptr.all;

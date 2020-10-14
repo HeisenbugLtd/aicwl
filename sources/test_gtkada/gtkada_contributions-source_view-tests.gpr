@@ -1,10 +1,11 @@
+with "../gtkada_contributions.gpr";
 with "../gtkada_contributions-source_view.gpr";
 
 project Gtkada_Contributions.Source_View.Tests is
 
    for Source_Files use ("test_gtk_source_view.adb");
    for Main use ("test_gtk_source_view.adb");
-   for Exec_Dir use ".";
+   for Object_Dir use GtkAda_Contributions.Object_Dir_Path;
 
    package Binder is
       for Default_Switches ("ada") use

@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Abstract_Store               Luebeck            --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

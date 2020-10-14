@@ -177,6 +177,9 @@ project AICWL is
           "pango-cairo-fonts-font_type_property.ads",
           "pango-enums-weight_property.ads"
        );
+   Object_Dir_Path := Strings_Edit.Object_Dir_Path;
+   for Object_Dir use Object_Dir_Path;
+       
    package Binder   renames GtkAda_Contributions.Binder;
    package Builder  renames GtkAda_Contributions.Builder;
    package Compiler renames GtkAda_Contributions.Compiler;

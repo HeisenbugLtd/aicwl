@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -149,11 +149,11 @@ package body GLib.Wrappers is
       return G_File_Test (File_Name, Test);
    end G_File_Test_UTF8;
 
-   function G_Find_Program_In_Path_UTF8 (Program : Address)
-      return Address is
-   begin
-      return G_Find_Program_In_Path (Program);
-   end G_Find_Program_In_Path_UTF8;
+--     function G_Find_Program_In_Path_UTF8 (Program : Address)
+--        return Address is
+--     begin
+--        return G_Find_Program_In_Path (Program);
+--     end G_Find_Program_In_Path_UTF8;
 
    function G_Get_Current_Dir_UTF8 return Address is
    begin

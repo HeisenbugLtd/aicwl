@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  11:46 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -50,7 +50,7 @@ package body Gtk.Layered is
 
    Class : Ada_GObject_Class := Uninitialized_Class;
 
-   Signal_Names : constant GtkAda.Types.Chars_Ptr_Array :=
+   Signal_Names : constant Interfaces.C.Strings.Chars_Ptr_Array :=
       (  0 => Interfaces.C.Strings.New_String ("layer-added"),
          1 => Interfaces.C.Strings.New_String ("layer-removed")
       );

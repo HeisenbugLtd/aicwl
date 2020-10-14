@@ -3,7 +3,7 @@
 --     Gtk.Abstract_Browser                        Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  07:53 21 Jul 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -141,15 +141,15 @@ package body Gtk.Abstract_Browser is
    -- Signals of abstract directory
    --
    Abstract_Directory_Signal_Names : constant
-                                     GtkAda.Types.Chars_Ptr_Array :=
-      (  0 => Interfaces.C.Strings.New_String ("read-error"),
-         1 => Interfaces.C.Strings.New_String ("rewind-error"),
-         2 => Interfaces.C.Strings.New_String ("refreshed"),
-         3 => Interfaces.C.Strings.New_String ("progress"),
-         4 => Interfaces.C.Strings.New_String ("item-inserted"),
-         5 => Interfaces.C.Strings.New_String ("item-renamed"),
-         6 => Interfaces.C.Strings.New_String ("item-deleting"),
-         7 => Interfaces.C.Strings.New_String ("item-deleted")
+      GtkAda.Types.Chars_Ptr_Array :=
+      (  0 => GtkAda.Types.New_String ("read-error"),
+         1 => GtkAda.Types.New_String ("rewind-error"),
+         2 => GtkAda.Types.New_String ("refreshed"),
+         3 => GtkAda.Types.New_String ("progress"),
+         4 => GtkAda.Types.New_String ("item-inserted"),
+         5 => GtkAda.Types.New_String ("item-renamed"),
+         6 => GtkAda.Types.New_String ("item-deleting"),
+         7 => GtkAda.Types.New_String ("item-deleted")
       );
    Abstract_Directory_Signal_Parameters : constant
                                           Signal_Parameter_Types :=
@@ -163,18 +163,18 @@ package body Gtk.Abstract_Browser is
          7 => (0 => GType_String,  1 => GType_None)
       );
    Read_Error_ID   : Signal_ID := Invalid_Signal_Id;
-   Rewind_Error_ID : Signal_ID;
-   Refreshed_ID    : Signal_ID;
-   Progress_ID     : Signal_ID;
-   Inserted_ID     : Signal_ID;
-   Renamed_ID      : Signal_ID;
-   Deleted_ID      : Signal_ID;
-   Deleting_ID     : Signal_ID;
+   Rewind_Error_ID : Signal_ID := Invalid_Signal_Id;
+   Refreshed_ID    : Signal_ID := Invalid_Signal_Id;
+   Progress_ID     : Signal_ID := Invalid_Signal_Id;
+   Inserted_ID     : Signal_ID := Invalid_Signal_Id;
+   Renamed_ID      : Signal_ID := Invalid_Signal_Id;
+   Deleted_ID      : Signal_ID := Invalid_Signal_Id;
+   Deleting_ID     : Signal_ID := Invalid_Signal_Id;
    --
    -- Signals of directory items
    --
    Directory_Items_Signal_Names : constant
-                                  GtkAda.Types.Chars_Ptr_Array :=
+      Interfaces.C.Strings.Chars_Ptr_Array :=
       (  0 => Interfaces.C.Strings.New_String ("directory-changed"),
          1 => Interfaces.C.Strings.New_String ("selection-changed")
       );
@@ -1375,11 +1375,11 @@ package body Gtk.Abstract_Browser is
       Init (Params (1), GType_Pointer);
       Set_Address (Params (1), Iter'Address);
       Init (Params (2), Path_Get_Type);
-      Set_Address (Params (2), Get_Object (Path));
+      Set_Boxed (Params (2), Get_Object (Path));
       EmitV (Params (0)'Address, Signal, 0, Result'Address);
       Unset (Params (0));
       Unset (Params (1));
---    Unset (Params (2));
+      Unset (Params (2));
    end Emit;
 
    procedure Emit
@@ -1782,7 +1782,7 @@ package body Gtk.Abstract_Browser is
                 (  Cache_Model_Type,
                    GLib.Signal_Name
                    (  String'
-                      (  Value
+                      (  GtkAda.Types.Value
                          (  Abstract_Directory_Signal_Names (Index)
                 )  )  )  );
       end Lookup;

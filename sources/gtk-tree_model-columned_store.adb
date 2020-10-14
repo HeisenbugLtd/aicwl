@@ -3,7 +3,7 @@
 --     Gtk.Tree_Model.Columned_Store               Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,11 +25,11 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Ada.Exceptions;        use Ada.Exceptions;
-with GLib.Messages;         use GLib.Messages;
-with Gtk.Missed;            use Gtk.Missed;
-with Interfaces.C.Strings;  use Interfaces.C.Strings;
-with System;                use System;
+with Ada.Exceptions;  use Ada.Exceptions;
+with GLib.Messages;   use GLib.Messages;
+with Gtk.Missed;      use Gtk.Missed;
+with GtkAda.Types;    use GtkAda.Types;
+with System;          use System;
 
 with Ada.Unchecked_Conversion;
 with GNAT.Traceback.Symbolic;
@@ -590,7 +590,7 @@ package body Gtk.Tree_Model.Columned_Store is
    end Has_Child;
 
    Signals : constant Chars_Ptr_Array :=
-      (0 => Interfaces.C.Strings.New_String ("root-changed"));
+                      (0 => New_String ("root-changed"));
 
    procedure Initialize
              (  Model     : not null access

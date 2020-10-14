@@ -2,7 +2,7 @@
 --  package Gtk.Missed              Copyright (c)  Maxim Reznik       --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  19:06 02 Jan 2018  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -225,7 +225,7 @@ package Gtk.Missed is
              (  Class_Record  : GObject_Class;
                 Prop_Id       : Property_Id;
                 Property_Spec : Param_Spec
-             );
+             )  renames GLib.Properties.Creation.Install_Property;
 
    function Compare
             (  Model : Gtk_Tree_Model;
@@ -1051,8 +1051,6 @@ private
    pragma Import (C, Unicode_To_Keyval, "gdk_unicode_to_keyval");
    pragma Import (C, Dir_Rewind,        "g_dir_rewind");
    pragma Import (C, GType_Icon,        "g_icon_get_type");
-   pragma Import (C, Class_Install_Property,
-                                     "g_object_class_install_property");
 --
 -- Search_Data -- To enumerate elements of a container
 --

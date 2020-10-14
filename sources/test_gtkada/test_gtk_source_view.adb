@@ -3,7 +3,7 @@
 --     Test_Gtk_Source_View                        Luebeck            --
 --  Test for Gtk.Source_View                       Summer, 2009       --
 --                                                                    --
---                                Last revision :  07:53 21 Jul 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -42,9 +42,9 @@ with Gtk.Text_Buffer;              use Gtk.Text_Buffer;
 with Gtk.Text_Iter;                use Gtk.Text_Iter;
 with Gtk.Window;                   use Gtk.Window;
 with Gtk.Widget;                   use Gtk.Widget;
+with GtkAda.Types;                 use GtkAda.Types;
 with Pango.Font;                   use Pango.Font;
 
-with Interfaces.C.Strings;
 with GLib.Messages;
 
 procedure Test_Gtk_Source_View is
@@ -72,7 +72,6 @@ begin
    Attach (Grid, Scroll, 0, 1, 0, 1);
 
    declare
-      use Interfaces.C.Strings;
       Dirs : constant Chars_Ptr_Array := Get_Default.Get_Search_Path;
    begin
       Put_Line ("Language search paths:");
@@ -91,7 +90,6 @@ begin
       end loop;
    end;
    declare
-      use Interfaces.C.Strings;
       Language : constant Gtk_Source_Language :=
                           Get_Language (Get_Default, "ada");
    begin

@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  19:07 02 Jan 2018  --
+--                                Last revision :  11:46 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -30,6 +30,8 @@ with Ada.Tags;                    use Ada.Tags;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
 with Interfaces;                  use Interfaces;
 
+with Gtkada.Bindings;
+with GtkAda.Types;
 with Gtk.Layered.Arc;
 with Gtk.Layered.Bar;
 with Gtk.Layered.Cache;
@@ -371,20 +373,19 @@ package body Gtk.Layered.Stream_IO is
              (  Stream : in out Root_Stream_Type'Class;
                 Value  : out Cairo_Font_Face
              )  is
-      use Interfaces.C.Strings;
-      Family : aliased Char_Array :=
-                  To_C (UTF8_String'(Restore (Stream'Access)));
+      use GtkAda.Types;
+      Family : Chars_Ptr := New_String (Restore (Stream'Access));
       Slant  : Cairo_Font_Slant;
       Weight : Cairo_Font_Weight;
    begin
       Restore (Stream, Slant);
       Restore (Stream, Weight);
-      Value :=
-         Toy_Font_Face_Create
-         (  To_Chars_Ptr (Family'Unchecked_Access),
-            Slant,
-            Weight
-         );
+      Value := Toy_Font_Face_Create (Family, Slant, Weight);
+      Free (Family);
+   exception
+      when others =>
+         Free (Family);
+         raise;
    end Restore;
 
    procedure Restore
@@ -941,7 +942,7 @@ package body Gtk.Layered.Stream_IO is
    begin
       Store
       (  Stream,
-         Interfaces.C.Strings.Value (Toy_Font_Face_Get_Family (Value))
+         GtkAda.Types.Value (Toy_Font_Face_Get_Family (Value))
       );
       Store (Stream, Toy_Font_Face_Get_Slant  (Value));
       Store (Stream, Toy_Font_Face_Get_Weight (Value));

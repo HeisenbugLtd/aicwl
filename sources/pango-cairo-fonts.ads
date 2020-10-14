@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  11:46 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -35,6 +35,7 @@ with Pango.Enums;      use Pango.Enums;
 with Pango.Font;       use Pango.Font;
 
 with Ada.Finalization;
+with GtkAda.Types;
 with Interfaces.C.Strings;
 
 package Pango.Cairo.Fonts is
@@ -331,7 +332,7 @@ private
    function Get_Family (Handle : Cairo_Font_Face_Handle)
       return UTF8_String;
    function Get_Family (Handle : Cairo_Font_Face_Handle)
-      return Interfaces.C.Strings.Chars_Ptr;
+      return GtkAda.Types.Chars_Ptr;
    function Get_Slant (Handle : Cairo_Font_Face_Handle)
       return Cairo_Font_Slant;
    function Get_Weight (Handle : Cairo_Font_Face_Handle)

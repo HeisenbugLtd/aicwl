@@ -3,7 +3,6 @@ with "../aicwl-editor.gpr";
 
 project AICWL.Tests is
 
-   for Exec_Dir use ".";
    for Main use ("test_aicwl.adb");
    for Source_Files use
        (  "test_aicwl.adb",
@@ -14,6 +13,7 @@ project AICWL.Tests is
           "test_generator.adb",
           "test_generator.ads"
        );
+   for Object_Dir use AICWL.Object_Dir_Path;
 
    package Compiler renames AICWL.Compiler;
    package Binder   renames AICWL.Binder;

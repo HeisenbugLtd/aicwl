@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  15:24 01 Apr 2015  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -77,14 +77,14 @@ package GLib.Wrappers is
           );
    pragma Weak_External (G_File_Test_UTF8);
 
-   function G_Find_Program_In_Path_UTF8 (Program : Address)
-      return Address;
-   pragma External
-          (  C,
-             G_Find_Program_In_Path_UTF8,
-             "g_find_program_in_path_utf8"
-          );
-   pragma Weak_External (G_Find_Program_In_Path_UTF8);
+--     function G_Find_Program_In_Path_UTF8 (Program : Address)
+--        return Address;
+--     pragma External
+--            (  C,
+--               G_Find_Program_In_Path_UTF8,
+--               "g_find_program_in_path_utf8"
+--            );
+--     pragma Weak_External (G_Find_Program_In_Path_UTF8);
 
    function G_Get_Current_Dir_UTF8 return Address;
    pragma External

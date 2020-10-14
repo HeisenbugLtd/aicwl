@@ -3,7 +3,7 @@
 --     Gtk.Source_Style_Scheme                     Luebeck            --
 --  Interface                                      Summer, 2009       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,10 +25,8 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
-with Interfaces.C.Strings;  use Interfaces.C.Strings;
-with Gtk.Source_Style;      use Gtk.Source_Style;
-
-with Interfaces.C.Pointers;
+with GtkAda.Types;      use GtkAda.Types;
+with Gtk.Source_Style;  use Gtk.Source_Style;
 
 package Gtk.Source_Style_Scheme is
 --

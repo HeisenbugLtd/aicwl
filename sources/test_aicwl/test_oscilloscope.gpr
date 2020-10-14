@@ -2,13 +2,14 @@ with "../aicwl.gpr";
 
 project Test_Oscilloscope is
 
-   for Exec_Dir use ".";
    for Main use ("test_oscilloscope.adb");
    for Source_Files use
        (  "test_oscilloscope.adb",
           "test_generator.adb",
           "test_generator.ads"
        );
+   for Object_Dir use AICWL.Object_Dir_Path;
+
    package Compiler renames AICWL.Compiler;
    package Binder   renames AICWL.Binder;
    package Builder  renames AICWL.Builder;

@@ -3,7 +3,7 @@
 --     Gtk.Source_Style_Scheme_Manager             Luebeck            --
 --  Interface                                      Summer, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  11:45 29 Jul 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -26,7 +26,7 @@
 --____________________________________________________________________--
 
 with Gtk.Source_Style_Scheme;  use Gtk.Source_Style_Scheme;
-with Interfaces.C.Strings;     use Interfaces.C.Strings;
+with GtkAda.Types;             use GtkAda.Types;
 
 package Gtk.Source_Style_Scheme_Manager is
 --
@@ -92,11 +92,11 @@ package Gtk.Source_Style_Scheme_Manager is
                Scheme  : UTF8_String
             )  return Gtk_Source_Style_Scheme;
 --
--- Get_Scheme_IDs -- Erase the cache
+-- Get_Scheme_IDs -- Get scheme ids
 --
 --    Manager - The manager
 --
--- This  function  returns  an array of string containing the ids of the
+-- This  function  returns an array of strings containing the ids of the
 -- available style schemes or Null_Ptr if no style scheme is  available.
 -- The array elements are owned by the manager and must not be freed.
 --
