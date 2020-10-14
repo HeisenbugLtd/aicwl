@@ -3,7 +3,7 @@
 --     Gtk.Layered.Graph_Paper_Annotation          Luebeck            --
 -- Implementation                                  Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:38 18 Nov 2019  --
+--                                Last revision :  21:57 12 Jan 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -729,14 +729,15 @@ package body Gtk.Layered.Graph_Paper_Annotation is
             end if;
             Layer.Middle_Value := GDouble'First;
             if Draw (Start) then
-               for Index in reverse 0..Start - 1 loop
-                  exit when not Draw (Index);
-               end loop;
-               Old_Box := Box;
-               for Index in Start + 1..Natural'Last loop
-                  exit when not Draw (Index);
-               end loop;
+               null;
             end if;
+            for Index in reverse 0..Start - 1 loop
+               exit when not Draw (Index);
+            end loop;
+            Old_Box := Box;
+            for Index in Start + 1..Natural'Last loop
+               exit when not Draw (Index);
+            end loop;
          end if;
       end Draw_X;
 
@@ -778,14 +779,15 @@ package body Gtk.Layered.Graph_Paper_Annotation is
             end if;
             Layer.Middle_Value := GDouble'First;
             if Draw (Start) then
-               for Index in reverse 0..Start - 1 loop
-                  exit when not Draw (Index);
-               end loop;
-               Old_Box := Box;
-               for Index in Start + 1..Natural'Last loop
-                  exit when not Draw (Index);
-               end loop;
+               null;
             end if;
+            for Index in reverse 0..Start - 1 loop
+               exit when not Draw (Index);
+            end loop;
+            Old_Box := Box;
+            for Index in Start + 1..Natural'Last loop
+               exit when not Draw (Index);
+            end loop;
          end if;
       end Draw_Y;
 
@@ -1089,8 +1091,8 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "font-type",
                      Nick    => "font type",
                      Default => Pango_Font,
-                     Blurb   => "The backend used for the font, " &
-                                "e.g. toy font, pango font"
+                     Blurb   => "The backend used for the font, e.g. " &
+                                "toy font, pango font"
                   );
             when Property_Border =>
                return
@@ -1100,9 +1102,9 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => GDouble'First,
                      Maximum => GDouble'Last,
                      Default => 2.0,
-                     Blurb   => "The amount added to the four sides" &
-                                "of the annotation text extents box " &
-                                "in order to get the corresponding " &
+                     Blurb   => "The amount added to the four sides"   &
+                                "of the annotation text extents box "  &
+                                "in order to get the corresponding "   &
                                 "background box"
                   );
             when Property_Overlap =>
@@ -1113,7 +1115,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => GDouble'First,
                      Maximum => GDouble'Last,
                      Default =>-2.0,
-                     Blurb   => "The amount inside the box allowed" &
+                     Blurb   => "The amount inside the box allowed"    &
                                 "to overlap other boxes"
                   );
             when Property_From =>
@@ -1124,14 +1126,14 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => GDouble'First,
                      Maximum => GDouble'Last,
                      Default => 0.0,
-                     Blurb   => "The x-coordinate of the point " &
-                                "of the line along which annotation " &
-                                "texts are arranged when the " &
-                                "annotation is horizontal. When " &
-                                "annotation is vertical it is the " &
-                                "y-coordinate. Annotation text is " &
-                                "shown only the corresponding " &
-                                "coordinate of the box is no less " &
+                     Blurb   => "The x-coordinate of the point of "    &
+                                "the line along which annotation "     &
+                                "texts are arranged when the "         &
+                                "annotation is horizontal. When "      &
+                                "annotation is vertical it is the "    &
+                                "y-coordinate. Annotation text is "    &
+                                "shown only the corresponding "        &
+                                "coordinate of the box is no less "    &
                                 "than the property value"
                   );
             when Property_To =>
@@ -1142,13 +1144,13 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => GDouble'First,
                      Maximum => GDouble'Last,
                      Default => 0.0,
-                     Blurb   => "The x-coordinate of the point " &
-                                "of the line along which annotation " &
-                                "texts are arranged when the " &
-                                "annotation is horizontal. When " &
-                                "annotation is vertical it is the " &
-                                "y-coordinate. Annotation text is " &
-                                "shown only the corresponding " &
+                     Blurb   => "The x-coordinate of the point "       &
+                                "of the line along which annotation "  &
+                                "texts are arranged when the "         &
+                                "annotation is horizontal. When "      &
+                                "annotation is vertical it is the "    &
+                                "y-coordinate. Annotation text is "    &
+                                "shown only the corresponding "        &
                                 "coordinate of the box is no greater " &
                                 "than the property value"
                   );
@@ -1160,16 +1162,16 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => GDouble'First,
                      Maximum => GDouble'Last,
                      Default => 0.0,
-                     Blurb   => "The y-coordinate of the line along " &
-                                "which annotation texts are " &
-                                "arranged when the annotation is " &
-                                "horizontal. When annotation is " &
-                                "vertical it is the x-coordinate. " &
-                                "When annotation position is " &
-                                "relative, the value is the y- or " &
-                                "x-value. In the latter case an " &
-                                "annotation text is shown only if " &
-                                "in the corresponding range of the " &
+                     Blurb   => "The y-coordinate of the line along "  &
+                                "which annotation texts are "          &
+                                "arranged when the annotation is "     &
+                                "horizontal. When annotation is "      &
+                                "vertical it is the x-coordinate. "    &
+                                "When annotation position is "         &
+                                "relative, the value is the y- or "    &
+                                "x-value. In the latter case an "      &
+                                "annotation text is shown only if "    &
+                                "in the corresponding range of the "   &
                                 "graph paper box"
                   );
             when Property_Text_Angle =>
@@ -1180,7 +1182,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum =>-2.0 * Pi,
                      Maximum => 2.0 * Pi,
                      Default => 0.0,
-                     Blurb   => "The angle of the annotation texts " &
+                     Blurb   => "The angle of the annotation texts "   &
                                 "base line"
                   );
             when Property_Stretch =>
@@ -1191,9 +1193,9 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => 0.0,
                      Maximum => GDouble'Last,
                      Default => 1.0,
-                     Blurb   => "The relation of the rendered width " &
-                                "of an annotation text to its " &
-                                "original width. The stretch value " &
+                     Blurb   => "The relation of the rendered width "  &
+                                "of an annotation text to its "        &
+                                "original width. The stretch value "   &
                                 "1 keeps texts unchanged"
                   );
             when Property_Height =>
@@ -1212,7 +1214,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "font-familiy",
                      Nick    => "font famility",
                      Default => "arial",
-                     Blurb   => "The annotation text font family, " &
+                     Blurb   => "The annotation text font family, "    &
                                 "e.g. courier"
                   );
             when Property_Opacity =>
@@ -1223,7 +1225,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => 0.0,
                      Maximum => 1.0,
                      Default => 1.0,
-                     Blurb   => "The opacity of the text background " &
+                     Blurb   => "The opacity of the text background "  &
                                 "boxes"
                   );
             when Property_X_Justify =>
@@ -1232,8 +1234,8 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "text-alignment",
                      Nick    => "text X-alignment",
                      Default => Center,
-                     Blurb   => "The text horizontal alignment " &
-                                "relatively to the annotation " &
+                     Blurb   => "The text horizontal alignment "       &
+                                "relatively to the annotation "        &
                                 "line"
                   );
             when Property_Y_Justify =>
@@ -1242,8 +1244,8 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "text-vertical-alignment",
                      Nick    => "text Y-alignment",
                      Default => Center,
-                     Blurb   => "The vertical horizontal alignment " &
-                                "relatively to the annotation " &
+                     Blurb   => "The vertical horizontal alignment "   &
+                                "relatively to the annotation "        &
                                 "line"
                   );
             when Property_Slant =>
@@ -1262,9 +1264,9 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                      Minimum => 1,
                      Maximum => GUInt (GInt'Last),
                      Default => 12,
-                     Blurb   => "The font size in points. " &
-                                "The value is only relevant for " &
-                                "pango fonts. For cairo toy size " &
+                     Blurb   => "The font size in points. "            &
+                                "The value is only relevant for "      &
+                                "pango fonts. For cairo toy size "     &
                                 "is ignored"
                   );
             when Property_Weight =>
@@ -1289,7 +1291,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name       => "background-color",
                      Boxed_Type => Gdk_Color_Type,
                      Nick       => "background",
-                     Blurb      => "The annotation texts background " &
+                     Blurb      => "The annotation texts background "  &
                                    "color"
                   );
             when Property_Scaled =>
@@ -1307,9 +1309,9 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "use-superscript",
                      Nick    => "superscript",
                      Default => False,
-                     Blurb   => "The annotation text may use " &
-                                "superscript characters for " &
-                                "the exponent part. When false, " &
+                     Blurb   => "The annotation text may use "         &
+                                "superscript characters for "          &
+                                "the exponent part. When false, "      &
                                 "the Eyy notation is used instead"
                   );
             when Property_Enlarged =>
@@ -1318,7 +1320,7 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "enlarged",
                      Nick    => "enlarged",
                      Default => False,
-                     Blurb   => "The annotation texts sizes are " &
+                     Blurb   => "The annotation texts sizes are "      &
                                 "changed when the widget is resized"
                   );
             when Property_Orientation =>
@@ -1327,8 +1329,8 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "orientation",
                      Nick    => "orientation",
                      Default => False,
-                     Blurb   => "The annotation corresponds to the " &
-                                "x-axis when false or to the y-axis " &
+                     Blurb   => "The annotation corresponds to the "   &
+                                "x-axis when false or to the y-axis "  &
                                 "otherwise"
                   );
             when Property_Alignment =>
@@ -1337,10 +1339,10 @@ package body Gtk.Layered.Graph_Paper_Annotation is
                   (  Name    => "alignment",
                      Nick    => "alignment",
                      Default => False,
-                     Blurb   => "The annotation line position " &
-                                "is a coordinate when this property " &
-                                "is false. Otherwise it is a " &
-                                "value, e.g. horizontal axis located" &
+                     Blurb   => "The annotation line position "        &
+                                "is a coordinate when this property "  &
+                                "is false. Otherwise it is a "         &
+                                "value, e.g. horizontal axis located"  &
                                 "where the signal value would appear"
                   );
          end case;

@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  22:38 18 Nov 2019  --
+--                                Last revision :  21:57 12 Jan 2020  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -3055,6 +3055,7 @@ package body Gtk.Oscilloscope is
                Defined := True;
             end if;
             Oscilloscope.Set_Values_Grid (Index, On);
+            exit when On; -- Activate the first one
          end if;
       end loop;
       for Index in Sweeper_Type'Range loop
@@ -3064,6 +3065,7 @@ package body Gtk.Oscilloscope is
                Defined := True;
             end if;
             Oscilloscope.Set_Time_Grid (Index, On);
+            exit when On; -- Activate the first one
          end if;
       end loop;
    exception
@@ -4933,7 +4935,9 @@ package body Gtk.Oscilloscope is
             Line.Color :=
                Style_Get (Widget, "values-line-color", Line.Color);
             Line.Width :=
-               GDouble (GUInt'(Style_Get (Widget, "values-line-width")));
+               GDouble
+               (  GUInt'(Style_Get (Widget, "values-line-width"))
+               );
             Line.Line_Cap := Style_Get (Widget, "values-line-cap");
             case Amplifier is
                when Left =>
