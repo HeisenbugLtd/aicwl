@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  10:05 22 Nov 2014  --
+--                                Last revision :  15:24 01 Apr 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,7 +31,7 @@
 --  they  are  renamed  using  #define  so  that  the  link names become
 --  different.   For   example  g_file_test  is  g_file_test_utf8  under
 --  Windows.  The  workaround  is that for such functions the references
---  are consistently make to the *_utf8 variant. This  package  provides
+--  are consistently made to the *_utf8 variant. This  package  provides
 --  backups of these functions declared weak  externals.  Under  Windows
 --  they are ignored. Under Linux the linker picks  them  up  since  the
 --  native  *_utf8  functions  are  absent. The implemntations here call

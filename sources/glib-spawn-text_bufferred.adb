@@ -3,7 +3,7 @@
 --     GLib.Spawn.Text_Bufferred                   Luebeck            --
 --  Implementation                                 Spring, 2009       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  15:24 01 Apr 2015  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
