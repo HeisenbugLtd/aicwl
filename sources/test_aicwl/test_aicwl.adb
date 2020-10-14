@@ -3,7 +3,7 @@
 --  Test                                           Luebeck            --
 --                                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  09:44 08 Oct 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -33,6 +33,7 @@ with Gdk.Color;                    use Gdk.Color;
 with Gdk.Event;                    use Gdk.Event;
 with Gdk.Rectangle;                use Gdk.Rectangle;
 with GLib;                         use GLib;
+with GLib.Error;                   use GLib.Error;
 with GLib.Messages;                use GLib.Messages;
 with GLib.Values;                  use GLib.Values;
 with Gtk.Adjustment;               use Gtk.Adjustment;
@@ -47,6 +48,8 @@ with Gtk.Editable;                 use Gtk.Editable;
 with Gtk.Enums;                    use Gtk.Enums;
 with Gtk.Enums.String_Lists;       use Gtk.Enums.String_Lists;
 with Gtk.File_Chooser;             use Gtk.File_Chooser;
+with Gtk.File_Chooser_Dialog;      use Gtk.File_Chooser_Dialog;
+with Gtk.File_Filter;              use Gtk.File_Filter;
 with Gtk.Frame;                    use Gtk.Frame;
 with Gtk.GEntry;                   use Gtk.GEntry;
 with Gtk.Label;                    use Gtk.Label;
@@ -56,6 +59,7 @@ with Gtk.Layered.Bar;              use Gtk.Layered.Bar;
 with Gtk.Layered.Clock_Hand;       use Gtk.Layered.Clock_Hand;
 with Gtk.Layered.Cap;              use Gtk.Layered.Cap;
 with Gtk.Layered.Digital;          use Gtk.Layered.Digital;
+with Gtk.Layered.Disk_Needle;      use Gtk.Layered.Disk_Needle;
 with Gtk.Layered_Editor;           use Gtk.Layered_Editor;
 with Gtk.Layered.Elliptic_Bar;     use Gtk.Layered.Elliptic_Bar;
 with Gtk.Layered.Elliptic_Scale;   use Gtk.Layered.Elliptic_Scale;
@@ -96,7 +100,7 @@ with Ada.Strings;
 with Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 with Cairo.PDF;
-with Gtk.File_Chooser_Dialog;
+with GLib.Object.Checked_Destroy;
 with Gtk.Handlers;
 with Gtk.Gauge.Flat_Horizontal;
 with Gtk.Gauge.Flat_Vertical;
@@ -115,6 +119,7 @@ with Gtk.Gauge.Round_270_Inout;
 with Gtk.Gauge.Round_270_Outer;
 with Gtk.Gauge.Round_270_Reversed;
 with Gtk.Layered.Graph_Paper_Annotation;
+with Gtk.Layered.SVG;
 with Gtk.Layered.Waveform;
 with Gtk.Main.Router.GNAT_Stack;
 with Gtk.Meter.Angular_90;
@@ -124,9 +129,12 @@ with Gtk.Meter.Round_94;
 with Gtk.Meter.Thermo;
 with Gtk.Meter.Thermo_Dual;
 with Gtk.Meter.Thermo_Symmetric;
+with Gtk.Valve.Round_90;
 with Gtk.Wall_Clock.Imperial;
 with Gtk.Wall_Clock.Modern;
 with Gtk.Wall_Clock.Classic;
+with RSVG.Handle;
+with Strings_Edit.UTF8;
 
 with Gtk.Layered.Elliptic_Annotation;
 use  Gtk.Layered.Elliptic_Annotation;
@@ -144,8 +152,9 @@ with Gtk.Layered.Waveform.Amplifier;
 with Gtk.Layered.Waveform.Sweeper;
 
 procedure Test_AICWL is
-   File_Name : constant String := "test_aicwl.css";
-   PDF_Name  : constant String := "test_aicwl.pdf";
+   Null_Space : constant String := Strings_Edit.UTF8.Image (16#200B#);
+   File_Name  : constant String := "test_aicwl.css";
+   PDF_Name   : constant String := "test_aicwl.pdf";
    --
    -- All data are global, for the sake of  simplicity.  Otherwise,  the
    -- test were impossible to keep in  just  one  body  due  to  Ada  95
@@ -166,6 +175,52 @@ procedure Test_AICWL is
    Editor         : Gtk_Layered_Editor;
    Engine         : Layered_Refresh_Engine;
    Offset_Edit    : Gtk_Entry;
+
+   function Get_File return String is
+      Dialog : Gtk_File_Chooser_Dialog;
+      Filter : Gtk_File_Filter;
+      Cancel : Gtk_Button;
+      OK     : Gtk_Button;
+   begin
+      Dialog :=
+         Gtk_File_Chooser_Dialog_New
+         (  "Select an SVG file",
+            Window,
+            Action_Save
+         );
+      Filter := Gtk_File_Filter_New;
+      Filter.Set_Name ("SVG file");
+      Filter.Add_Pattern ("*.svg");
+      Dialog.Add_Filter (Filter);
+      Cancel := Add_Button_From_Stock
+                (  Dialog   => Dialog,
+                   Response => Gtk_Response_Cancel,
+                   Icon     => Stock_Cancel,
+                   Label    => "_Cancel",
+                   Tip      => "Close the file selection dialog"
+                );
+      OK :=     Add_Button_From_Stock
+                (  Dialog   => Dialog,
+                   Response => Gtk_Response_Accept,
+                   Icon     => Stock_OK,
+                   Label    => "_OK",
+                   Tip      => "Use the selected file"
+                );
+      OK.Set_Can_Default (True);
+      Dialog.Show_All;
+      Dialog.Set_Default_Response (Gtk_Response_Accept);
+      if Gtk_Response_Accept = Dialog.Run then
+         declare
+            File_Name : constant String := Dialog.Get_Filename;
+         begin
+            GLib.Object.Checked_Destroy (Dialog);
+            return File_Name;
+         end;
+      else
+         GLib.Object.Checked_Destroy (Dialog);
+         return "";
+      end if;
+   end Get_File;
 
    procedure Test_IO is separate;
    procedure Test_Ring_Buffer is separate;
@@ -1797,127 +1852,6 @@ procedure Test_AICWL is
       return Box.all'Unchecked_Access;
    end Test_26;
 
-   function Test_35 return Gtk_Widget is
-      Widget  : Gtk_Layered;
-      Angle   : GDouble;
-      Center  : constant Cairo_Tuple := (400.0, 300.0);
-      Ellipse : constant Ellipse_Parameters :=
-                   (Center, 1.0 / 190.0, 160.0, Pi / 7.0);
-   begin
-      Gtk_New (Widget);
-
-      Add_Arc
-      (  Under   => Widget,
-         Ellipse => Ellipse,
-         Color   => RGB (0.0, 0.0, 0.0)
-      );
-      Add_Line
-      (  Under   => Widget,
-         From    => Center,
-         Length  => 200.0,
-         Angle   => Pi / 7.0,
-         Color   => RGB (0.0, 0.0, 0.0)
-      );
-      Add_Line
-      (  Under   => Widget,
-         From    => Center,
-         Length  => 200.0,
-         Angle   => Pi + Pi / 7.0,
-         Color   => RGB (0.0, 0.0, 0.0)
-      );
-         -- Moved centered
-      Angle := Pi + Pi / 3.0;
-      Add_Label
-      (  Under    => Widget,
-         Text     => "centered",
-         Stretch  => 0.5,
-         Height   => 50.0,
-         Angle    => Angle,
-         Location => Get_Point (Ellipse, Ellipse * Angle),
-         Mode     => Moved_Centered
-      );
-      Add_Line
-      (  Under => Widget,
-         From  => Center,
-         To    => Get_Point (Ellipse, Ellipse * Angle),
-         Color => RGB (0.5, 0.5, 1.0)
-      );
-         -- Moved inside
-      Angle := Pi / 3.0;
-      Add_Label
-      (  Under    => Widget,
-         Text     => "inside",
-         Stretch  => 0.5,
-         Height   => 50.0,
-         Angle    => Angle,
-         Location => Get_Point (Ellipse, Ellipse * Angle),
-         Mode     => Moved_Inside
-      );
-      Add_Line
-      (  Under => Widget,
-         From  => Center,
-         To    => Get_Point (Ellipse, Ellipse * Angle),
-         Color => RGB (0.5, 0.5, 1.0)
-      );
-         -- Moved outside
-      Angle := Pi / 2.0 + Pi / 3.0;
-      Add_Label
-      (  Under    => Widget,
-         Text     => "outside",
-         Stretch  => 0.5,
-         Height   => 50.0,
-         Angle    => Angle,
-         Location => Get_Point (Ellipse, Ellipse * Angle),
-         Mode     => Moved_Outside
-      );
-      Add_Line
-      (  Under => Widget,
-         From  => Center,
-         To    => Get_Point (Ellipse, Ellipse * Angle),
-         Color => RGB (0.5, 0.5, 1.0)
-      );
-         -- Moved skewed
-      Angle := -Pi / 4.0;
-      Add_Label
-      (  Under    => Widget,
-         Text     => "skewed",
-         Stretch  => 0.5,
-         Height   => 50.0,
-         Angle    => Ellipse.Angle,
-         Location => Get_Point (Ellipse, Ellipse * Angle),
-         Skew     => Ellipse.Angle,
-         Mode     => Skewed
-      );
-      Add_Line
-      (  Under => Widget,
-         From  => Center,
-         To    => Get_Point (Ellipse, Ellipse * Angle),
-         Color => RGB (0.5, 0.5, 1.0)
-      );
-         -- Rotated
-      Angle := Pi * 1.98;
-      Add_Label
-      (  Under    => Widget,
-         Text     => "rotated",
-         Stretch  => 0.5,
-         Height   => 50.0,
-         Angle    => Angle,
-         Location => Get_Point (Ellipse, Ellipse * Angle),
-         Mode     => Rotated
-      );
-      Add_Line
-      (  Under => Widget,
-         From  => Center,
-         To    => Get_Point (Ellipse, Ellipse * Angle),
-         Color => RGB (0.5, 0.5, 1.0)
-      );
-
-      Put (Editor, Widget);
-      Set_Sensitive (Load_Button, True);
-      Set_Sensitive (Save_Button, True);
-      return Widget.all'Unchecked_Access;
-   end Test_35;
-
    procedure Set_Autoscale
              (  Toggle : access Gtk_Toggle_Button_Record'Class
              )  is
@@ -2551,6 +2485,174 @@ procedure Test_AICWL is
       return Box.all'Unchecked_Access;
    end Test_34;
 
+   function Test_35 return Gtk_Widget is
+      Widget  : Gtk_Layered;
+      Angle   : GDouble;
+      Center  : constant Cairo_Tuple := (400.0, 300.0);
+      Ellipse : constant Ellipse_Parameters :=
+                   (Center, 1.0 / 190.0, 160.0, Pi / 7.0);
+   begin
+      Gtk_New (Widget);
+
+      Add_Arc
+      (  Under   => Widget,
+         Ellipse => Ellipse,
+         Color   => RGB (0.0, 0.0, 0.0)
+      );
+      Add_Line
+      (  Under   => Widget,
+         From    => Center,
+         Length  => 200.0,
+         Angle   => Pi / 7.0,
+         Color   => RGB (0.0, 0.0, 0.0)
+      );
+      Add_Line
+      (  Under   => Widget,
+         From    => Center,
+         Length  => 200.0,
+         Angle   => Pi + Pi / 7.0,
+         Color   => RGB (0.0, 0.0, 0.0)
+      );
+         -- Moved centered
+      Angle := Pi + Pi / 3.0;
+      Add_Label
+      (  Under    => Widget,
+         Text     => "centered",
+         Stretch  => 0.5,
+         Height   => 50.0,
+         Angle    => Angle,
+         Location => Get_Point (Ellipse, Ellipse * Angle),
+         Mode     => Moved_Centered
+      );
+      Add_Line
+      (  Under => Widget,
+         From  => Center,
+         To    => Get_Point (Ellipse, Ellipse * Angle),
+         Color => RGB (0.5, 0.5, 1.0)
+      );
+         -- Moved inside
+      Angle := Pi / 3.0;
+      Add_Label
+      (  Under    => Widget,
+         Text     => "inside",
+         Stretch  => 0.5,
+         Height   => 50.0,
+         Angle    => Angle,
+         Location => Get_Point (Ellipse, Ellipse * Angle),
+         Mode     => Moved_Inside
+      );
+      Add_Line
+      (  Under => Widget,
+         From  => Center,
+         To    => Get_Point (Ellipse, Ellipse * Angle),
+         Color => RGB (0.5, 0.5, 1.0)
+      );
+         -- Moved outside
+      Angle := Pi / 2.0 + Pi / 3.0;
+      Add_Label
+      (  Under    => Widget,
+         Text     => "outside",
+         Stretch  => 0.5,
+         Height   => 50.0,
+         Angle    => Angle,
+         Location => Get_Point (Ellipse, Ellipse * Angle),
+         Mode     => Moved_Outside
+      );
+      Add_Line
+      (  Under => Widget,
+         From  => Center,
+         To    => Get_Point (Ellipse, Ellipse * Angle),
+         Color => RGB (0.5, 0.5, 1.0)
+      );
+         -- Moved skewed
+      Angle := -Pi / 4.0;
+      Add_Label
+      (  Under    => Widget,
+         Text     => "skewed",
+         Stretch  => 0.5,
+         Height   => 50.0,
+         Angle    => Ellipse.Angle,
+         Location => Get_Point (Ellipse, Ellipse * Angle),
+         Skew     => Ellipse.Angle,
+         Mode     => Skewed
+      );
+      Add_Line
+      (  Under => Widget,
+         From  => Center,
+         To    => Get_Point (Ellipse, Ellipse * Angle),
+         Color => RGB (0.5, 0.5, 1.0)
+      );
+         -- Rotated
+      Angle := Pi * 1.98;
+      Add_Label
+      (  Under    => Widget,
+         Text     => "rotated",
+         Stretch  => 0.5,
+         Height   => 50.0,
+         Angle    => Angle,
+         Location => Get_Point (Ellipse, Ellipse * Angle),
+         Mode     => Rotated
+      );
+      Add_Line
+      (  Under => Widget,
+         From  => Center,
+         To    => Get_Point (Ellipse, Ellipse * Angle),
+         Color => RGB (0.5, 0.5, 1.0)
+      );
+
+      Put (Editor, Widget);
+      Set_Sensitive (Load_Button, True);
+      Set_Sensitive (Save_Button, True);
+      return Widget.all'Unchecked_Access;
+   end Test_35;
+
+   function Test_36 return Gtk_Widget is
+      use Gtk.Valve.Round_90;
+      Widget     : Gtk_Valve_Round_90;
+      Box        : Gtk_HBox;
+      Adjustment : Gtk_Adjustment;
+      Slider     : Gtk_Scale;
+   begin
+      Gtk_New (Adjustment, 0.0, 0.0, 1.0, 0.01, 0.1);
+      Gtk_New_HBox (Box);
+      Gtk_New
+      (  Widget,
+         Null_Space & " 20 40 60 80 " & Null_Space,
+         Adjustment => Adjustment
+      );
+      Box.Pack_Start (Widget);
+      Gtk_New_Vscale (Slider, Adjustment);
+      Box.Pack_Start (Slider, False, False);
+      Put (Editor, Widget);
+      Set_Sensitive (Load_Button, True);
+      Set_Sensitive (Save_Button, True);
+      return Box.all'Unchecked_Access;
+   end Test_36;
+
+   function Test_37 return Gtk_Widget is
+      use Gtk.Layered.SVG;
+      use RSVG.Handle;
+      Widget : Gtk_Layered;
+      File   : constant String := Get_File;
+   begin
+      Gtk_New (Widget);
+      if File'Length > 0 then
+         declare
+            Result : Create_Result := Gtk_New_From_File (File);
+         begin
+            if Result.Success then
+               Add_SVG (Widget, Result.Handle, (0.5, 0.5), True);
+               Result.Handle.Unref;
+            else
+               Gtk.Main.Router.Say (Get_Message (Result.Error));
+               Error_Free (Result.Error);
+            end if;
+         end;
+      end if;
+      Put (Editor, Widget);
+      return Widget.all'Unchecked_Access;
+   end Test_37;
+
 begin
    Gtk.Main.Init;
 -- Gtk.Main.Router.GNAT_Stack.Set_Log_Trace;
@@ -2642,6 +2744,14 @@ begin
             Add_Test ("Gtk_Clock_Imperial", Test_7'Address);
             Add_Test ("Gtk_Clock_Modern",   Test_6'Address);
             Add_Test ("Gtk_Clock_Classic",  Test_5'Address);
+         -- Valves
+         Append (List, Parent, Null_Iter);
+         Gtk.Missed.Set (List, Parent, 0, "Valves");
+            Add_Test ("Gtk_Valve_Round_90",     Test_36'Address);
+         -- SVG
+         Append (List, Parent, Null_Iter);
+         Gtk.Missed.Set (List, Parent, 0, "SVG images");
+            Add_Test ("Gtk_Layer_SVG",          Test_37'Address);
          -- Waveforms
          Append (List, Parent, Null_Iter);
          Gtk.Missed.Set (List, Parent, 0, "Waveforms");

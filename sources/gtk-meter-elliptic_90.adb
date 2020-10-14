@@ -3,7 +3,7 @@
 --     Gtk.Meter.Elliptic_90                       Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  22:07 23 Jul 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -510,6 +510,8 @@ package body Gtk.Meter.Elliptic_90 is
          Border_Depth   => Widget.Background.Get_Border_Depth,
          Border_Color   => Widget.Background.Get_Border_Color,
          Border_Shadow  => Widget.Background.Get_Border_Shadow,
+         Lens_Reflex    => Widget.Background.Get_Lens_Reflex,
+         Lens_Shadow    => Widget.Background.Get_Lens_Shadow,
          Color  =>
             Style_Get (Widget, "backgound-color", Background_Color)
       );

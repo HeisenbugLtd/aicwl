@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -273,6 +273,8 @@ private
 
    package Alignment_Box is
       new Gtk.Generic_Enum_Combo_Box (Ada.Strings.Alignment);
+   package Elliptic_Shape_Box is
+      new Gtk.Generic_Enum_Combo_Box (Elliptic_Shape_Type);
    package Font_Slant_Box is
       new Gtk.Generic_Enum_Combo_Box (Cairo.Cairo_Font_Slant);
    package Font_Type_Box is
@@ -457,7 +459,8 @@ private
            Rectangular_Background_Layer,
            Rectangular_Clip_Region_On_Layer,
            Sector_Needle_Layer,
-           Waveform_Layer
+           Waveform_Layer,
+           Disk_Needle_Layer
         );
    package Layer_Combo is new Gtk.Generic_Enum_Combo_Box (Layer_Type);
 

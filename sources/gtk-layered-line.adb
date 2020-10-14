@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -44,7 +44,8 @@ package body Gtk.Layered.Line is
            Property_To_Y,
            Property_Line_Width,
            Property_Line_Color,
-           Property_Line_Cap
+           Property_Line_Cap,
+           Property_Opacity
         );
 
    procedure Free is
@@ -68,10 +69,11 @@ package body Gtk.Layered.Line is
    procedure Add_Line
              (  Under    : not null access Layer_Location'Class;
                 From     : Cairo_Tuple    := (0.0, 0.0);
-                Angle    : GDouble         := 0.0;
-                Length   : GDouble         := 1.0;
-                Width    : GDouble         := 1.0;
+                Angle    : GDouble        := 0.0;
+                Length   : GDouble        := 1.0;
+                Width    : GDouble        := 1.0;
                 Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+                Opacity  : GDouble        := 1.0;
                 Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                 Scaled   : Boolean        := False;
                 Widened  : Boolean        := False
@@ -81,12 +83,14 @@ package body Gtk.Layered.Line is
    begin
       Layer.Scaled  := Scaled;
       Layer.Widened := Widened;
+      Layer.Opacity   := GDouble'Max (GDouble'Min (Opacity, 1.0), 0.0);
       Add (Ptr, Under);
       Set
       (  Layer   => Layer,
          From    => From,
          Angle   => Angle,
          Length  => Length,
+         Opacity => Opacity,
          Line    => (Width, Color, Line_Cap)
       );
    exception
@@ -99,8 +103,9 @@ package body Gtk.Layered.Line is
              (  Under    : not null access Layer_Location'Class;
                 From     : Cairo_Tuple    := (0.0, 0.0);
                 To       : Cairo_Tuple    := (0.0, 1.0);
-                Width    : GDouble         := 1.0;
+                Width    : GDouble        := 1.0;
                 Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+                Opacity  : GDouble        := 1.0;
                 Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                 Scaled   : Boolean        := False;
                 Widened  : Boolean        := False
@@ -110,12 +115,14 @@ package body Gtk.Layered.Line is
    begin
       Layer.Scaled  := Scaled;
       Layer.Widened := Widened;
+      Layer.Opacity   := GDouble'Max (GDouble'Min (Opacity, 1.0), 0.0);
       Add (Ptr, Under);
       Set
-      (  Layer => Layer,
-         From  => From,
-         To    => To,
-         Line  => (Width, Color, Line_Cap)
+      (  Layer   => Layer,
+         From    => From,
+         To      => To,
+         Opacity => Opacity,
+         Line    => (Width, Color, Line_Cap)
       );
    exception
       when others =>
@@ -126,10 +133,11 @@ package body Gtk.Layered.Line is
    function Add_Line
             (  Under    : not null access Layer_Location'Class;
                From     : Cairo_Tuple    := (0.0, 0.0);
-               Angle    : GDouble         := 0.0;
-               Length   : GDouble         := 1.0;
-               Width    : GDouble         := 1.0;
+               Angle    : GDouble        := 0.0;
+               Length   : GDouble        := 1.0;
+               Width    : GDouble        := 1.0;
                Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+               Opacity  : GDouble        := 1.0;
                Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                Scaled   : Boolean        := False;
                Widened  : Boolean        := False
@@ -139,13 +147,15 @@ package body Gtk.Layered.Line is
    begin
       Layer.Scaled  := Scaled;
       Layer.Widened := Widened;
+      Layer.Opacity   := GDouble'Max (GDouble'Min (Opacity, 1.0), 0.0);
       Add (Ptr, Under);
       Set
-      (  Layer  => Layer,
-         From   => From,
-         Angle  => Angle,
-         Length => Length,
-         Line   => (Width, Color, Line_Cap)
+      (  Layer   => Layer,
+         From    => From,
+         Angle   => Angle,
+         Length  => Length,
+         Opacity => Opacity,
+         Line    => (Width, Color, Line_Cap)
       );
       return Layer'Unchecked_Access;
    exception
@@ -158,8 +168,9 @@ package body Gtk.Layered.Line is
             (  Under    : not null access Layer_Location'Class;
                From     : Cairo_Tuple    := (0.0, 0.0);
                To       : Cairo_Tuple    := (0.0, 1.0);
-               Width    : GDouble         := 1.0;
+               Width    : GDouble        := 1.0;
                Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+               Opacity  : GDouble        := 1.0;
                Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                Scaled   : Boolean        := False;
                Widened  : Boolean        := False
@@ -169,11 +180,13 @@ package body Gtk.Layered.Line is
    begin
       Layer.Scaled  := Scaled;
       Layer.Widened := Widened;
+      Layer.Opacity := GDouble'Max (GDouble'Min (Opacity, 1.0), 0.0);
       Add (Ptr, Under);
       Set
       (  Layer => Layer,
          From  => From,
          To    => To,
+         Opacity => Opacity,
          Line  => (Width, Color, Line_Cap)
       );
       return Layer'Unchecked_Access;
@@ -198,12 +211,22 @@ package body Gtk.Layered.Line is
       else
          Set_Line_Width (Context, Layer.Line.Width);
       end if;
-      Set_Source_RGB
-      (  Context,
-         GDouble (Red   (Layer.Line.Color)) / GDouble (Guint16'Last),
-         GDouble (Green (Layer.Line.Color)) / GDouble (Guint16'Last),
-         GDouble (Blue  (Layer.Line.Color)) / GDouble (Guint16'Last)
-      );
+      if Layer.Opacity = 1.0 then
+         Set_Source_RGB
+         (  Context,
+            GDouble (Red   (Layer.Line.Color)) / GDouble (Guint16'Last),
+            GDouble (Green (Layer.Line.Color)) / GDouble (Guint16'Last),
+            GDouble (Blue  (Layer.Line.Color)) / GDouble (Guint16'Last)
+         );
+      else
+         Set_Source_RGBA
+         (  Context,
+            GDouble (Red   (Layer.Line.Color)) / GDouble (Guint16'Last),
+            GDouble (Green (Layer.Line.Color)) / GDouble (Guint16'Last),
+            GDouble (Blue  (Layer.Line.Color)) / GDouble (Guint16'Last),
+            Layer.Opacity
+         );
+      end if;
       Set_Line_Cap (Context, Layer.Line.Line_Cap);
       if Layer.Scaled then
          declare
@@ -233,9 +256,14 @@ package body Gtk.Layered.Line is
             Y  => Layer.To.Y
          );
       end if;
-      Stroke  (Context);
+      Stroke (Context);
       Layer.Updated := False;
    end Draw;
+
+   function Get_Opacity (Layer : Line_Layer) return GDouble is
+   begin
+      return Layer.Opacity;
+   end Get_Opacity;
 
    function Get_Angle (Layer : Line_Layer) return GDouble is
    begin
@@ -283,6 +311,16 @@ package body Gtk.Layered.Line is
          raise Constraint_Error;
       else
          case Layer_Property'Val (Property - 1) is
+            when Property_Opacity =>
+               return
+                  Gnew_Double
+                  (  Name    => "opacity",
+                     Nick    => "opacity",
+                     Minimum => 0.0,
+                     Maximum => 1.1,
+                     Default => 0.0,
+                     Blurb   => "The line color opacity"
+                  );
             when Property_From_X =>
                return
                   Gnew_Double
@@ -387,6 +425,9 @@ package body Gtk.Layered.Line is
             Value : GValue;
          begin
             case Layer_Property'Val (Property - 1) is
+               when Property_Opacity =>
+                  Init (Value, GType_Double);
+                  Set_Double (Value, Layer.Opacity);
                when Property_From_X =>
                   Init (Value, GType_Double);
                   Set_Double (Value, Layer.From.X);
@@ -457,19 +498,22 @@ package body Gtk.Layered.Line is
              (  Stream : in out Root_Stream_Type'Class;
                 Layer  : in out Line_Layer
              )  is
-      From : Cairo_Tuple;
-      To   : Cairo_Tuple;
-      Line : Line_Parameters;
+      From  : Cairo_Tuple;
+      To    : Cairo_Tuple;
+      Line  : Line_Parameters;
+      Opacity : GDouble;
    begin
       Restore (Stream, From);
       Restore (Stream, To);
       Restore (Stream, Line);
       Restore (Stream, Layer.Scaled, Layer.Widened);
+      Restore (Stream, Opacity);
       Set
       (  Layer => Layer,
          From  => From,
          To    => To,
-         Line  => Line
+         Line  => Line,
+         Opacity => Opacity
       );
    end Restore;
 
@@ -490,23 +534,26 @@ package body Gtk.Layered.Line is
                 From   : Cairo_Tuple;
                 Angle  : GDouble;
                 Length : GDouble;
-                Line   : Line_Parameters
+                Line   : Line_Parameters;
+                Opacity  : GDouble
              )  is
    begin
       Set
-      (  Layer => Layer,
-         Line  => Line,
-         From  => From,
-         To    => (  X => From.X + Length * cos (Angle),
-                     Y => From.Y + Length * sin (Angle)
-      )           );
+      (  Layer   => Layer,
+         Line    => Line,
+         From    => From,
+         Opacity => Opacity,
+         To      => (  X => From.X + Length * cos (Angle),
+                       Y => From.Y + Length * sin (Angle)
+      )             );
    end Set;
 
    procedure Set
              (  Layer : in out Line_Layer;
                 From  : Cairo_Tuple;
                 To    : Cairo_Tuple;
-                Line  : Line_Parameters
+                Line  : Line_Parameters;
+                Opacity : GDouble
              )  is
    begin
       if Line.Width <= 0.0 then
@@ -515,6 +562,7 @@ package body Gtk.Layered.Line is
       Layer.From    := From;
       Layer.To      := To;
       Layer.Line    := Line;
+      Layer.Opacity := GDouble'Max (GDouble'Min (Opacity, 1.0), 0.0);
       Layer.Updated := True;
    end Set;
 
@@ -528,6 +576,8 @@ package body Gtk.Layered.Line is
          raise Constraint_Error;
       else
          case Layer_Property'Val (Property - 1) is
+            when Property_Opacity =>
+               Layer.Opacity := Get_Double (Value);
             when Property_From_X =>
                Layer.From.X := Get_Double (Value);
             when Property_From_Y =>
@@ -582,6 +632,7 @@ package body Gtk.Layered.Line is
       Store (Stream, Layer.To);
       Store (Stream, Layer.Line);
       Store (Stream, Layer.Scaled, Layer.Widened);
+      Store (Stream, Layer.Opacity);
    end Store;
 
 end Gtk.Layered.Line;

@@ -12,6 +12,7 @@
 ./centos-logo.jpg
 ./debian-logo.jpg
 ./digital_layer.png
+./disk_needle.png
 ./download.jpg
 ./ellipse_parameters.png
 ./elliptic_backgrounds.png
@@ -80,6 +81,8 @@
 ./gtk-layered-clock_hand.adb
 ./gtk-layered-clock_hand.ads
 ./gtk-layered-digital.ads
+./gtk-layered-disk_needle.adb
+./gtk-layered-disk_needle.ads
 ./gtk-layered-elliptic_annotation.adb
 ./gtk-layered-elliptic_annotation.ads
 ./gtk-layered-elliptic_background.adb
@@ -120,6 +123,8 @@
 ./gtk-layered-sector_needle.ads
 ./gtk-layered-stream_io.adb
 ./gtk-layered-stream_io.ads
+./gtk-layered-svg.adb
+./gtk-layered-svg.ads
 ./gtk-layered-text_transformation_property.ads
 ./gtk-layered-vertical_alignment_property.ads
 ./gtk-layered-waveform-amplifier.adb
@@ -165,6 +170,9 @@
 ./gtk-oscilloscope-sweeper_panel.ads
 ./gtk-oscilloscope.adb
 ./gtk-oscilloscope.ads
+./gtk-valve-round_90.adb
+./gtk-valve-round_90.ads
+./gtk-valve.ads
 ./gtk-wall_clock-classic.adb
 ./gtk-wall_clock-classic.ads
 ./gtk-wall_clock-imperial.adb
@@ -210,6 +218,7 @@
 ./gtk_meter_thermo.png
 ./gtk_meter_thermo_dual.png
 ./gtk_meter_thermo_symmetric.png
+./gtk_valve_round_90.png
 ./home.jpg
 ./in.jpg
 ./index.gif

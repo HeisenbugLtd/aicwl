@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  19:57 08 Aug 2015  --
+--                                Last revision :  19:18 30 Apr 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -90,6 +90,22 @@ package Gtk.Main.Router is
       new Ada.Finalization.Limited_Controlled with null record;
    type Request_Data_Ptr is access all Request_Data'Class;
 --
+-- Get_Max_Asynchronous -- Maxumum pending requests
+--
+-- Returns :
+--
+--    Maximum pending asynchronous requests
+--
+   function Get_Max_Asynchronous return Positive;
+--
+-- Get_Request_Info -- Current requests statistics
+--
+-- Returns :
+--
+--     Statistics about current requests
+--
+   function Get_Request_Info return String;
+--
 -- Request -- To service on the GTK+ context
 --
 --    Data - The object containing the request data
@@ -115,6 +131,16 @@ package Gtk.Main.Router is
 --
    procedure Service (Data : in out Request_Data) is abstract;
 --
+-- Set_Max_Asynchronous -- Maxumum pending requests
+--
+--    Max - The limit
+--
+-- This procedure  sets the limit  on the maximum asynchronous requests.
+-- When exceeded  the new  requests  are  blocked  and could  result  in
+-- Busy_Error when waiting timeout expires.
+--
+   procedure Set_Max_Asynchronous (Max : Positive);
+--
 -- Init -- GTK+ initialization
 --
 --    Window   - Main window for which the main loop is running
@@ -135,6 +161,22 @@ package Gtk.Main.Router is
                 Period   : Duration := 0.2;
                 GPS_Port : Natural  := 50_000
              );
+--
+-- Is_Active -- Check if servicing active
+--
+-- Returns :
+--
+--    True if active
+--
+   function Is_Active return Boolean;
+--
+-- Quit -- Stop servicing
+--
+-- All pending  and future requests  terminate with Quit_Error.  This is
+-- done  automatically  upon destroying  the window  given in Init. Thus
+-- this procedure is necessary only to stop servicing prematurely.
+--
+   procedure Quit;
 --
 -- Request -- Callback on the GTK+ context
 --

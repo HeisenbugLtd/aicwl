@@ -129,7 +129,7 @@ package body Gtk.Generic_Enum_Combo_Box is
       use type Glib.Gint;
    begin
       if Active_Index < 0 then
-         raise Gtk.Missed.No_Selection;
+         raise Gtk.Missed.No_Selection with "Nothing selected yet";
       end if;
       return Enum_Type'Val (Active_Index);
    end Get_Active_Value;

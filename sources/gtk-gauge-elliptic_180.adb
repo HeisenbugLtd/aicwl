@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Elliptic_180                      Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -49,7 +49,7 @@ package body Gtk.Gauge.Elliptic_180 is
    Needle_Color     : constant Gdk_Color := RGB (1.0, 0.0, 0.0);
    Background_Color : constant Gdk_Color := RGB (0.0, 0.0, 0.0);
    Scale_Area_Color : constant Gdk_Color := RGB (1.0, 1.0, 1.0);
-   Major_Tick_Color : constant Gdk_Color := RGB (1.0, 0.0, 0.0);
+   Major_Tick_Color : constant Gdk_Color := RGB (0.0, 0.0, 0.0);
    Text_Color       : constant Gdk_Color := RGB (1.0, 0.6, 0.0);
 
    Class_Record : aliased Ada_GObject_Class := Uninitialized_Class;
@@ -395,6 +395,8 @@ package body Gtk.Gauge.Elliptic_180 is
          Border_Depth  => Widget.Background.Get_Border_Depth,
          Border_Color  => Widget.Background.Get_Border_Color,
          Border_Shadow => Widget.Background.Get_Border_Shadow,
+         Lens_Reflex   => Widget.Background.Get_Lens_Reflex,
+         Lens_Shadow   => Widget.Background.Get_Lens_Shadow,
          Color  =>
             Style_Get (Widget, "backgound-color", Background_Color)
       );

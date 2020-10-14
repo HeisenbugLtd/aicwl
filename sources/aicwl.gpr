@@ -1,4 +1,5 @@
 with "gtkada_contributions.gpr";
+with "gtkada_contributions-rsvg.gpr";
 with "strings_edit.gpr";
 
 project AICWL is
@@ -30,6 +31,8 @@ project AICWL is
           "gtk-layered-cap.adb",
           "gtk-layered-cap.ads",
           "gtk-layered-digital.ads",
+          "gtk-layered-disk_needle.adb",
+          "gtk-layered-disk_needle.ads",
           "gtk-layered-elliptic_annotation.adb",
           "gtk-layered-elliptic_annotation.ads",
           "gtk-layered-elliptic_background.adb",
@@ -66,10 +69,14 @@ project AICWL is
           "gtk-layered-rectangle.ads",
           "gtk-layered-refresh_engine.adb",
           "gtk-layered-refresh_engine.ads",
+          "gtk-layered-svg.adb",
+          "gtk-layered-svg.ads",
           "gtk-layered-sector_needle.adb",
           "gtk-layered-sector_needle.ads",
           "gtk-layered-stream_io.adb",
           "gtk-layered-stream_io.ads",
+          "gtk-layered-svg.adb",
+          "gtk-layered-svg.ads",
           "gtk-layered-text_transformation_property.ads",
           "gtk-layered-vertical_alignment_property.ads",
           "gtk-layered-waveform.adb",
@@ -144,6 +151,9 @@ project AICWL is
           "gtk-oscilloscope-on_motion.adb",
           "gtk-oscilloscope-sweeper_panel.adb",
           "gtk-oscilloscope-sweeper_panel.ads",
+          "gtk-valve.ads",
+          "gtk-valve-round_90.adb",
+          "gtk-valve-round_90.ads",
           "gtk-wall_clock.ads",
           "gtk-wall_clock-classic.adb",
           "gtk-wall_clock-classic.ads",
@@ -170,7 +180,11 @@ project AICWL is
    package Binder   renames GtkAda_Contributions.Binder;
    package Builder  renames GtkAda_Contributions.Builder;
    package Compiler renames GtkAda_Contributions.Compiler;
-   package Linker   renames GtkAda_Contributions.Linker;
+
+   package Linker is
+      for Default_Switches ("ada")
+         use Gtkada_Contributions.Linker'Default_Switches ("ada") & ("-lrsvg-2");
+   end Linker;
 
 end AICWL;
 

@@ -1,0 +1,22 @@
+with "gtkada_contributions.gpr";
+
+project Gtkada_Contributions.RSVG is
+
+   for Source_Dirs use (".");
+   for Source_Files use
+       (  "rsvg.ads",
+          "rsvg-handle.adb",
+          "rsvg-handle.ads"
+       );
+
+   package Binder   renames Gtkada_Contributions.Binder;
+   package Builder  renames Gtkada_Contributions.Builder;
+   package Compiler renames Gtkada_Contributions.Compiler;
+   
+   package Linker is
+      for Default_Switches ("ada")
+         use Gtkada_Contributions.Linker'Default_Switches ("ada") & ("-lrsvg-2");
+   end Linker;
+
+ end Gtkada_Contributions.RSVG;
+

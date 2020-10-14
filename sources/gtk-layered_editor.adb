@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  23:22 29 Sep 2017  --
+--                                Last revision :  21:20 09 Feb 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -54,10 +54,12 @@ with Gtk.Layered.Bar;
 with Gtk.Layered.Cache;
 with Gtk.Layered.Cap;
 with Gtk.Layered.Clock_Hand;
+with Gtk.Layered.Disk_Needle;
 with Gtk.Layered.Elliptic_Annotation;
 with Gtk.Layered.Elliptic_Background;
 with Gtk.Layered.Elliptic_Bar;
 with Gtk.Layered.Elliptic_Scale;
+with Gtk.Layered.Elliptic_Shape_Property;
 with Gtk.Layered.Flat_Annotation;
 with Gtk.Layered.Flat_Needle;
 with Gtk.Layered.Flat_Scale;
@@ -168,7 +170,7 @@ package body Gtk.Layered_Editor is
             end;
          end loop;
          if not Error then
-            Combo.Set_Active_Value (State);
+            Combo.Set_Active (Enum_Property.Enumeration'Pos (State));
          end if;
          Enum_Handlers.Connect
          (  Box.all'Unchecked_Access,
@@ -188,14 +190,14 @@ package body Gtk.Layered_Editor is
 
       procedure Changed (Combo : access Gtk_Enum_Record'Class) is
          use Enum_Property;
-         Value : GValue;
+         Value  : GValue;
+         Choice : GInt;
       begin
-         Set_Enum
-         (  Value,
-            Boxes.Gtk_Enum_Combo_Box_Record'Class
-            (  Combo.all
-            ) .Get_Active_Value
-         );
+         Choice := Combo.Get_Active;
+         if Choice < 0 then
+            return;
+         end if;
+         Set_Enum (Value, Enum_Property.Enumeration'Val (Choice));
          for Layer_No in Combo.Widget.Selected_Layers'Range loop
             Combo.Widget.Selected_Layers (Layer_No).Set_Property_Value
             (  Combo.Widget.Selected_Properties (Layer_No, Combo.No),
@@ -221,6 +223,11 @@ package body Gtk.Layered_Editor is
 
    package Alignment_Enum is
       new Generic_Enum (Gtk.Layered.Alignment_Property, Alignment_Box);
+   package Elliptic_Shape_Enum is
+      new Generic_Enum
+          (  Gtk.Layered.Elliptic_Shape_Property,
+             Elliptic_Shape_Box
+          );
    package Shadow_Type_Enum is
       new Generic_Enum (Gtk.Enums.Shadow_Property, Shadow_Type_Box);
    package Font_Slant_Enum is
@@ -1530,6 +1537,15 @@ package body Gtk.Layered_Editor is
                   Color  => Default_Color,
                   Center => Default_Center
                ) .Get_Position;
+         when Disk_Needle_Layer =>
+            Gtk_New (Adjustment, 0.0, 0.0, 0.1, 0.01, 0.1);
+            Position :=
+               Gtk.Layered.Disk_Needle.Add_Disk_Needle
+               (  Under      => Under,
+                  Center     => Default_Center,
+                  Radius     => Default_Radius,
+                  Adjustment => Adjustment
+               ) .Get_Position;
          when Elliptic_Annotation_Layer =>
             Position :=
                Gtk.Layered.Elliptic_Annotation.
@@ -2425,6 +2441,17 @@ package body Gtk.Layered_Editor is
                      elsif Value_Type (Specification) =
                            Gtk.Enums.Shadow_Property.Get_Type then
                         Shadow_Type_Enum.Add
+                        (  Widget.all'Unchecked_Access,
+                           Row,
+                           Layers,
+                           Properties,
+                           Property,
+                           Description (Specification)
+                        );
+                     elsif Value_Type (Specification) =
+                           Gtk.Layered.Elliptic_Shape_Property.
+                           Get_Type then
+                        Elliptic_Shape_Enum.Add
                         (  Widget.all'Unchecked_Access,
                            Row,
                            Layers,

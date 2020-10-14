@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  07:54 21 Jul 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -31,7 +31,7 @@ with GLib.Properties.Creation;    use GLib.Properties.Creation;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
 
 with Ada.Unchecked_Deallocation;
-with ada.Text_IO;
+
 package body Gtk.Layered.Cap is
    type Cap_Ptr is access all Cap_Layer;
 
@@ -425,7 +425,9 @@ package body Gtk.Layered.Cap is
          Border_Width  => Border_Width,
          Border_Depth  => Border_Depth,
          Border_Color  => Border_Color,
-         Border_Shadow => Border_Shadow
+         Border_Shadow => Border_Shadow,
+         Lens_Reflex   => Layer.Get_Lens_Reflex,
+         Lens_Shadow   => Layer.Get_Lens_Shadow
       );
    end Set;
 

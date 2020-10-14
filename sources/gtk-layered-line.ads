@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -41,6 +41,7 @@ package Gtk.Layered.Line is
 --  [ Angle, Length | To ] - The line angle and length or end point
 --    Width    - The line width
 --    Color    - The line color
+--    Opacity  - The opacity (1.0 when opaque, 0.0 transparent)
 --    Line_Cap - The way lines end
 --    Scaled   - The layer is scaled together with the parent widget
 --    Widened  - The layer's line is widened together with the widget
@@ -66,6 +67,7 @@ package Gtk.Layered.Line is
                 Length   : GDouble        := 1.0;
                 Width    : GDouble        := 1.0;
                 Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+                Opacity  : GDouble        := 1.0;
                 Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                 Scaled   : Boolean        := False;
                 Widened  : Boolean        := False
@@ -76,6 +78,7 @@ package Gtk.Layered.Line is
                 To       : Cairo_Tuple    := (0.0, 1.0);
                 Width    : GDouble        := 1.0;
                 Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+                Opacity  : GDouble        := 1.0;
                 Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                 Scaled   : Boolean        := False;
                 Widened  : Boolean        := False
@@ -87,6 +90,7 @@ package Gtk.Layered.Line is
                Length   : GDouble        := 1.0;
                Width    : GDouble        := 1.0;
                Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+               Opacity  : GDouble        := 1.0;
                Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                Scaled   : Boolean        := False;
                Widened  : Boolean        := False
@@ -97,6 +101,7 @@ package Gtk.Layered.Line is
                To       : Cairo_Tuple    := (0.0, 1.0);
                Width    : GDouble        := 1.0;
                Color    : Gdk_Color      := RGB (0.0, 0.0, 0.0);
+               Opacity    : GDouble        := 1.0;
                Line_Cap : Cairo_Line_Cap := CAIRO_LINE_CAP_BUTT;
                Scaled   : Boolean        := False;
                Widened  : Boolean        := False
@@ -142,6 +147,16 @@ package Gtk.Layered.Line is
 --
    function Get_Line (Layer : Line_Layer) return Line_Parameters;
 --
+-- Get_Opacity -- The line opacity
+--
+--    Layer - The line layer
+--
+-- Returns :
+--
+--    Opacity, 1.0 if opaque
+--
+   function Get_Opacity (Layer : Line_Layer) return GDouble;
+--
 -- Get_To -- The point where the line ends
 --
 --    Layer - The line layer
@@ -154,27 +169,30 @@ package Gtk.Layered.Line is
 --
 -- Set -- Parameters of the line
 --
---    Layer - The line layer
---    From  - The point where the line begins
+--    Layer   - The line layer
+--    From    - The point where the line begins
 --  [ Angle, Length | To ] - The line angle and length or end point
---    Line  - The line parameters
+--    Line    - The line parameters
+--    Opacity - The opacity (1.0 when opaque, 0.0 transparent)
 --
 -- Exceptions :
 --
 --    Constraint_Error - Wrong parameters
 --
    procedure Set
-             (  Layer  : in out Line_Layer;
-                From   : Cairo_Tuple;
-                Angle  : GDouble;
-                Length : GDouble;
-                Line   : Line_Parameters
+             (  Layer   : in out Line_Layer;
+                From    : Cairo_Tuple;
+                Angle   : GDouble;
+                Length  : GDouble;
+                Line    : Line_Parameters;
+                Opacity : GDouble
              );
    procedure Set
-             (  Layer : in out Line_Layer;
-                From  : Cairo_Tuple;
-                To    : Cairo_Tuple;
-                Line  : Line_Parameters
+             (  Layer   : in out Line_Layer;
+                From    : Cairo_Tuple;
+                To      : Cairo_Tuple;
+                Line    : Line_Parameters;
+                Opacity : GDouble
              );
 
    overriding
@@ -250,6 +268,7 @@ private
       From    : Cairo_Tuple;
       To      : Cairo_Tuple;
       Line    : Line_Parameters;
+      Opacity : GDouble;
       Scaled  : Boolean := False;
       Widened : Boolean := False;
       Updated : Boolean := True;

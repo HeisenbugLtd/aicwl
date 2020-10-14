@@ -3,7 +3,7 @@
 --     Gtk.Gauge.LED_Round                         Luebeck            --
 --  Implementation                                 Summer, 2012       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -298,22 +298,26 @@ package body Gtk.Gauge.LED_Round is
          Border_Depth  => Widget.Background.Get_Border_Depth,
          Border_Color  => Widget.Background.Get_Border_Color,
          Border_Shadow => Widget.Background.Get_Border_Shadow,
+         Lens_Reflex   => Widget.Background.Get_Lens_Reflex,
+         Lens_Shadow   => Widget.Background.Get_Lens_Shadow,
          Color         => Colors (1)
       );
       Widget.Reflection.Set
-      (  From => Widget.Reflection.Get_From,
-         To   => Widget.Reflection.Get_To,
-         Line => (  Width    => Widget.Reflection.Get_Line.Width,
-                    Line_Cap => Widget.Reflection.Get_Line.Line_Cap,
-                    Color    => Colors (2)
-      )          );
+      (  From    => Widget.Reflection.Get_From,
+         To      => Widget.Reflection.Get_To,
+         Opacity => 1.0,
+         Line    => (  Width    => Widget.Reflection.Get_Line.Width,
+                       Line_Cap => Widget.Reflection.Get_Line.Line_Cap,
+                       Color    => Colors (2)
+      )             );
       Widget.Shadow.Set
-      (  From => Widget.Shadow.Get_From,
-         To   => Widget.Shadow.Get_To,
-         Line => (  Width    => Widget.Shadow.Get_Line.Width,
-                    Line_Cap => Widget.Shadow.Get_Line.Line_Cap,
-                    Color    => Colors (3)
-      )          );
+      (  From    => Widget.Shadow.Get_From,
+         To      => Widget.Shadow.Get_To,
+         Opacity => 1.0,
+         Line    => (  Width    => Widget.Shadow.Get_Line.Width,
+                       Line_Cap => Widget.Shadow.Get_Line.Line_Cap,
+                       Color    => Colors (3)
+      )             );
    end Update_State;
 
 end Gtk.Gauge.LED_Round;

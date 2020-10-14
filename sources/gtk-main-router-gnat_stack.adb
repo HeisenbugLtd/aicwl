@@ -3,7 +3,7 @@
 --     Gtk.Main.Router.GNAT_Stack                  Luebeck            --
 --  Implementation                                 Autumn, 2007       --
 --                                                                    --
---                                Last revision :  22:45 07 Apr 2016  --
+--                                Last revision :  21:19 26 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -191,13 +191,18 @@ package body Gtk.Main.Router.GNAT_Stack is
       begin
          Call_Chain (TB, Len);
          Log_Default_Handler (Domain, Level, Message);
-         Gtk.Main.Router.Trace
-         (  Message =>
-               (  Domain & " " & Message & LF
-               &  Symbolic_Traceback (TB (1..Len))
-               ),
-            Break => Standard.True
-         );
+         if Is_Active then
+            Gtk.Main.Router.Trace
+            (  Message =>
+                  (  Domain & " " & Message & LF
+                  &  Symbolic_Traceback (TB (1..Len))
+                  ),
+               Break => Standard.True
+            );
+         else -- Dump to the output instead
+            Ada.Text_IO.Put_Line (Domain & " " & Message);
+            Ada.Text_IO.Put_Line (Symbolic_Traceback (TB (1..Len)));
+         end if;
       end;
    end Log_Function;
 
@@ -238,6 +243,9 @@ package body Gtk.Main.Router.GNAT_Stack is
       else
          Handler (Value (Domain), Level, Value (Message));
       end if;
+   exception
+      when others =>
+         null;
    end Log_Func;
 
    procedure Set_Log_Trace is

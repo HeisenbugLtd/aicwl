@@ -3,7 +3,7 @@
 --     Gtk.Meter.Thermo_Symmetric                  Luebeck            --
 --  Implementation                                 Summer, 2012       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -673,29 +673,32 @@ package body Gtk.Meter.Thermo_Symmetric is
                     Line_Cap => Widget.Bar.Get_Line.Line_Cap
       )          );
       Widget.Bulb.Set
-      (  From => Widget.Bulb.Get_From,
-         To   => Widget.Bulb.Get_To,
-         Line => (  Width    => Widget.Bulb.Get_Line.Width,
-                    Color    => Color,
-                    Line_Cap => Widget.Bulb.Get_Line.Line_Cap
-      )          );
+      (  From    => Widget.Bulb.Get_From,
+         To      => Widget.Bulb.Get_To,
+         Opacity => 1.0,
+         Line    => (  Width    => Widget.Bulb.Get_Line.Width,
+                       Color    => Color,
+                       Line_Cap => Widget.Bulb.Get_Line.Line_Cap
+      )             );
       Widget.Reflection.Set
-      (  From => Widget.Reflection.Get_From,
-         To   => Widget.Reflection.Get_To,
-         Line => (  Width    => Widget.Reflection.Get_Line.Width,
-                    Line_Cap => Widget.Reflection.Get_Line.Line_Cap,
-                    Color    => Lighten
-                                (  Color,
-                                   Reflection_Shift,
-                                   True
-      )          )              );
+      (  From    => Widget.Reflection.Get_From,
+         To      => Widget.Reflection.Get_To,
+         Opacity => 1.0,
+         Line    => (  Width    => Widget.Reflection.Get_Line.Width,
+                       Line_Cap => Widget.Reflection.Get_Line.Line_Cap,
+                       Color    => Lighten
+                                   (  Color,
+                                      Reflection_Shift,
+                                      True
+      )             )              );
       Widget.Stem.Set
-      (  From   => Widget.Stem.Get_From,
-         To     => Widget.Stem.Get_To,
-         Line   => (  Width    => Widget.Stem.Get_Line.Width,
-                      Color    => Color,
-                      Line_Cap => Widget.Stem.Get_Line.Line_Cap
-      )            );
+      (  From    => Widget.Stem.Get_From,
+         To      => Widget.Stem.Get_To,
+         Opacity => 1.0,
+         Line    => (  Width    => Widget.Stem.Get_Line.Width,
+                       Color    => Color,
+                       Line_Cap => Widget.Stem.Get_Line.Line_Cap
+      )             );
    end Set_Bar_Color;
 
    procedure Set_Value
@@ -792,6 +795,8 @@ package body Gtk.Meter.Thermo_Symmetric is
          Border_Depth   => Widget.Background.Get_Border_Depth,
          Border_Color   => Widget.Background.Get_Border_Color,
          Border_Shadow  => Widget.Background.Get_Border_Shadow,
+         Lens_Reflex    => Widget.Background.Get_Lens_Reflex,
+         Lens_Shadow    => Widget.Background.Get_Lens_Shadow,
          Color  =>
             Style_Get (Widget, "backgound-color", Background_Color)
       );

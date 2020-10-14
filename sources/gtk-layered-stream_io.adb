@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -495,6 +495,22 @@ package body Gtk.Layered.Stream_IO is
       Restore (Stream, G);
       Restore (Stream, B);
       Set_RGB (Value, R, G, B);
+   end Restore;
+
+   procedure Restore
+             (  Stream : in out Root_Stream_Type'Class;
+                Value  : out Gdk_RGBA
+             )  is
+      R, G, B, A : GUInt16;
+   begin
+      Restore (Stream, R);
+      Restore (Stream, G);
+      Restore (Stream, B);
+      Restore (Stream, A);
+      Value.Red   := GDouble (R) / GDouble (GUint16'Last);
+      Value.Green := GDouble (G) / GDouble (GUint16'Last);
+      Value.Blue  := GDouble (B) / GDouble (GUint16'Last);
+      Value.Alpha := GDouble (A) / GDouble (GUint16'Last);
    end Restore;
 
    procedure Restore
@@ -1003,6 +1019,17 @@ package body Gtk.Layered.Stream_IO is
       Store (Stream, Red   (Value));
       Store (Stream, Green (Value));
       Store (Stream, Blue  (Value));
+   end Store;
+
+   procedure Store
+             (  Stream : in out Root_Stream_Type'Class;
+                Value  : Gdk_RGBA
+             )  is
+   begin
+      Store (Stream, GUInt16 (Value.Red   * GDouble (GUInt16'Last)));
+      Store (Stream, GUInt16 (Value.Green * GDouble (GUInt16'Last)));
+      Store (Stream, GUInt16 (Value.Blue  * GDouble (GUInt16'Last)));
+      Store (Stream, GUInt16 (Value.Alpha * GDouble (GUInt16'Last)));
    end Store;
 
    procedure Store

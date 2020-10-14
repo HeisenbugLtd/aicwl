@@ -3,7 +3,7 @@
 --     Gtk.Layered.Elliptic_Scale                  Luebeck            --
 --  Implementation                                 Autumn, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --

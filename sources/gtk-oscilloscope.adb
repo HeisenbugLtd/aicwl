@@ -3,7 +3,7 @@
 --     Gtk.Oscilloscope                            Luebeck            --
 --  Implementation                                 Summer, 2011       --
 --                                                                    --
---                                Last revision :  09:08 05 Mar 2017  --
+--                                Last revision :  20:05 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -4788,9 +4788,10 @@ package body Gtk.Oscilloscope is
                   Y := GDouble'Floor (Box.Y1) + 0.5;
             end case;
             Data.Line.Set
-            (  From => (Box.X1, Y),
-               To   => (Box.X2, Y),
-               Line => Line
+            (  From    => (Box.X1, Y),
+               To      => (Box.X2, Y),
+               Line    => Line,
+               Opacity => 1.0
             );
          end;
          declare -- Setting the time annotation
@@ -4952,9 +4953,10 @@ package body Gtk.Oscilloscope is
                   X := GDouble'Floor (Box.X2) + 0.5;
             end case;
             Data.Line.Set
-            (  From => (X, Box.Y1),
-               To   => (X, Box.Y2),
-               Line => Line
+            (  From    => (X, Box.Y1),
+               To      => (X, Box.Y2),
+               Line    => Line,
+               Opacity => 1.0
             );
          end;
          declare -- Setting the time annotation

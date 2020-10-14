@@ -3,7 +3,7 @@
 --     Gtk.Layered.Sector_Needle                   Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -65,7 +65,7 @@ package body Gtk.Layered.Sector_Needle is
 
    procedure Changed
              (  Adjustment : access GObject_Record'Class;
-                Needle      : Needle_Ptr
+                Needle     : Needle_Ptr
              );
 
    function Add
@@ -857,17 +857,17 @@ package body Gtk.Layered.Sector_Needle is
       end case;
       if Outer.Minor_Radius <= 0.0 then
          raise Constraint_Error with
-            "Non-positive outer ellipse radius";
+               "Non-positive outer ellipse radius";
       elsif Outer.Major_Curvature < 0.0 then
          raise Constraint_Error with
-            "Negative outer ellipse curvature";
+               "Negative outer ellipse curvature";
       elsif Inner.Shape = Bagel then
          if Inner.Arc.Minor_Radius < 0.0 then
             raise Constraint_Error with
-               "Negative inner ellipse radius";
+                  "Negative inner ellipse radius";
          elsif Inner.Arc.Major_Curvature < 0.0 then
             raise Constraint_Error with
-               "Negative inner ellipse curvature";
+                  "Negative inner ellipse curvature";
          end if;
       end if;
       Layer.Outer   := Outer;
@@ -886,17 +886,17 @@ package body Gtk.Layered.Sector_Needle is
    begin
       if Outer.Minor_Radius <= 0.0 then
          raise Constraint_Error with
-            "Non-positive outer ellipse radius";
+               "Non-positive outer ellipse radius";
       elsif Outer.Major_Curvature < 0.0 then
          raise Constraint_Error with
-            "Negative outer ellipse curvature";
-      elsif Inner.Shape = Sector then
+               "Negative outer ellipse curvature";
+      elsif Inner.Shape = Bagel then
          if Inner.Arc.Minor_Radius < 0.0 then
             raise Constraint_Error with
-               "Negative inner ellipse radius";
+                  "Negative inner ellipse radius";
          elsif Inner.Arc.Major_Curvature < 0.0 then
             raise Constraint_Error with
-               "Negative inner ellipse curvature";
+                  "Negative inner ellipse curvature";
          end if;
       end if;
       Layer.Outer   := Outer;

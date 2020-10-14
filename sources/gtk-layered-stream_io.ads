@@ -3,7 +3,7 @@
 --  Interface                                      Luebeck            --
 --                                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  10:27 26 Mar 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -27,6 +27,7 @@
 
 with Ada.Strings;      use Ada.Strings;
 with Cairo.Font_Face;  use Cairo.Font_Face;
+with Gdk.RGBA;         use Gdk.RGBA;
 with Gtk.Enums;        use Gtk.Enums;
 
 package Gtk.Layered.Stream_IO is
@@ -188,6 +189,10 @@ package Gtk.Layered.Stream_IO is
              );
    procedure Restore
              (  Stream : in out Root_Stream_Type'Class;
+                Value  : out Gdk_RGBA
+             );
+   procedure Restore
+             (  Stream : in out Root_Stream_Type'Class;
                 Value  : out Gtk_Shadow_Type
              );
    procedure Restore
@@ -345,6 +350,10 @@ package Gtk.Layered.Stream_IO is
    procedure Store
              (  Stream : in out Root_Stream_Type'Class;
                 Value  : Gdk_Color
+             );
+   procedure Store
+             (  Stream : in out Root_Stream_Type'Class;
+                Value  : Gdk_RGBA
              );
    procedure Store
              (  Stream : in out Root_Stream_Type'Class;

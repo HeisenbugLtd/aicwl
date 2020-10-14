@@ -2,7 +2,7 @@
 --  package Gtk.Missed              Copyright (c)  Maxim Reznik       --
 --  Interface                                      Summer, 2006       --
 --                                                                    --
---                                Last revision :  16:49 28 Feb 2016  --
+--                                Last revision :  19:06 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -519,6 +519,16 @@ package Gtk.Missed is
 --    The program name
 --
    function Get_PRGName return UTF8_String;
+--
+-- Image -- Of a color
+--
+--    Color - The color
+--
+-- Returns :
+--
+--    Human-readable representation as numbers 0..255
+--
+   function Image (Color : Gdk_Color) return String;
 
    function Is_A (Derived, Ancestor : GType) return Boolean;
 

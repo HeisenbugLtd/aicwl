@@ -3,7 +3,7 @@
 --  Implementation                                 Luebeck            --
 --                                                 Spring, 2006       --
 --                                                                    --
---                                Last revision :  10:25 19 Feb 2017  --
+--                                Last revision :  19:18 30 Apr 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -72,25 +72,23 @@ package body Gtk.Main.Router is
 -- task  requesting  servicing.  The following diagram illustrates state
 -- transitions upon a request.
 --
---        main loop                   state       task
---           :                          |           |
---           :                         Idle         |__
---        sleeping                      |              | Request_Service
---           :                         Busy <--------- |
---  timer -->|                          |    (data)  __|
---           |__                        |           :
---              | Initiate_Service      |           :
---              | Service (data)        |        waiting
---              | Complete_Service --> Ready        :
---            __|                       |           :__
---           |                          |              | Serviced
---           :                         Idle <--------- |
---        sleeping                      |           .__|
---           :                          |           |
+--        main loop                   task
+--           :                          |
+--           :                          |__
+--        sleeping                         | Request_Service (data)
+--           :                             |
+--  timer -->|                           __|
+--           |__                        :
+--              | Initiate_Service      :
+--              | Service (data)     waiting
+--              | Complete_Service -->  :
+--            __|                       :__
+--           |                            | Serviced
+--           :                 <--------- |
+--        sleeping                     .__|
+--           :                         |
 --
-   type Gateway_State is (Idle, Failed, Ready, Busy, Quitted);
-   subtype Completed is Gateway_State range Idle..Ready;
-
+   Queue_Size    : constant        := 100;
    Max_Recursion : constant        := 100;
    GPS_Prompt    : constant String := "GPS>> ";
    GPS_Port      : Natural         := 50_000;
@@ -123,41 +121,112 @@ package body Gtk.Main.Router is
       new Gtk.Handlers.Callback (Gtk_Window_Record);
    procedure On_Quit (Window : access Gtk_Window_Record'Class);
 
+   type Request_State is
+        (  Request_Unused,
+           Request_Pending,
+           Request_Serviced,
+           Request_Failed,
+           Request_Successful
+        );
+   type Request_Item;
+   type Request_Item_Ptr is access all Request_Item;
+   type Request_Item is limited record
+      Previous    : Request_Item_Ptr := Request_Item'Unchecked_Access;
+      Next        : Request_Item_Ptr := Request_Item'Unchecked_Access;
+      State       : Request_State    := Request_Unused;
+      Fault       : Exception_Occurrence;
+      Synchronous : Boolean;
+      Data        : Request_Data_Ptr;
+   end record;
+
+   function Get (Head : Request_Item) return Request_Item_Ptr;
+   pragma Inline (Get);
+   procedure Insert (Head : Request_Item; Item : Request_Item_Ptr);
+   pragma Inline (Insert);
+   function Length (Head : Request_Item) return Natural;
+   pragma Inline (Length);
+
+   function Get (Head : Request_Item) return Request_Item_Ptr is
+      Self : constant Request_Item_Ptr := Head.Next.Previous;
+   begin
+      if Head.Next = Self then -- Empty
+         return null;
+      else
+         declare
+            Item : constant Request_Item_Ptr := Head.Next;
+         begin
+            Self.Next          := Item.Next;
+            Item.Next.Previous := Self;
+            Item.Next          := Item;
+            Item.Previous      := Item;
+            return Item;
+         end;
+      end if;
+   end Get;
+
+   procedure Insert (Head : Request_Item; Item : Request_Item_Ptr) is
+      Self : constant Request_Item_Ptr := Head.Next.Previous;
+   begin
+      Item.Next.Previous := Item.Previous;
+      Item.Previous.Next := Item.Next;
+      Item.Previous      := Self.Previous;
+      Item.Next          := Self;
+      Item.Next.Previous := Item;
+      Item.Previous.Next := Item;
+   end Insert;
+
+   function Length (Head : Request_Item) return Natural is
+      This  : Request_Item_Ptr := Head.Next;
+      Self  : constant Request_Item_Ptr := This.Previous;
+      Count : Natural := 0;
+   begin
+      while This /= Self loop
+         Count := Count + 1;
+         This  := This.Next;
+      end loop;
+      return Count;
+   end Length;
+
    protected Gateway is
-      procedure Abort_Service (Error : Exception_Occurrence);
-      procedure Complete_Service;
-      function Get_State return Gateway_State;
+      procedure Abort_Service
+                (  Item  : in out Request_Item_Ptr;
+                   Error : Exception_Occurrence
+                );
+      procedure Clean_Up         (Item : out Request_Item_Ptr);
+      procedure Complete_Service (Item : in out Request_Item_Ptr);
+      procedure Get_Free_Item    (Item : out Request_Item_Ptr);
+      function Get_Max_Async return Positive;
       function Get_Request_Info return String;
-      entry Initiate_Service (Data : out Request_Data_Ptr);
-      entry Request_Service
-            (  Data        : in out Request_Data'Class;
-               Synchronous : Boolean
-            );
+      function Is_Quitted return Boolean;
+      procedure Initiate_Service (Item : out Request_Item_Ptr);
+      entry Request_Asynchronous (Item : Request_Item_Ptr);
+      entry Request_Synchronous  (Item : in out Request_Item_Ptr);
+      procedure Set_Max_Async (Max : Positive);
       procedure Quit;
    private
-      entry Serviced
-            (  Data        : in out Request_Data'Class;
-               Synchronous : Boolean
-            );
-      Fault : Exception_Occurrence;
-      State : Gateway_State := Idle;
-      Call  : Boolean; -- True if active request is synchronous
-      Data  : Request_Data_Ptr;
+      entry Serviced (Boolean) (Item : in out Request_Item_Ptr);
+      Quitted   : Boolean  := Standard.False;
+      Current   : Boolean  := Standard.False;
+      Async     : Natural  := 0;   -- Number of asynchronous requests
+      Max_Async : Positive := 100; -- Maximum number of such requests
+      Queued    : aliased Request_Item;
+      Ready     : aliased Request_Item;
+      Free      : aliased Request_Item;
    end Gateway;
 --
 -- Callback -- Called from the main loop on timer events
 --
    function Callback return Boolean is
-      Data : Request_Data_Ptr;
+      Item : Request_Item_Ptr;
    begin
       loop
-         Gateway.Initiate_Service (Data);
-         exit when Data = null;
+         Gateway.Initiate_Service (Item);
+         exit when Item = null;
          begin
             if Recursion < Max_Recursion then
                Recursion := Recursion + 1;
                begin
-                  Service (Data.all);
+                  Service (Item.Data.all);
                   Recursion := Recursion - 1;
                exception
                   when others =>
@@ -165,10 +234,10 @@ package body Gtk.Main.Router is
                      raise;
                end;
             end if;
-            Gateway.Complete_Service;
+            Gateway.Complete_Service (Item);
          exception
             when Error : others =>
-               Gateway.Abort_Service (Error);
+               Gateway.Abort_Service (Item, Error);
          end;
       end loop;
       return Standard.True;
@@ -176,122 +245,144 @@ package body Gtk.Main.Router is
 
    protected body Gateway is
 
-      procedure Abort_Service (Error : Exception_Occurrence) is
+      procedure Abort_Service
+                (  Item  : in out Request_Item_Ptr;
+                   Error : Exception_Occurrence
+                )  is
       begin
-         if Call then
-            State := Failed;
-            Save_Occurrence (Fault, Error);
+         if Item.Synchronous then
+            Item.State := Request_Failed;
+            Save_Occurrence (Item.Fault, Error);
+            Insert (Ready, Item);
+            Current := not Current;
          else
-            State := Idle;
+            Item.State := Request_Unused;
+            Insert (Free, Item);
+            Async := Async - 1;
          end if;
       end Abort_Service;
 
-      procedure Complete_Service is
+      procedure Clean_Up (Item : out Request_Item_Ptr) is
       begin
-         if Call then
-            State := Ready;
+         Item := Get (Ready);
+         if Item = null then
+            Item := Get (Free);
+         end if;
+      end Clean_Up;
+
+      procedure Complete_Service (Item : in out Request_Item_Ptr) is
+      begin
+         if Item.Synchronous then
+            Item.State := Request_Successful;
+            Insert (Ready, Item);
+            Current := not Current;
          else
-            State := Idle;
+            Item.State := Request_Unused;
+            Insert (Free, Item);
+            Async := Async - 1;
          end if;
       end Complete_Service;
 
-      function Get_State return Gateway_State is
+      procedure Get_Free_Item (Item : out Request_Item_Ptr) is
       begin
-         return State;
-      end Get_State;
+         Item := Get (Free);
+      end Get_Free_Item;
+
+      function Get_Max_Async return Positive is
+      begin
+         return Max_Async;
+      end Get_Max_Async;
 
       function Get_Request_Info return String is
-         use Ada.Tags;
-         function Info return String is
+         function Is_Quitted return String is
          begin
-            return
-            (  Expanded_Name (Data.all'Tag)
-            &  " at"
-            &  Integer_Address'Image (To_Integer (Data.all'Address))
-            );
-         end Info;
+            if Quitted then
+               return " [quitted]";
+            else
+               return "";
+            end if;
+         end Is_Quitted;
       begin
-         case State is
-            when Idle =>
-               return "idle";
-            when Ready =>
-               if Data = null then
-                  return "ready ";
-               else
-                  return "ready with " & Info;
-               end if;
-            when Busy =>
-               if Data = null then
-                  return "busy";
-               else
-                  return "busy on " & Info;
-               end if;
-            when Failed =>
-               if Data = null then
-                  return "failed [" & Exception_Message (Fault) & "]";
-               else
-                  return "failed [" & Exception_Message (Fault) &
-                         "] on " & Info;
-               end if;
-            when Quitted =>
-               return "quitted";
-         end case;
+         return
+         (  "requests: pending" & Integer'Image (Length (Queued))
+         &  ", ready"           & Integer'Image (Length (Ready ))
+         &  ", free"            & Integer'Image (Length (Free  ))
+         &  Is_Quitted
+         );
       end Get_Request_Info;
 
-      entry Initiate_Service
-            (  Data : out Request_Data_Ptr
-            )  when not (  State in Completed        -- Not before
-                        and then                     -- Request_Service
-                           Request_Service'Count > 0 -- when completed
-                        )  is
+      procedure Initiate_Service (Item : out Request_Item_Ptr) is
       begin
-         if State = Busy then
-            Data := Gateway.Data;
-         else
-            Data := null;
-         end if;
+         Item := Get (Queued);
       end Initiate_Service;
+
+      function Is_Quitted return Boolean is
+      begin
+         return Quitted;
+      end Is_Quitted;
 
       procedure Quit is
       begin
-         State := Quitted;
+         Quitted := Standard.True;
       end Quit;
 
-      entry Request_Service
-            (  Data        : in out Request_Data'Class;
-               Synchronous : Boolean
-            )  when State = Idle or else State = Quitted is
+      entry Request_Asynchronous
+            (  Item : Request_Item_Ptr
+            )  when Async < Max_Async or else Quitted is
       begin
-         if State = Quitted then
+         if Quitted then
+            Item.State := Request_Unused;
+            Insert (Free, Item);
             raise Quit_Error;
          end if;
-         Gateway.Data := Data'Unchecked_Access;
-         Call  := Synchronous;
-         State := Busy;
-         if Synchronous then
-            requeue Serviced;
-         end if;
-      end Request_Service;
+         Item.State := Request_Pending;
+         Insert (Queued, Item);
+         Item.Synchronous := Standard.False;
+         Async := Async + 1;
+      end Request_Asynchronous;
 
-      entry Serviced
-            (  Data        : in out Request_Data'Class;
-               Synchronous : Boolean
-            )  when (  State = Ready
-                    or else
-                       State = Failed
-                    or else
-                       State = Quitted
-                    )  is
+      entry Request_Synchronous
+            (  Item : in out Request_Item_Ptr
+            )  when Standard.True is
       begin
-         if State = Quitted then
+         if Quitted then
+            Item.State := Request_Unused;
+            Insert (Free, Item);
             raise Quit_Error;
-         elsif State = Failed then
-            State := Idle;
-            Reraise_Occurrence (Fault);
+         end if;
+         Item.State := Request_Pending;
+         Insert (Queued, Item);
+         Item.Synchronous := Standard.True;
+         requeue Serviced (not Current);
+      end Request_Synchronous;
+
+      entry Serviced (for Toggle in Boolean)
+            (  Item : in out Request_Item_Ptr
+            )  when Quitted or else Current = Toggle is
+      begin
+         if Quitted then
+            Item.State := Request_Unused;
+            Insert (Free, Item);
+            raise Quit_Error;
          else
-            State := Idle;
+            case Item.State is
+               when Request_Unused =>
+                  null;
+               when Request_Pending | Request_Serviced =>
+                  requeue Serviced (not Current);
+               when Request_Failed =>
+                  Insert (Free, Item);
+                  Reraise_Occurrence (Item.Fault);
+               when Request_Successful =>
+                  Insert (Free, Item);
+            end case;
          end if;
       end Serviced;
+
+      procedure Set_Max_Async (Max : Positive) is
+      begin
+         Max_Async := Max;
+      end Set_Max_Async;
 
    end Gateway;
 
@@ -324,6 +415,7 @@ package body Gtk.Main.Router is
                    Timeout : Duration := 0.5
                 )  is
          Message : Message_Data_Ptr := new Message_Data;
+         Item    : Request_Item_Ptr;
       begin
          Message.Handler := Handler;
          Message.Data    := Data;
@@ -336,8 +428,14 @@ package body Gtk.Main.Router is
          elsif Main = Null_Task_ID then
             raise Program_Error;
          else
+            Gateway.Get_Free_Item (Item);
+            if Item = null then
+               Item := new Request_Item;
+            end if;
+            Item.Synchronous := Standard.False;
+            Item.Data        := Message.all'Unchecked_Access;
             select
-               Gateway.Request_Service (Message.all, Standard.False);
+               Gateway.Request_Asynchronous (Item);
             or delay Timeout;
                raise Busy_Error with
                      "Current state " & Gateway.Get_Request_Info;
@@ -483,6 +581,16 @@ package body Gtk.Main.Router is
       end;
       Destroy (Dialog);
    end Connect;
+
+   function Get_Max_Asynchronous return Positive is
+   begin
+      return Gateway.Get_Max_Async;
+   end Get_Max_Asynchronous;
+
+   function Get_Request_Info return String is
+   begin
+      return Gateway.Get_Request_Info;
+   end Get_Request_Info;
 --
 -- GPS_Read -- Reading GPS connection socket until prompt it received
 --
@@ -533,21 +641,30 @@ package body Gtk.Main.Router is
          declare
             ID : G_Source_Id;
          begin
-            ID :=
-               Timeout_Add
-               (  Guint (Float (Period) * 1000.0),
-                  Callback'Access
-               );
+            ID := Timeout_Add
+                  (  Guint (Float (Period) * 1000.0),
+                     Callback'Access
+                  );
          end;
          Parent := Window.all'Unchecked_Access;
          Window_Callback.Connect (Window, "destroy", On_Quit'Access);
       end if;
    end Init;
 
+   function Is_Active return Boolean is
+   begin
+      return not Gateway.Is_Quitted;
+   end Is_Active;
+
+   procedure Quit is
+   begin
+      Gateway.Quit;
+   end Quit;
+
    procedure Request (Data : in out Request_Data'Class) is
    begin
       if Main = Current_Task then
-         if Gateway.Get_State = Quitted then
+         if Gateway.Is_Quitted then
             raise Quit_Error;
          end if;
          if Recursion < Max_Recursion then
@@ -569,7 +686,16 @@ package body Gtk.Main.Router is
          );
          raise Program_Error;
       else
-         Gateway.Request_Service (Data, Standard.True);
+         declare
+            Item : Request_Item_Ptr;
+         begin
+            Gateway.Get_Free_Item (Item);
+            if Item = null then
+               Item := new Request_Item;
+            end if;
+            Item.Data := Data'Unchecked_Access;
+            Gateway.Request_Synchronous (Item);
+         end;
       end if;
    end Request;
 
@@ -667,6 +793,11 @@ package body Gtk.Main.Router is
       end if;
       Say_Callback.Request (Say'Access, Data'Access);
    end Say;
+
+   procedure Set_Max_Asynchronous (Max : Positive) is
+   begin
+      Gateway.Set_Max_Async (Max);
+   end Set_Max_Asynchronous;
 
    type Trace_Request (Length : Natural; Break : Boolean) is record
       Text : String (1..Length);
@@ -949,9 +1080,33 @@ package body Gtk.Main.Router is
    end On_Populate_Popup;
 
    procedure On_Quit (Window : access Gtk_Window_Record'Class) is
+      procedure Free is
+         new Ada.Unchecked_Deallocation
+             (  Request_Item,
+                Request_Item_Ptr
+             );
+      procedure Free is
+         new Ada.Unchecked_Deallocation
+             (  Request_Data'Class,
+                Request_Data_Ptr
+             );
+      Item : Request_Item_Ptr;
    begin
       Parent := null;
       Gateway.Quit;
+      loop
+         Gateway.Initiate_Service (Item);
+         exit when Item = null;
+         if not Item.Synchronous then
+            Free (Item.Data);
+         end if;
+         Free (Item);
+      end loop;
+      loop
+         Gateway.Clean_Up (Item);
+         exit when Item = null;
+         Free (Item);
+      end loop;
    end On_Quit;
 
    procedure On_Response

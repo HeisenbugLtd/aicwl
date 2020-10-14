@@ -1020,6 +1020,15 @@ package body Gtk.Missed is
       );
    end Insert_Alt;
 
+   function Image (Color : Gdk_Color) return String is
+      Result : constant String :=
+                        GUint16'Image (Red   (Color) / 256) & "," &
+                        GUint16'Image (Green (Color) / 256) & "," &
+                        GUint16'Image (Blue  (Color) / 256);
+   begin
+      return Result (2..Result'Last);
+   end Image;
+
    function Is_A (Derived, Ancestor : GType) return Boolean is
       function Internal (Derived, Ancestor : GType) return GBoolean;
       pragma Import (C, Internal, "g_type_is_a");

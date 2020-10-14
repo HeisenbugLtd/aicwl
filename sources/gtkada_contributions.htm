@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>GtkAda Contributions</b></font><BIG><br>
-<EM>version 3.18</EM></BIG><br>
+<EM>version 3.22</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -126,10 +126,10 @@ executable file might be covered by the GNU Public License.</P>
 	<tr>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
-		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_18.tgz">gtkada_contributions_3_18.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
+		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_22.tgz">gtkada_contributions_3_22.tgz</a> (<b>tar</b> + <b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium">&nbsp;</td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
-		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_18.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td style="border-bottom-style: none; border-bottom-width: medium" align="right"><a href="http://www.dmitry-kazakov.de/ada/gtkada_contributions_3_22.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td style="border-bottom-style: none; border-bottom-width: medium" align="right">&nbsp;</td>
 	</tr>
 	<tr>
@@ -244,7 +244,8 @@ The described here packages are proposed as a contribution to
 	<li>Spawning processes synchronously and asynchronously with pipes;</li>
 	<li>Capturing asynchronous process standard I/O by Ada tasks and by text 
 	buffers;</li>
-	<li>Source view widget support.</li>
+	<li>Source view widget support;</li>
+	<li>SVG images support.</li>
 </ul>
 <P align="left">
 See also <a href="#changes_log">changes log</a>.&nbsp;</p>
@@ -308,13 +309,28 @@ Busy_Error : <font color="#0000FF">exception</font>;</tt></p>
 <p>The exception propagated when servicing is impossible because the main <a href="http://www.gtk.org">GTK+</a> 
 loop was prematurely left.</p>
 		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Max_Asynchronous
+<font color="#0000FF">return</font> Positive;</tt></p>
+</blockquote>
+<p>This function returns the maximum number of asynchronous requests pending in 
+the queue. When the limit is reached the new asynchronous requests are blocked. 
+When a request stays until timeout expiration, it fails with Busy_Error 
+exception.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Request_Info
+<font color="#0000FF">return</font> String;</tt></p>
+</blockquote>
+<p>This function returns a string containing information about current requests. 
+It is used for debugging purpose.</p>
+		<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Main.Router.Init"></a>procedure</font> 
 Init<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<b>&nbsp; Window</b>&nbsp;&nbsp; 
 : <font color="#0000FF">not null access</font> Gtk_Window_Record'Class;<br>
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Period</b>&nbsp;&nbsp; : Duration := 0.2;<br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Period</b>&nbsp;&nbsp; : Duration := 
+<font color="#800000">0.2</font>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-GPS_Port</b> : Natural&nbsp; := 50_000<br>
+GPS_Port</b> : Natural&nbsp; := <font color="#800000">50_000</font><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure should be called once from the main GTK+ thread after
@@ -324,6 +340,27 @@ functionality. <b>Period</b> specifies how frequently the mail loop will poll
 for graphic requests from other tasks. The parameter <b>Window</b> is the 
 application window for which the main loop is used. The parameter <b>GPS_Port</b> specifies 
 the port used to connect to the GPS, when the latter is in the server mode.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Is_Active <font color="#0000FF">
+return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if servicing 
+is active. When inactive requests fail with Quit_Error exceptions.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">procedure</font> 
+Quit;</tt></p>
+</blockquote>
+<p>This procedure stops servicing request. All pending and future requests 
+propagate Quit_Error. Normally it is not necessary to use this procedure because 
+servicing is stopped automatically when the window specified in
+<a href="#Gtk.Main.Router.Init">Init</a> is destroyed.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="Gtk.Main.Router.Set_Max_Asynchronous"></a>
+procedure</font> Set_Max_Asynchronous (<b>Max</b> : Positive);</tt></p>
+</blockquote>
+<p>This procedure sets the maximum number of asynchronous requests pending in 
+the queue. This limit does not affect the synchronous requests because these are 
+limited by the total number of tasks.</p>
 		<blockquote>
 <p><tt><font color="#0000FF"><a name="Gtk.Main.Router.Request_Data"></a>type</font> 
 Request_Data <font color="#0000FF">is abstract<br>
@@ -360,7 +397,7 @@ Gtk_Callback);</tt></p>
 </blockquote>
 <p>The caller will wait 
 until the request will be serviced through a call to <b>Service</b> on the GTK+ context. 
-Program_Error is propagated when <a href="#Gtk.Main.Router.Init">Init</a> was 
+<b>Service</b> is a parameterless procedure. Program_Error is propagated when <a href="#Gtk.Main.Router.Init">Init</a> was 
 not called. Other exceptions are the exceptions propagated out of
 <a href="#Gtk.Main.Router.Service">Service</a> and re-raised on the caller's 
 context. Quit_Error is propagated when the main <a href="http://www.gtk.org">GTK+</a> 
@@ -430,7 +467,8 @@ Timeout</b> : Duration := <font color="#800000">0.5</font><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This call requests execution of <b>Handler</b> with <b>Data</b> parameters. 
-It does not block the caller. When called on the context of the main loop, the 
+It does not block the caller unless the maximum number of asynchronous requests 
+is reached (see <a href="#Gtk.Main.Router.Set_Max_Asynchronous">Set_Max_Asynchronous</a>). When called on the context of the main loop, the 
 callback is postponed until messages loop end. <b>Data</b> is marshaled. Program_Error is propagated when <a href="#Gtk.Main.Router.Init">Init</a> was 
 not called. Quit_Error is propagated when the main <a href="http://www.gtk.org">GTK+</a> 
 loop was quitted before the request was serviced. Busy_Error is propagated when
@@ -8812,6 +8850,14 @@ GType_Icon <font color="#0000FF">return</font> GType;</tt></p>
 </blockquote>
 <p>Returns the <i>has-tooltip</i> property of Widget.</p>
 		<blockquote>
+<p><tt><font color="#0000FF">function</font> Image (<b>Color</b> :
+Gdk_Color) <font color="#0000FF">
+return</font> String;</tt></p>
+</blockquote>
+<p>This function returns string representation of color in the form <i>red, 
+green, blue</i>, where <i>red</i>, <i>green</i>, <i>blue</i> are values in the 
+range 0..255.</p>
+		<blockquote>
 <p><tt><font color="#0000FF">function</font> Is_A (<b>Derived</b>, <b>Ancestor</b> 
 : GType) <font color="#0000FF">return</font> Boolean;</tt></p>
 </blockquote>
@@ -11884,6 +11930,343 @@ Column</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : GInt<br>
 instead and adds a cell data function which first searches for the icons added 
 using <a href="#Gtk.Missed.Add_Named">Add_Named</a> and only then for the themed 
 ones.</p>
+<h3><a name="5.13"></a>5.13. RSVG bindings</h3>
+<p> 
+<a name="RSVG"></a><a name="RSVG.Handle"></a>The package <a href="#RSVG">RSVG</a> 
+and its child <a href="#RSVG.Handle">RSVG.Handle</a> provide bindings to the 
+GNOME SVG Library (RSVG), a library for rendering SVG and SVGZ files. The 
+package <a href="#RSVG.Handle">RSVG.Handle</a> declares the following types:</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Create_Result"></a>type</font> 
+Create_Result (Success : Boolean := False) <font color="#0000FF">is record<br>
+&nbsp;&nbsp; case </font>Success <font color="#0000FF">is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when</font> True =&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Handle : RSVG_Handle;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000FF">when</font> False =&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Error : GError;<br>
+&nbsp;&nbsp; <font color="#0000FF">end case</font>;<br>
+<font color="#0000FF">end record</font>;</tt></p>
+</blockquote>
+<p>This type is used for the results of SVG object creation that may fail. When the 
+operation was not successful the component Error is the corresponding error. It 
+must be freed by calling to 
+	<a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/glib.error.html#L44C14">Error_Free</a>. 
+When it was successful then the component Handle is the new SVG object. Note 
+that SVG objects are not widgets. It means that they are created with reference 
+count 1 and must be freed using Unref.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Dimension_Data"></a>type</font> 
+Dimension_Data <font color="#0000FF">is record<br>
+</font>&nbsp;&nbsp; Width&nbsp; : int;<br>
+&nbsp;&nbsp; Height : int;<br>
+&nbsp;&nbsp; EM&nbsp;&nbsp;&nbsp;&nbsp; : GDouble;<br>
+&nbsp;&nbsp; EX&nbsp;&nbsp;&nbsp;&nbsp; : GDouble;<br>
+<font color="#0000FF">end record</font>;</tt></p>
+</blockquote>
+<p>This type is used for dimensions of an SVG object.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.IO_Result"></a>type</font> 
+IO_Result (Success : Boolean := False) <font color="#0000FF">is record<br>
+&nbsp;&nbsp; case </font>Success <font color="#0000FF">is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when</font> True =&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000FF">null</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000FF">when</font> False =&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Error : GError;<br>
+&nbsp;&nbsp; <font color="#0000FF">end case</font>;<br>
+<font color="#0000FF">end record</font>;</tt></p>
+</blockquote>
+<p>This type is used for the results of I/O operations that may fail. When the 
+operation was not successful the component Error is the corresponding error. It 
+must be freed by calling to 
+	<a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/glib.error.html#L44C14">Error_Free</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Position_Data"></a>type</font> 
+Position_Data <font color="#0000FF">is record<br>
+</font>&nbsp;&nbsp; X : int;<br>
+&nbsp;&nbsp; Y : int;<br>
+<font color="#0000FF">end record</font>;</tt></p>
+</blockquote>
+<p>This type is used for positions of an SVG object element.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.RSVG_Handle_Record"></a>type</font> 
+RSVG_Handle_Record<font color="#0000FF"> is<br>
+&nbsp;&nbsp; new </font>GLib.Object.GObject_Record <font color="#0000FF">with 
+null record</font>;<br>
+<font color="#0000FF">type </font>RSVG_Handle<font color="#0000FF"> is<br>
+&nbsp;&nbsp; access all </font>RSVG_Handle_Record'Class;</tt></p>
+</blockquote>
+<p>The object of this type is an SVG object ready to be rendered. The following 
+operations are defined on the type:</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Close"></a>function</font> 
+Close<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> IO_Result;</tt></p>
+</blockquote>
+<p>This function closes handle to indicate that loading the image is complete. 
+This will return <a href="#RSVG.Handle.IO_Result">IO_Result</a> with <i>Success</i> set to <i><font color="#800000">true</font></i> 
+if the loader closed successfully. Note that handle is not freed until Unref is 
+called.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Base_URI"></a>function</font> 
+Get_Base_URI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>String;</tt></p>
+</blockquote>
+<p>This function gets the base URI for <b>Handle</b>. It can be empty string.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Dimensions"></a>function</font> 
+Get_Dimensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>Dimension_Data;</tt></p>
+</blockquote>
+<p>This function gets size of the SVG object <b>Handle</b>. The result has the 
+type <a href="#RSVG.Handle.Dimension_Data">Dimension_Data</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Dimensions_Sub"></a>function</font> 
+Get_Dimensions_Sub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ID</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+: String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>Dimension_Data;</tt></p>
+</blockquote>
+<p>This function gets size of an element of the SVG object <b>Handle</b>. The 
+element is specified by the parameter <b>ID</b>. For example, <b>ID</b> &quot;<i>#layer1</i>&quot; 
+specifies element &quot;<i>layer1</i>&quot;. The result has the 
+type <a href="#RSVG.Handle.Dimension_Data">Dimension_Data</a>.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Pixbuf"></a>function</font> 
+Get_Pixbuf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>Gdk_Pixbuf;</tt></p>
+</blockquote>
+<p>This function returns the pixbuf loaded by <b>Handle</b>. The caller of this 
+function must use Unref to free the result if not Null_Pixbuf, If insufficient data has been read to create 
+the pixbuf, or an error occurred in loading, then Null_Pixbuf will be returned. 
+Note that the pixbuf may not be complete until <a href="#RSVG.Handle.Close">
+Close</a> has been called.</p>
+		<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Pixbuf_Sub"></a>function</font> 
+Get_Pixbuf_Sub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ID</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+: String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>Gdk_Pixbuf;</tt></p>
+</blockquote>
+<p>This function returns the pixbuf loaded by <b>Handle</b> for the element 
+specified by the parameter <b>ID</b>. For example, <b>ID</b> &quot;<i>#layer1</i>&quot; 
+specifies element &quot;<i>layer1</i>&quot;.&nbsp; The caller of this 
+function must use Unref to free the result, if not Null_Pixbuf. If insufficient data has been read to create 
+the pixbuf, or an error occurred in loading, then Null_Pixbuf will be returned. 
+Note that the pixbuf may not be complete until <a href="#RSVG.Handle.Close">
+Close</a> has been called.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Position_Sub"></a>function</font> 
+Get_Position_Sub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ID</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+: String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return </font>Dimension_Data;</tt></p>
+</blockquote>
+<p>This function gets position of an element of the SVG object <b>Handle</b>. The 
+element is specified by the parameter <b>ID</b>. For example, <b>ID</b> &quot;<i>#layer1</i>&quot; 
+specifies element &quot;<i>layer1</i>&quot;. The result has the 
+type <a href="#RSVG.Handle.Position_Data">Position_Data</a>.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Get_Type"></a>function</font> 
+Get_Type <font color="#0000FF">
+return </font>GType;</tt></p>
+</blockquote>
+<p>This function returns the type of SVG object.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Gtk_New"></a>procedure </font> 
+Gtk_New (<b>Handle</b> : <font color="#0000FF">out</font> RSVG_Handle);</tt></p>
+</blockquote>
+<p>This procedure creates a new SVG object. The result must be freed with Unref. 
+This handle can be used for dynamically loading an image. You need to feed it 
+data using Write, then call <a href="#RSVG.Handle.Close">
+Close</a> when done. Afterwards, you can render it using Cairo or get a 
+Gdk_Pixbuf from it. When finished, free with Unref. No more than one image can 
+be loaded with one handle.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Gtk_New_From_Data"></a>function</font> 
+Gtk_New_From_Data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Data</b> : 
+Stream_Element_Array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Create_Result;</tt></p>
+</blockquote>
+<p>This function creates a new SVG object from <b>Data</b>. The result is of
+<a href="#RSVG.Handle.Create_Result">Create_Result</a>.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Gtk_New_From_File"></a>function</font> 
+Gtk_New_From_File<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>File_Name</b> : 
+String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Create_Result;</tt></p>
+</blockquote>
+<p>This function creates a new SVG object from a file specified by its name <b>
+File_Name</b>. The result is of
+<a href="#RSVG.Handle.Create_Result">Create_Result</a>.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Gtk_New_With_Flags"></a>procedure </font> 
+Gtk_New_With_Flags (<b>Handle</b> : <font color="#0000FF">out</font> RSVG_Handle;
+<b>Flags</b> : Handle_Flags);</tt></p>
+</blockquote>
+<p>This procedure creates a new SVG object. The parameter <b>Flags</b> specified 
+additional flags:</p>
+<blockquote>
+<p><tt><font color="#0000FF">type </font>Handle_Flags <font color="#0000FF">is 
+mod</font> <font color="#800000">2</font>**<font color="#800000">2</font>;<br>
+pragma Convention (C, Handle_Flags);<br>
+Handle_Flags_None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+<font color="#0000FF">constant</font> := <font color="#800000">0</font>;<br>
+Handle_Flag_Unlimited&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+<font color="#0000FF">constant</font> := <font color="#800000">1</font>;<br>
+Handle_Flag_Keep_Image_Data : <font color="#0000FF">constant</font> :=
+<font color="#800000">2</font>;</tt></p>
+</blockquote>
+<p>The result must be freed with Unref. 
+This handle can be used for dynamically loading an image. You need to feed it 
+data using Write, then call <a href="#RSVG.Handle.Close">
+Close</a> when done. Afterwards, you can render it using Cairo or get a 
+Gdk_Pixbuf from it. When finished, free with Unref. No more than one image can 
+be loaded with one handle.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Initialize"></a>
+procedure </font> 
+Initialize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record'Class<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<font color="#0000FF"><br>
+procedure </font>Initialize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Flags</b>&nbsp; : Handle_Flags<font color="#0000FF"><br>
+</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<br>
+<font color="#0000FF">procedure </font>Initialize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Data</b>&nbsp;&nbsp; 
+: Stream_Element_Array;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Error</b>&nbsp; : <font color="#0000FF">out</font> IO_Result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<font color="#0000FF"><br>
+procedure </font>Initialize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b>&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">not null access</font> RSVG_Handle_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+File_Name</b> : UTF8_String;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Error</b>&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">out</font> IO_Result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>One of these procedures must be used to initialize any type derived from
+<a href="#RSVG.Handle.RSVG_Handle_Record">RSVG_Handle_Record</a>. The last two 
+procedures may fail which is indicated by the Error parameter of <a href="#RSVG.Handle.IO_Result">IO_Result</a> 
+type. In the case of failure the object is left uninitialized an must be freed 
+or else initialized by some other call.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Render_Cairo"></a>
+function</font> 
+Render_Cairo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b>&nbsp; :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Context</b> 
+: Cairo_Context<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function draws <b>Handle</b> object on the context specified by the 
+parameter <b>Context</b>. On errors the result is <i><font color="#800000">false</font></i>.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Render_Cairo_Sub"></a>
+function</font> 
+Render_Cairo_Sub<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b>&nbsp; :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Context</b> 
+: Cairo_Context;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ID</b>&nbsp;&nbsp;&nbsp; &nbsp; 
+: String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function draws element <b>ID</b> of the <b>Handle</b> object on the context specified by the 
+parameter <b>Context</b>. On errors the result is <i><font color="#800000">false</font></i>.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Set_Base_URI"></a>
+procedure</font> 
+Set_Base_URI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>URI&nbsp;&nbsp;
+</b>&nbsp;: String<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure sets the base <b>URI</b> for the SVG <b>Handle</b>. This can 
+only be called before <a href="#RSVG.Handle.Write">Write</a> has been called.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Set_DPI"></a>
+procedure</font> 
+Set_DPI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>DPI&nbsp;&nbsp;
+</b>&nbsp;: double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure sets the DPI for the outgoing pixbuf. Common values are 75, 
+90, and 300 DPI. Passing a number &lt;= 0 to DPI will reset the DPI to whatever the 
+default value happens to be.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Set_DPI_X_Y"></a>
+procedure</font> 
+Set_DPI_X_Y<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>X&nbsp; &nbsp;&nbsp;
+</b>&nbsp;: double;<br>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Y&nbsp; &nbsp;&nbsp;
+</b>&nbsp;: double<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure sets the DPI for the outgoing pixbuf. Common values are 75, 
+90, and 300 DPI. Passing a number &lt;= 0 to DPI will reset the DPI to whatever the 
+default value happens to be.</p>
+<blockquote>
+<p><tt><font color="#0000FF"><a name="RSVG.Handle.Write"></a>
+function</font> 
+Write<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Handle</b> :
+<font color="#0000FF">not null access</font> RSVG_Handle_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Buffer</b> 
+: Stream_Element_Array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return</font> IO_Result;</tt></p>
+</blockquote>
+<p>This function loads the bytes of the image. This will return <a href="#RSVG.Handle.IO_Result">IO_Result</a> 
+with <i>Success</i> set <i><font color="#800000">true</font></i> if the data was 
+loaded successful, and <i><font color="#800000">false</font></i> if an error 
+occurred. In the latter case, the loader will be closed, and will not accept 
+further writes. The error will be set to an error from the RsvgError domain. 
+Errors from GIOErrorEnum are also possible.</p>
 <hr>
 <p align="right">
   <a name="6"></a><a href="#5"><IMG src="prev.gif" alt="[Back]" width="29"
@@ -13260,6 +13643,13 @@ You will need to download and install them manually. Normally</p>
 	<font color="#0000FF">with</font> 
 	&quot;gtkada_contributions.gpr&quot;;</tt></TD>
   </TR>
+  <tr>
+    <TD valign="top">gtkada_contributions-rsvg</TD>
+    <TD valign="top">GtkAda contributions with RSVG support</TD>
+    <TD valign="top"><tt>
+	<font color="#0000FF">with</font> 
+	&quot;gtkada_contributions-rsvg.gpr&quot;;</tt></TD>
+  </tr>
   <TR>
     <TD valign="top">gtkada_contributions-source_view</TD>
     <TD valign="top">GtkAda contributions with source view packages</TD>
@@ -13286,112 +13676,6 @@ Ada</a> and native ODBC bindings </TD>
 	&quot;components-odbc-gtk.gpr&quot;;</tt></TD>
   </TR>
   </TABLE>
-<h3><a name="12.2"></a>12.2. GtkAda distributions</h3>
-<p><u><b>Fedora Core 20</b></u>. <a name="gtkada_fedora_packages"></a>Presently 
-Fedora does not provide packaged GtkAda 
-3.x. The following transitional packages can be used instead:</p>
-  <TABLE border="5" cellpadding="3" cellspacing="0">
-  <TR>
-    <TD valign="top" bgcolor="#008080"><font color="#FFFFFF"><b>Packages</b></font></TD>
-    <TD valign="top" bgcolor="#008080"><font color="#FFFFFF"><b>32-bit</b></font></TD>
-    <TD valign="top" bgcolor="#008080"><font color="#FFFFFF"><b>64-bit</b></font></TD>
-  </TR>
-  <TR>
-    <TD valign="top" rowspan="2">Binary</TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-3.8-1.i686.rpm">gtkada-3.8-1.i686.rpm</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-3.8-1.x86_64.rpm">gtkada-3.8-1.x86_64.rpm</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-debuginfo-3.8-1.i686.rpm">gtkada-debuginfo-3.8-1.i686.rpm</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-debuginfo-3.8-1.x86_64.rpm">gtkada-debuginfo-3.8-1.x86_64.rpm</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top" rowspan="2">Developing</TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-devel-3.8-1.i686.rpm">gtkada-devel-3.8-1.i686.rpm</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-devel-3.8-1.x86_64.rpm">gtkada-devel-3.8-1.x86_64.rpm</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-devel-debuginfo-3.8-1.i686.rpm">gtkada-devel-debuginfo-3.8-1.i686.rpm</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-devel-debuginfo-3.8-1.x86_64.rpm">gtkada-devel-debuginfo-3.8-1.x86_64.rpm</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top" rowspan="2">Source</TD>
-    <TD valign="top" colspan="2">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-3.8-1.src.rpm">gtkada-3.8-1.src.rpm</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top" colspan="2">
-	<a href="http://www.dmitry-kazakov.de/distributions/gtkada-devel-3.8-1.src.rpm">gtkada-devel-3.8-1.src.rpm</a></TD>
-  </TR>
-  </TABLE>
-<p>For automatic install and update with <i>yum</i>,
-place the file <a href="http://dmitry-kazakov.de/dmitry-kazakov.repo">dmitry-kazakov.repo</a> 
-into the directory <i>/etc/yum.repos.d</i>.</p>
-<p><u><b>Debian 7</b></u>. <a name="gtkada_debian_packages"></a>Presently Debian 
-does not provide packaged GtkAda 
-3.x. The following transitional packages can be used instead (manually or from 
-the repository):</p>
-  <TABLE border="5" cellpadding="3" cellspacing="0">
-  <TR>
-    <TD valign="top" bgcolor="#008080"><font color="#FFFFFF"><b>Packages</b></font></TD>
-    <TD valign="top" bgcolor="#008080"><font color="#FFFFFF"><b>32-bit</b></font></TD>
-    <TD valign="top" bgcolor="#008080"><font color="#FFFFFF"><b>64-bit</b></font></TD>
-  </TR>
-  <TR>
-    <TD valign="top" rowspan="2">Binary</TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/pool/main/libg/libgtkada-3.8/libgtkada3.8_1_i386.deb">
-	libgtkada3.8_1_i386.deb</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/pool/main/libg/libgtkada-3.8/libgtkada3.8_1_amd64.deb">
-	libgtkada3.8_1_amd64.deb</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/pool/main/libg/libgtkada-3.8/libgtkada3.8-dbg_1_i386.deb">
-	libgtkada3.8-dbg_1_i386.deb</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/pool/main/libg/libgtkada-3.8/libgtkada3.8-dbg_1_amd64.deb">
-	libgtkada3.8-dbg_1_amd64.deb</a></TD>
-  </TR>
-  <TR>
-    <TD valign="top">Developing</TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/pool/main/libg/libgtkada-3.8/libgtkada3.8-dev_1_i386.deb">
-	libgtkada3.8-dev_1_i386.deb</a></TD>
-    <TD valign="top">
-	<a href="http://www.dmitry-kazakov.de/distributions/pool/main/libg/libgtkada-3.8/libgtkada3.8-dev_1_amd64.deb">
-	libgtkada3.8-dev_1_amd64.deb</a></TD>
-  </TR>
-  </TABLE>
-<p>For automatic install and update with APT, add the following line to <i>/etc/apt/sources.list</i>:</p>
-<blockquote><tt>deb http://dmitry-kazakov.de/distributions sid main</tt></blockquote>
-<p><u><b>Windows</b></u>. The GtkAda 3.4.x can be obtained from AdaCore
-<a href="http://libre.adacore.com/libre/tools/gtkada/">Libre</a>.</p>
-<h3><a name="12.3"></a>12.3. Debian and Fedora packages</h3>
-<p>Under Fedora, Debian Linux and their derivates you can use GtkAda 
-contribution packages for
-<a href="#fedora_packages">Fedora</a> and
-	<a href="#debian_packages">Debian</a> respectively.</p>
-<h3><a name="12.4"></a>12.4. Fedora packages repository</h3>
-<p>The Fedora packages of this library are located in a <i>yum</i> software 
-package manager repository. They can be searched, installed and updated 
-automatically using <i>yum</i>. In order to do so, the file
-<a href="http://dmitry-kazakov.de/dmitry-kazakov.repo">dmitry-kazakov.repo</a> 
-can be put into the directory <i>/etc/yum.repos.d</i>.</p>
-<h3><a name="12.5"></a>12.5. Debian packages repository</h3>
-<p>In order to use <i>apt</i> Debian repository for automatic install and update 
-these packages add the following line to <i>/etc/apt/sources.list</i>:</p>
-<blockquote>
-	<tt>deb http://dmitry-kazakov.de/distributions sid main</tt></blockquote>
 <hr>
 <p align="right">
   <a name="13"></a><a href="#12"><IMG src="prev.gif" alt="[Back]" width="29"
@@ -13411,6 +13695,25 @@ GNAT GPL 2016 (20160515-49)</li>
 <ul>
 	<li><i>GtkAda 3.14.2</i></li>
 </ul>
+<P>
+Changes (3 May 2018) to the version 3.21:<ul>
+	<li>Get_Requests_Info function added to Gtk.Main.Router package to return 
+	statistics about pending requests.</li>
+	</ul>
+<P>
+Changes (10 February 2018) to the version 3.20:<ul>
+	<li>Gtk.Main.Router package was redesigned to improve performance of 
+	asynchronous requests.</li>
+	</ul>
+<P>
+Changes (28 January 2018) to the version 3.19:<ul>
+	<li>The procedure Quit added to the Gtk.Main.Router package.</li>
+	</ul>
+<P>
+Changes (4 January 2018) to the version 3.18:<ul>
+	<li>The packages RSVG and RSVG.Handle provide bindings to librsvg;</li>
+	<li>Image function for Gdk_Color was added to Gtk.Missed.</li>
+	</ul>
 <P>
 Changes (21 February 2017) to the version 3.17:<ul>
 	<li>Gtk.Main.Router implementation of Send is changed so that when called on 
@@ -14036,7 +14339,8 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#5.9">5.9. Drives (GDrive)</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#5.10">5.10. Volume monitor (GVolumeMonitor)</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#5.11">5.11. Generic signal handlers</A><br>
-&nbsp;&nbsp;&nbsp; <A href="#5.12">5.12. Stock items backward compatibility</A><hr>
+&nbsp;&nbsp;&nbsp; <A href="#5.12">5.12. Stock items backward compatibility</A><br>
+&nbsp;&nbsp;&nbsp; <A href="#5.13">5.13. RSVG bindings</A><hr>
 <b><big><big>6</big></big></b>&nbsp;<A href="#6"><big>Handles as GTK+ values</big></A><hr>
 <b><big><big>7</big></big></b>&nbsp;<A href="#7"><big>Unit selection widget and dialogs</big></A><hr>
 <b><big><big>8</big></big></b>&nbsp;<A href="#8"><big>Improved HLS color model</big></A><hr>
@@ -14053,11 +14357,7 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#11.4">11.4. Enumeration combo box</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#11.5">11.5. Resizing custom drawn widgets</A><hr>
 <b><big><big>12</big></big></b>&nbsp;<A href="#12"><big>Installation</big></A><br>
-&nbsp;&nbsp;&nbsp; <A href="#12.1">12.1. Using the source distribution</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#12.2">12.2. GtkAda distributions</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#12.3">12.3. Debian and Fedora packages</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#12.4">12.4. Fedora packages repository</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#12.5">12.5. Debian packages repository</A><hr>
+&nbsp;&nbsp;&nbsp; <A href="#12.1">12.1. Using the source distribution</A><hr>
 <b><big><big>13</big></big></b>&nbsp;<A href="#13"><big>Changes log</big></A><hr>
 <b><big><big>14</big></big></b>&nbsp;<A href="#14"><big>Table of contents</big></A></td>
 	</tr>

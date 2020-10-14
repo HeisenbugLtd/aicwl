@@ -3,7 +3,7 @@
 --     Gtk.Layered.Rectangular_Background          Luebeck            --
 --  Interface                                      Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,6 +25,7 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
+with Gdk.RGBA;                       use Gdk.RGBA;
 with Gtk.Enums;                      use Gtk.Enums;
 with Gtk.Layered.Abstract_Bordered;  use Gtk.Layered.Abstract_Bordered;
 
@@ -49,6 +50,8 @@ package Gtk.Layered.Rectangular_Background is
 --    Border_Color   - The border color
 --    Border_Shadow  - The border shape
 --    Deepened       - The border depth is increased with the parent
+--    Lens_Reflex    - Color of the lens on top with a reflex
+--    Lens_Shadow    - Color of the lens on top with a shadow
 --    Scaled         - The layer is scaled together with the parent
 --    Widened        - The border line is widened with the parent
 --
@@ -81,13 +84,15 @@ package Gtk.Layered.Rectangular_Background is
                 Rotation_Angle : GDouble     := 0.0;
                 Corner_Radius  : GDouble     := 0.0;
                 Color          : Gdk_Color   := RGB (0.0, 0.0, 0.0);
-                Border_Width   : GDouble           := 0.0;
-                Border_Depth   : GDouble           := 1.0;
+                Border_Width   : GDouble     := 0.0;
+                Border_Depth   : GDouble     := 1.0;
                 Border_Color   : Border_Color_Type := Default_Color;
                 Border_Shadow  : Gtk_Shadow_Type   := Shadow_In;
-                Deepened       : Boolean           := False;
-                Scaled         : Boolean           := False;
-                Widened        : Boolean           := False
+                Deepened       : Boolean     := False;
+                Lens_Reflex    : Gdk_RGBA     := (1.0, 1.0, 1.0, 0.0);
+                Lens_Shadow    : Gdk_RGBA     := (0.0, 0.0, 0.0, 0.0);
+                Scaled         : Boolean     := False;
+                Widened        : Boolean     := False
              );
    function Add_Rectangular_Background
             (  Under          : not null access Layer_Location'Class;
@@ -97,13 +102,15 @@ package Gtk.Layered.Rectangular_Background is
                Rotation_Angle : GDouble     := 0.0;
                Corner_Radius  : GDouble     := 0.0;
                Color          : Gdk_Color   := RGB (0.0, 0.0, 0.0);
-               Border_Width   : GDouble           := 0.0;
-               Border_Depth   : GDouble           := 1.0;
+               Border_Width   : GDouble     := 0.0;
+               Border_Depth   : GDouble     := 1.0;
                Border_Color   : Border_Color_Type := Default_Color;
                Border_Shadow  : Gtk_Shadow_Type   := Shadow_In;
-               Deepened       : Boolean           := False;
-               Scaled         : Boolean           := False;
-               Widened        : Boolean           := False
+               Deepened       : Boolean     := False;
+               Lens_Reflex    : Gdk_RGBA    := (1.0, 1.0, 1.0, 0.0);
+               Lens_Shadow    : Gdk_RGBA    := (0.0, 0.0, 0.0, 0.0);
+               Scaled         : Boolean     := False;
+               Widened        : Boolean     := False
             )  return not null access Rectangular_Background_Layer;
 --
 -- Get_Center -- Of the rectangle
@@ -185,6 +192,8 @@ package Gtk.Layered.Rectangular_Background is
 --    Border_Depth   - Border depth
 --    Border_Color   - The border color
 --    Border_Shadow  - The border shape
+--    Lens_Reflex    - Color of the lens on top with a reflex
+--    Lens_Shadow    - Color of the lens on top with a shadow
 --
 -- Exceptions :
 --
@@ -201,7 +210,9 @@ package Gtk.Layered.Rectangular_Background is
                 Border_Width   : GDouble;
                 Border_Depth   : GDouble;
                 Border_Color   : Border_Color_Type;
-                Border_Shadow  : Gtk_Shadow_Type
+                Border_Shadow  : Gtk_Shadow_Type;
+                Lens_Reflex    : Gdk_RGBA;
+                Lens_Shadow    : Gdk_RGBA
              );
 
    overriding

@@ -3,7 +3,7 @@
 --     Gtk.Layered.Abstract_Bordered               Luebeck            --
 --  Interface                                      Winter, 2010       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -25,6 +25,7 @@
 --  executable file might be covered by the GNU Public License.       --
 --____________________________________________________________________--
 
+with Gdk.RGBA;   use Gdk.RGBA;
 with Gtk.Enums;  use Gtk.Enums;
 
 package Gtk.Layered.Abstract_Bordered is
@@ -156,6 +157,54 @@ package Gtk.Layered.Abstract_Bordered is
    function Get_Foreground (Layer : Abstract_Bordered_Layer)
       return access Foreground_Layer'Class;
 --
+-- Get_Lens_Reflex -- The border lens reflex
+--
+--    Layer - The background layer
+--
+-- Returns :
+--
+--    The lens reflex color
+--
+   function Get_Lens_Reflex (Layer : Abstract_Bordered_Layer)
+      return Gdk_RGBA;
+   function Get_Lens_Reflex (Layer : Abstract_Bordered_Layer)
+      return Gdk_Color;
+--
+-- Get_Lens_Shadow -- The border lens shadow
+--
+--    Layer - The background layer
+--
+-- Returns :
+--
+--    The color used for the lens shadow
+--
+   function Get_Lens_Shadow (Layer : Abstract_Bordered_Layer)
+      return Gdk_RGBA;
+   function Get_Lens_Shadow (Layer : Abstract_Bordered_Layer)
+      return Gdk_Color;
+--
+-- Has_Lens_Reflex -- The border lens reflex
+--
+--    Layer - The background layer
+--
+-- Returns :
+--
+--    True if the lens has a reflex
+--
+   function Has_Lens_Reflex (Layer : Abstract_Bordered_Layer)
+      return Boolean;
+--
+-- Has_Lens_Shadow -- The border lens shadow
+--
+--    Layer - The background layer
+--
+-- Returns :
+--
+--    True if the lens has a shadow
+--
+   function Has_Lens_Shadow (Layer : Abstract_Bordered_Layer)
+      return Boolean;
+--
 -- Set -- Parameters of the border
 --
 --    Layer         - The background layer
@@ -163,6 +212,11 @@ package Gtk.Layered.Abstract_Bordered is
 --    Border_Depth  - Border depth
 --    Border_Color  - The border color
 --    Border_Shadow - The border shape
+--    Lens_Reflex   - Color of the lens on top with a reflex
+--    Lens_Shadow   - Color of the lens on top with a shadow
+--
+-- When Lens_Reflex's alpha or Lens_Shadow's alpha is set to transparent
+-- (0.0) then the corresponding part of the lens is not used.
 --
 -- Exceptions :
 --
@@ -173,7 +227,9 @@ package Gtk.Layered.Abstract_Bordered is
                 Border_Width  : GDouble;
                 Border_Depth  : GDouble;
                 Border_Color  : Border_Color_Type;
-                Border_Shadow : Gtk_Shadow_Type
+                Border_Shadow : Gtk_Shadow_Type;
+                Lens_Reflex   : Gdk_RGBA;
+                Lens_Shadow   : Gdk_RGBA
              );
 --
 -- Set_Aspected -- Border behavior when the parent widget is resized
@@ -307,13 +363,15 @@ private
       Foreground    : Foreground_Layer_Ptr;
       Border_Color  : Border_Color_Type := (Style_Color => True);
       Border_Shadow : Gtk_Shadow_Type   := Shadow_None;
-      Border_Width  : GDouble  := 0.0;
-      Border_Depth  : GDouble  := 1.0;
-      Aspected      : Boolean := False;
-      Scaled        : Boolean := False;
-      Widened       : Boolean := False;
-      Deepened      : Boolean := False;
-      Updated       : Boolean := True;
+      Border_Width  : GDouble           := 0.0;
+      Border_Depth  : GDouble           := 1.0;
+      Lens_Reflex   : Gdk_RGBA          := (1.0, 1.0, 1.0, 0.0);
+      Lens_Shadow   : Gdk_RGBA          := (0.0, 0.0, 0.0, 0.0);
+      Aspected      : Boolean           := False;
+      Scaled        : Boolean           := False;
+      Widened       : Boolean           := False;
+      Deepened      : Boolean           := False;
+      Updated       : Boolean           := True;
    end record;
    overriding
       procedure Remove (Layer : in out Abstract_Bordered_Layer);

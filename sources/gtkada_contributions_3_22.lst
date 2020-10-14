@@ -123,6 +123,7 @@
 ./gtk-widget-styles.ads
 ./gtk-wildcard_directory_browser.adb
 ./gtk-wildcard_directory_browser.ads
+./gtkada_contributions-rsvg.gpr
 ./gtkada_contributions-source_view.gpr
 ./gtkada_contributions.gpr
 ./gtkada_contributions.htm
@@ -136,10 +137,14 @@
 ./next.gif
 ./prev.gif
 ./readme_gtkada.txt
+./rsvg-handle.adb
+./rsvg-handle.ads
+./rsvg.ads
 ./test_gtkada/components-gnade-gtk-tests.gpr
 ./test_gtkada/components-gtk-tests.gpr
 ./test_gtkada/gtk-tree_model-custom_store.adb
 ./test_gtkada/gtk-tree_model-custom_store.ads
+./test_gtkada/gtkada_contributions-rsvg-tests.gpr
 ./test_gtkada/gtkada_contributions-source_view-tests.gpr
 ./test_gtkada/gtkada_contributions-tests.gpr
 ./test_gtkada/readme_gtkada.txt
@@ -161,6 +166,7 @@
 ./test_gtkada/test_gtk_persistent_directory_browser.adb
 ./test_gtkada/test_gtk_p_enum.ads
 ./test_gtkada/test_gtk_recent_manager.adb
+./test_gtkada/test_gtk_rsvg.adb
 ./test_gtkada/test_gtk_source_view.adb
 ./test_gtkada/test_gtk_spawn.adb
 ./test_gtkada/test_gtk_tasking.adb

@@ -1,0 +1,29 @@
+with "../gtkada_contributions-rsvg.gpr";
+
+project Gtkada_Contributions.RSVG.Tests is
+
+   for Source_Files use ("test_gtk_rsvg.adb");
+   for Main use ("test_gtk_rsvg.adb");
+   for Exec_Dir use ".";
+
+   package Binder is
+      for Default_Switches ("ada") use
+         Gtkada_Contributions.RSVG.Binder'Default_Switches ("ada");
+   end Binder;
+
+   package Builder is
+      for Default_Switches ("ada") use
+         Gtkada_Contributions.RSVG.Builder'Default_Switches ("ada");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use
+         Gtkada_Contributions.RSVG.Compiler'Default_Switches ("ada");
+   end Compiler;
+
+   package Linker is
+      for Default_Switches ("ada") use
+         Gtkada_Contributions.RSVG.Linker'Default_Switches ("ada");
+   end Linker;
+   
+end Gtkada_Contributions.RSVG.Tests;

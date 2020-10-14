@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Wall_Clock.Modern                 Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -510,6 +510,8 @@ package body Gtk.Wall_Clock.Modern is
          Border_Depth  => Widget.Background.Get_Border_Depth,
          Border_Color  => Widget.Background.Get_Border_Color,
          Border_Shadow => Widget.Background.Get_Border_Shadow,
+         Lens_Reflex   => Widget.Background.Get_Lens_Reflex,
+         Lens_Shadow   => Widget.Background.Get_Lens_Shadow,
          Color  =>
             Style_Get (Widget, "backgound-color", Background_Color)
       );
@@ -555,6 +557,8 @@ package body Gtk.Wall_Clock.Modern is
          Border_Depth  => Widget.Pin.Get_Border_Depth,
          Border_Color  => Widget.Pin.Get_Border_Color,
          Border_Shadow => Widget.Pin.Get_Border_Shadow,
+         Lens_Reflex   => Widget.Pin.Get_Lens_Reflex,
+         Lens_Shadow   => Widget.Pin.Get_Lens_Shadow,
          Color         => Style_Get (Widget, "pin-color", Pin_Color)
       );
    end Style_Changed;

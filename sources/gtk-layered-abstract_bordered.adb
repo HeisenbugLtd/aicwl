@@ -3,7 +3,7 @@
 --     Gtk.Layered.Abstract_Bordered               Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  07:54 21 Jul 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -28,8 +28,8 @@
 with Ada.Exceptions;              use Ada.Exceptions;
 with Ada.IO_Exceptions;           use Ada.IO_Exceptions;
 with Cairo.Elementary_Functions;  use Cairo.Elementary_Functions;
+with Cairo.Pattern;               use Cairo.Pattern;
 with Gdk.Color.IHLS;              use Gdk.Color.IHLS;
-with Gdk.RGBA;                    use Gdk.RGBA;
 with GLib.Properties.Creation;    use GLib.Properties.Creation;
 with Gtk.Style_Context;           use Gtk.Style_Context;
 with Gtk.Layered.Stream_IO;       use Gtk.Layered.Stream_IO;
@@ -55,7 +55,11 @@ package body Gtk.Layered.Abstract_Bordered is
            Property_Width,
            Property_Depth,
            Property_Aspected,
-           Property_Deepened
+           Property_Deepened,
+           Property_Lens_Reflex_Opacity,
+           Property_Lens_Reflex_Color,
+           Property_Lens_Shadow_Opacity,
+           Property_Lens_Shadow_Color
         );
 
    procedure Free is
@@ -401,6 +405,93 @@ package body Gtk.Layered.Abstract_Bordered is
                 Area    : Gdk_Rectangle
              )  is
    begin
+      if (  Layer.Border.Lens_Reflex.Alpha > 0.0
+         or else
+            Layer.Border.Lens_Shadow.Alpha > 0.0
+         )
+      then
+         declare
+            Pattern    : Cairo_Pattern;
+            X1, X2     : aliased GDouble;
+            Y1, Y2     : aliased GDouble;
+            Corner     : Cairo_Tuple;
+            Diameter   : GDouble;
+            Allocation : Gdk_Rectangle;
+         begin
+            Layer.Widget.Get_Allocation (Allocation);
+            Layer.Border.Set_Contents_Path (Context, Allocation);
+            Path_Extents
+            (  Cr => Context,
+               X1 => X1'Access,
+               Y1 => Y1'Access,
+               X2 => X2'Access,
+               Y2 => Y2'Access
+            );
+            Diameter := GDouble'Max (X2 - X1, Y2 - Y1);
+            if Layer.Border.Lens_Reflex.Alpha > 0.0 then
+               Corner.X := X1 + Diameter * 0.2;
+               Corner.Y := Y1 + Diameter * 0.2;
+               Pattern := Create_Radial
+                          (  Cx0     => Corner.X,
+                             Cy0     => Corner.Y,
+                             Radius0 => Diameter * 0.05,
+                             Cx1     => Corner.X + Diameter * 0.15,
+                             Cy1     => Corner.Y + Diameter * 0.15,
+                             Radius1 => Diameter * 0.4
+                          );
+               Add_Color_Stop_RGBA
+               (  Pattern => Pattern,
+                  Offset  => 0.0,
+                  Red     => Layer.Border.Lens_Reflex.Red,
+                  Green   => Layer.Border.Lens_Reflex.Green,
+                  Blue    => Layer.Border.Lens_Reflex.Blue,
+                  Alpha   => Layer.Border.Lens_Reflex.Alpha
+               );
+               Add_Color_Stop_RGBA
+               (  Pattern => Pattern,
+                  Offset  => 1.0,
+                  Red     => Layer.Border.Lens_Reflex.Red,
+                  Green   => Layer.Border.Lens_Reflex.Green,
+                  Blue    => Layer.Border.Lens_Reflex.Blue,
+                  Alpha   => 0.0
+               );
+               Set_Source (Context, Pattern);
+               Cairo.Fill (Context);
+               Pattern_Destroy (Pattern);
+            end if;
+            if Layer.Border.Lens_Shadow.Alpha > 0.0 then
+               Corner.X := X2 - Diameter * 0.2;
+               Corner.Y := Y2 - Diameter * 0.2;
+               Pattern := Create_Radial
+                          (  Cx0     => Corner.X,
+                             Cy0     => Corner.Y,
+                             Radius0 => Diameter * 0.02,
+                             Cx1     => Corner.X - Diameter * 0.07,
+                             Cy1     => Corner.Y - Diameter * 0.07,
+                             Radius1 => Diameter * 0.2
+                          );
+               Add_Color_Stop_RGBA
+               (  Pattern => Pattern,
+                  Offset  => 0.0,
+                  Red     => Layer.Border.Lens_Shadow.Red,
+                  Green   => Layer.Border.Lens_Shadow.Green,
+                  Blue    => Layer.Border.Lens_Shadow.Blue,
+                  Alpha   => Layer.Border.Lens_Shadow.Alpha
+               );
+               Add_Color_Stop_RGBA
+               (  Pattern => Pattern,
+                  Offset  => 1.0,
+                  Red     => Layer.Border.Lens_Shadow.Red,
+                  Green   => Layer.Border.Lens_Shadow.Green,
+                  Blue    => Layer.Border.Lens_Shadow.Blue,
+                  Alpha   => 0.0
+               );
+               Set_Source (Context, Pattern);
+               Cairo.Fill (Context);
+               Pattern_Destroy (Pattern);
+            end if;
+         end;
+      end if;
       Layer.Widget.Size := Layer.Size;
    end Draw;
 
@@ -463,6 +554,38 @@ package body Gtk.Layered.Abstract_Bordered is
    begin
       return Layer.Foreground;
    end Get_Foreground;
+
+   function Get_Lens_Reflex (Layer : Abstract_Bordered_Layer)
+      return Gdk_RGBA is
+   begin
+      return Layer.Lens_Reflex;
+   end Get_Lens_Reflex;
+
+   function Get_Lens_Reflex (Layer : Abstract_Bordered_Layer)
+      return Gdk_Color is
+   begin
+      return RGB
+             (  Red   => Layer.Lens_Reflex.Red,
+                Green => Layer.Lens_Reflex.Green,
+                Blue  => Layer.Lens_Reflex.Blue
+             );
+   end Get_Lens_Reflex;
+
+   function Get_Lens_Shadow (Layer : Abstract_Bordered_Layer)
+      return Gdk_RGBA is
+   begin
+      return Layer.Lens_Shadow;
+   end Get_Lens_Shadow;
+
+   function Get_Lens_Shadow (Layer : Abstract_Bordered_Layer)
+      return Gdk_Color is
+   begin
+      return RGB
+             (  Red   => Layer.Lens_Shadow.Red,
+                Green => Layer.Lens_Shadow.Green,
+                Blue  => Layer.Lens_Shadow.Blue
+             );
+   end Get_Lens_Shadow;
 
    function Get_Properties_Number
             (  Layer : Abstract_Bordered_Layer
@@ -589,6 +712,48 @@ package body Gtk.Layered.Abstract_Bordered is
                      Blurb   => "The border's line width is changed " &
                                 "when the widget is resized"
                   );
+            when Property_Lens_Reflex_Opacity =>
+               return
+                  Gnew_Double
+                  (  Name    => "lens-reflex-opacity",
+                     Nick    => "reflex opacity",
+                     Minimum => 0.0,
+                     Maximum => 1.0,
+                     Default => 0.0,
+                     Blurb   => "The opacity of the lens reflex. " &
+                                "When 0, no reflex is used. " &
+                                "A typical value is 0.5, i.e. " &
+                                "half-transparent"
+                  );
+            when Property_Lens_Reflex_Color =>
+               return
+                  Gnew_Boxed
+                  (  Name       => "lens-reflex-color",
+                     Boxed_Type => Gdk_Color_Type,
+                     Nick       => "reflex color",
+                     Blurb      => "The lens reflex color"
+                  );
+            when Property_Lens_Shadow_Opacity =>
+               return
+                  Gnew_Double
+                  (  Name    => "lens-shadow-opacity",
+                     Nick    => "shadow opacity",
+                     Minimum => 0.0,
+                     Maximum => 1.0,
+                     Default => 0.0,
+                     Blurb   => "The opacity of the lens shadow. " &
+                                "When 0, no shadow is used. " &
+                                "A typical value is 0.5, i.e. " &
+                                "half-transparent"
+                  );
+            when Property_Lens_Shadow_Color =>
+               return
+                  Gnew_Boxed
+                  (  Name       => "lens-shadow-color",
+                     Boxed_Type => Gdk_Color_Type,
+                     Nick       => "shadow color",
+                     Blurb      => "The lens shadow color"
+                  );
          end case;
       end if;
    end Get_Property_Specification;
@@ -657,6 +822,28 @@ package body Gtk.Layered.Abstract_Bordered is
                when Property_Widened =>
                   Init (Value, GType_Boolean);
                   Set_Boolean (Value, Layer.Widened);
+               when Property_Lens_Reflex_Opacity =>
+                  Init (Value, GType_Double);
+                  Set_Double (Value, Layer.Lens_Reflex.Alpha);
+               when Property_Lens_Reflex_Color =>
+                  Set_Value
+                  (  Value,
+                     RGB
+                     (  Red   => Layer.Lens_Reflex.Red,
+                        Green => Layer.Lens_Reflex.Green,
+                        Blue  => Layer.Lens_Reflex.Blue
+                  )  );
+               when Property_Lens_Shadow_Opacity =>
+                  Init (Value, GType_Double);
+                  Set_Double (Value, Layer.Lens_Shadow.Alpha);
+               when Property_Lens_Shadow_Color =>
+                  Set_Value
+                  (  Value,
+                     RGB
+                     (  Red   => Layer.Lens_Shadow.Red,
+                        Green => Layer.Lens_Shadow.Green,
+                        Blue  => Layer.Lens_Shadow.Blue
+                  )  );
             end case;
             return Value;
          end;
@@ -685,6 +872,18 @@ package body Gtk.Layered.Abstract_Bordered is
       return Layer.Widened;
    end Get_Widened;
 
+   function Has_Lens_Reflex (Layer : Abstract_Bordered_Layer)
+      return Boolean is
+   begin
+      return Layer.Lens_Reflex.Alpha > 0.0;
+   end Has_Lens_Reflex;
+
+   function Has_Lens_Shadow (Layer : Abstract_Bordered_Layer)
+      return Boolean is
+   begin
+      return Layer.Lens_Shadow.Alpha > 0.0;
+   end Has_Lens_Shadow;
+
    function Is_Updated (Layer : Abstract_Bordered_Layer)
       return Boolean is
    begin
@@ -708,11 +907,13 @@ package body Gtk.Layered.Abstract_Bordered is
              (  Stream : in out Root_Stream_Type'Class;
                 Layer  : in out Abstract_Bordered_Layer
              )  is
-      Color      : Gdk_Color;
-      Shadow     : Gtk_Shadow_Type;
-      Width      : GDouble;
-      Depth      : GDouble;
-      User_Color : Boolean;
+      Color        : Gdk_Color;
+      Shadow       : Gtk_Shadow_Type;
+      Width        : GDouble;
+      Depth        : GDouble;
+      User_Color   : Boolean;
+      Lens_Reflex  : Gdk_RGBA;
+      Lens_Shadow  : Gdk_RGBA;
    begin
       Restore
       (  Stream,
@@ -725,13 +926,17 @@ package body Gtk.Layered.Abstract_Bordered is
       Restore (Stream, Shadow);
       Restore (Stream, Width);
       Restore (Stream, Depth);
+      Restore (Stream, Lens_Reflex);
+      Restore (Stream, Lens_Shadow);
       if User_Color then
          Set
          (  Layer         => Layer,
             Border_Width  => Width,
             Border_Depth  => Depth,
             Border_Color  => (Style_Color => True),
-            Border_Shadow => Shadow
+            Border_Shadow => Shadow,
+            Lens_Reflex   => Lens_Reflex,
+            Lens_Shadow   => Lens_Shadow
          );
       else
          Restore (Stream, Color);
@@ -740,7 +945,9 @@ package body Gtk.Layered.Abstract_Bordered is
             Border_Width  => Width,
             Border_Depth  => Depth,
             Border_Color  => (Style_Color => False, Color => Color),
-            Border_Shadow => Shadow
+            Border_Shadow => Shadow,
+            Lens_Reflex   => Lens_Reflex,
+            Lens_Shadow   => Lens_Shadow
          );
       end if;
    end Restore;
@@ -750,13 +957,17 @@ package body Gtk.Layered.Abstract_Bordered is
                 Border_Width  : GDouble;
                 Border_Depth  : GDouble;
                 Border_Color  : Border_Color_Type;
-                Border_Shadow : Gtk_Shadow_Type
+                Border_Shadow : Gtk_Shadow_Type;
+                Lens_Reflex   : Gdk_RGBA;
+                Lens_Shadow   : Gdk_RGBA
              )  is
    begin
       Layer.Border_Width  := Border_Width;
       Layer.Border_Depth  := Border_Depth;
       Layer.Border_Color  := Border_Color;
       Layer.Border_Shadow := Border_Shadow;
+      Layer.Lens_Reflex   := Lens_Reflex;
+      Layer.Lens_Shadow   := Lens_Shadow;
       Layer.Updated       := True;
    end Set;
 
@@ -832,6 +1043,46 @@ package body Gtk.Layered.Abstract_Bordered is
                Layer.Scaled := Get_Boolean (Value);
             when Property_Widened =>
                Layer.Widened := Get_Boolean (Value);
+            when Property_Lens_Reflex_Opacity =>
+               Layer.Lens_Reflex.Alpha :=
+                  GDouble'Min
+                  (  GDouble'Max
+                     (  Get_Double (Value),
+                        0.0
+                     ),
+                     1.0
+                 );
+            when Property_Lens_Shadow_Opacity =>
+               Layer.Lens_Shadow.Alpha :=
+                  GDouble'Min
+                  (  GDouble'Max
+                     (  Get_Double (Value),
+                        0.0
+                     ),
+                     1.0
+                 );
+            when Property_Lens_Reflex_Color =>
+               declare
+                  Color : constant Gdk_Color := Get_Value (Value);
+               begin
+                  Layer.Lens_Reflex.Red :=
+                     GDouble (Red (Color)) / GDouble (GUInt16'Last);
+                  Layer.Lens_Reflex.Green :=
+                     GDouble (Green (Color)) / GDouble (GUInt16'Last);
+                  Layer.Lens_Reflex.Blue :=
+                     GDouble (Blue (Color)) / GDouble (GUInt16'Last);
+               end;
+            when Property_Lens_Shadow_Color =>
+               declare
+                  Color : constant Gdk_Color := Get_Value (Value);
+               begin
+                  Layer.Lens_Shadow.Red :=
+                     GDouble (Red (Color)) / GDouble (GUInt16'Last);
+                  Layer.Lens_Shadow.Green :=
+                     GDouble (Green (Color)) / GDouble (GUInt16'Last);
+                  Layer.Lens_Shadow.Blue :=
+                     GDouble (Blue (Color)) / GDouble (GUInt16'Last);
+               end;
          end case;
       end if;
       Layer.Updated := True;
@@ -887,6 +1138,8 @@ package body Gtk.Layered.Abstract_Bordered is
       Store (Stream, Layer.Border_Shadow);
       Store (Stream, Layer.Border_Width);
       Store (Stream, Layer.Border_Depth);
+      Store (Stream, Layer.Lens_Reflex);
+      Store (Stream, Layer.Lens_Shadow);
       if not Layer.Border_Color.Style_Color then
          Store (Stream, Layer.Border_Color.Color);
       end if;

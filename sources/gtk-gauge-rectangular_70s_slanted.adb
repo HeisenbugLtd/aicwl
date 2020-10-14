@@ -3,7 +3,7 @@
 --     Gtk.Gauge.Rectangular_70s_Slanted           Luebeck            --
 --  Implementation                                 Winter, 2011       --
 --                                                                    --
---                                Last revision :  13:51 30 May 2014  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -285,6 +285,22 @@ package body Gtk.Gauge.Rectangular_70s_Slanted is
          Install_Style_Property
          (  Class_Ref (Class_Record.The_Type),
             Gnew_Boxed
+            (  Name       => "middle-tick-color",
+               Boxed_Type => Gdk_Color_Type,
+               Nick       => "Middle ticks color",
+               Blurb      => "Middle ticks color"
+         )  );
+         Install_Style
+         (  Class_Ref (Class_Record.The_Type),
+            Cairo.Line_Cap_Property.Gnew_Enum
+            (  Name    => "middle-tick-line-cap",
+               Nick    => "Middle tick cap",
+               Blurb   => "The line cap style used for middle ticks",
+               Default => CAIRO_LINE_CAP_BUTT
+         )  );
+         Install_Style_Property
+         (  Class_Ref (Class_Record.The_Type),
+            Gnew_Boxed
             (  Name       => "minor-tick-color",
                Boxed_Type => Gdk_Color_Type,
                Nick       => "Minor ticks color",
@@ -482,6 +498,8 @@ package body Gtk.Gauge.Rectangular_70s_Slanted is
          Border_Depth   => Widget.Background.Get_Border_Depth,
          Border_Color   => Widget.Background.Get_Border_Color,
          Border_Shadow  => Widget.Background.Get_Border_Shadow,
+         Lens_Reflex    => Widget.Background.Get_Lens_Reflex,
+         Lens_Shadow    => Widget.Background.Get_Lens_Shadow,
          Color  =>
             Style_Get (Widget, "backgound-color", Background_Color)
       );

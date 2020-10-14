@@ -12,7 +12,7 @@
 <BODY bgcolor="#FFFFFF" link="#0000FF" vlink="#800080">
 <P align="center">
 <font size="6"><b>ADA INDUSTRIAL CONTROL WIDGET LIBRARY</b></font><BIG><br>
-<EM>version 3.16</EM></BIG><br>
+<EM>version 3.17</EM></BIG><br>
 <div align="center">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -120,12 +120,12 @@ executable file might be covered by the GNU Public License.</P>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px" colspan="2">Source distribution (any platform)</td>
 		<td style="border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">
-		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_16.tgz">aicwl_3_16.tgz</a> (<b>tar</b> +
+		<a href="http://www.dmitry-kazakov.de/ada/aicwl_3_17.tgz">aicwl_3_17.tgz</a> (<b>tar</b> +
 		<b>gzip</b>, Windows users may use WinZip)</td>
 		<td style="border-top-style: none; border-top-width: medium; border-bottom-style: solid; border-bottom-width: 1px">&nbsp;</td>
 		<td>&nbsp;</td>
 		<td align="center">&nbsp;</td>
-		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_16.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
+		<td align="center"><a href="http://www.dmitry-kazakov.de/ada/aicwl_3_17.tgz.tgz"><img src="download.jpg" align=middle alt="[Download]" width="29" height="29"></a></td>
 		<td align="center">&nbsp;</td>
 	</tr>
 	</table>
@@ -224,6 +224,13 @@ straightforward and can be used as templates for customization.</p>
 		<td align="center">
 		<img border="0" src="gtk_meter_round_90.png" width="283" height="148" alt="meter round 90"><br>
 		<a href="#Gtk.Meter.Round_90">Gtk_Meter_Round_90</a></td>
+	</tr>
+	<tr>
+		<td align="center">
+		<img border="0" src="gtk_valve_round_90.png"><br>
+		<a href="#Gtk.Valve.Round_90">Gtk_Valve_Round_90</a></td>
+		<td align="center">
+		&nbsp;</td>
 	</tr>
 	</table>
 <table border="0" cellspacing="10">
@@ -1009,6 +1016,41 @@ Get_Foreground (<b>Layer</b> : Abstract_Bordered_Layer)<br>
 <p>This function returns the foreground layer corresponding to the bordered 
 layer or <font color="#0000FF">null</font> when there is none.</p>
 		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Lens_Reflex (<b>Layer</b> : 
+Abstract_Bordered_Layer) <font color="#0000FF">return</font> Gdk_RGBA;<br>
+<font color="#0000FF">function</font> Get_Lens_Reflex (<b>Layer</b> : 
+Abstract_Bordered_Layer) <font color="#0000FF">return</font> Gdk_Color};</tt></p>
+</blockquote>
+<p>This function returns the color used for the light reflex on the lens. When not used 
+it is transparent (the alpha channel is 0). The reflex is rendered on the 
+foreground of the border so that all layers between it and the background appear 
+under the lens.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Lens_Shadow (<b>Layer</b> : 
+Abstract_Bordered_Layer) <font color="#0000FF">return</font> Gdk_RGBA;<br>
+<font color="#0000FF">function</font> Get_Lens_Shadow (<b>Layer</b> : 
+Abstract_Bordered_Layer) <font color="#0000FF">return</font> Gdk_Color;</tt></p>
+</blockquote>
+<p>This function returns the color used for the lens light shadow. When not used 
+it is transparent (the alpha channel is 0). The reflex is rendered on the 
+foreground of the border so that all layers between it and the background appear 
+under the lens. The shadow is rendered on the foreground of the border so that 
+all layers between it and the background appear under the lens.</p>
+<blockquote>
+<p><tt><font color="#0000FF">function</font> Has_Lens_Reflex (<b>Layer</b> : 
+Abstract_Bordered_Layer)<br>
+&nbsp;&nbsp; <font color="#0000FF">return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the border 
+has a lens on top of all layers it contains. The lens shows a light reflex.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Has_Lens_Shadow (<b>Layer</b> : 
+Abstract_Bordered_Layer)<br>
+&nbsp;&nbsp; <font color="#0000FF">return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the border 
+has a lens on top of all layers it contains. The lens shows a light shadow.</p>
+<blockquote>
 <p><tt><font color="#0000FF">
 <a name="Gtk.Layered.Abstract_Bordered.Set"></a>procedure</font> 
 Set<br>
@@ -1021,7 +1063,11 @@ Border_Depth</b>&nbsp; : GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Border_Color</b>&nbsp; : Border_Color_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Border_Shadow</b> : Gtk_Shadow_Type<br>
+Border_Shadow</b> : Gtk_Shadow_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Lens_Reflex&nbsp; </b>&nbsp;: Gdk_RGBA;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Lens_Shadow</b>&nbsp;&nbsp; : Gdk_RGBA<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure sets parameters of the border. <b>Border_Width</b> is the 
@@ -1031,7 +1077,10 @@ Border_Color</b> of the type
 <a href="#Gtk.Layered.Abstract_Bordered.Border_Color_Type">Border_Color_Type</a> 
 specifies the border color. The parameter <b>Border_Shadow</b> defines the 
 border shadow type as defined in the package
-<a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/gtk.enums.html">Gtk.Enums</a>.</p>
+<a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/gtk.enums.html">Gtk.Enums</a>. 
+The parameters <b>Lens_Reflex</b> and <b>Lens_Shadow</b> specify the colors used 
+for the lens on top of all layers under its foreground. The lens can have reflex 
+and shadow when alpha channel of the corresponding color is not 0.</p>
 		<blockquote>
 <p><tt><font color="#0000FF">
 <a name="Gtk.Layered.Abstract_Bordered.Set_Aspected"></a>procedure</font> 
@@ -1635,21 +1684,29 @@ private</font>;</tt></p>
 	<b>Inner</b> : 
 	Ellipse_Parameters / <b>Center</b> : Cairo_Tuple; ]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>From</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: GDouble&nbsp;&nbsp; := <font color="#800000">0.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Length</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : GDouble&nbsp;&nbsp; 
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; := <font color="#800000">0.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<b>Length</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	:= <font color="#800000">2.0</font> * Pi;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<b>Color</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Gdk_Color := RGB 
+	<b>Color</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Gdk_Color&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := RGB 
 	(<font color="#800000">0.0</font>, <font color="#800000">0.0</font>,
 	<font color="#800000">0.0</font>);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Border_Width</b>&nbsp; : GDouble&nbsp;&nbsp; := 
+	<b>Border_Width</b>&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; := 
 	<font color="#800000">0.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Border_Depth</b>&nbsp; : GDouble&nbsp;&nbsp; := 
+	<b>Border_Depth</b>&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
 	<font color="#800000">1.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>Border_Color</b>&nbsp; : Border_Color_Type := Default_Color;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<b>Border_Shadow</b> : Gtk_Shadow_Type&nbsp;&nbsp; := Shadow_In;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Deepened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Scaled</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Widened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean := False<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<font color="#0000FF"><br>function
+	<b>Deepened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<b>Lens_Reflex</b>&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">1.0</font>, <font color="#800000">1.0</font>,
+	<font color="#800000">1.0</font>, <font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Lens_Shadow</b>&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">0.0</font>, <font color="#800000">0.0</font>,
+	<font color="#800000">0.0</font>, <font color="#800000">0.0</font>);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<b>Scaled</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<b>Widened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := False<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<font color="#0000FF"><br>function
 	</font>Add_Elliptic_Background<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; 
 	<b>Under</b> :
 	<font color="#0000FF">not null access
@@ -1659,24 +1716,32 @@ private</font>;</tt></p>
 	<b>Inner</b> : 
 	Ellipse_Parameters / <b>Center</b> : Cairo_Tuple; ]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>From</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: GDouble&nbsp;&nbsp;&nbsp;:= <font color="#800000">0.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;:= <font color="#800000">0.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>Length</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: GDouble&nbsp;&nbsp;&nbsp;:= <font color="#800000">2.0</font> * Pi;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := <font color="#800000">2.0</font> * Pi;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<b>Color</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: Gdk_Color := RGB (<font color="#800000">0.0</font>, <font color="#800000">0.0</font>, 
+	: Gdk_Color&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := RGB (<font color="#800000">0.0</font>, <font color="#800000">0.0</font>, 
 	<font color="#800000">0.0</font>);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Border_Width</b>&nbsp; : GDouble&nbsp;&nbsp; := 
+	<b>Border_Width</b>&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
 	<font color="#800000">0.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<b>Border_Depth</b>&nbsp; : GDouble&nbsp;&nbsp; := 
+	<b>Border_Depth</b>&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; := 
 	<font color="#800000">1.0</font>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>Border_Color</b>&nbsp; : Border_Color_Type := Default_Color;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<b>Border_Shadow</b> : Gtk_Shadow_Type&nbsp;&nbsp; := Shadow_In;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>Deepened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: Boolean := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<b>Lens_Reflex</b>&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">1.0</font>, <font color="#800000">1.0</font>,
+	<font color="#800000">1.0</font>, <font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Lens_Shadow</b>&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">0.0</font>, <font color="#800000">0.0</font>,
+	<font color="#800000">0.0</font>, <font color="#800000">0.0</font>);<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>Scaled</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: Boolean := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := False;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	<b>Widened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	: Boolean := False<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; 
+	: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := False<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; 
 	<font color="#0000FF">return not null access </font>Elliptic_Background_Layer;</tt></blockquote>
 <p>These procedure and function create an elliptic background. The parameter <b>Under</b> 
 specifies the layer location. The background layers outer bound is an elliptic 
@@ -1700,7 +1765,12 @@ that both angles are in the <a href="http://cairographics.org/manual/index.html"
 	<b>Border_Width</b>, <b>Border_Depth</b>, <b>Border_Color</b>, <b>
 	Border_Shadow</b> are the parameters the background layer's border. See the 
 	procedure <a href="#Gtk.Layered.Abstract_Bordered.Set">Set</a> for the 
-	meaning of these parameters. The parameters <b>Deepened</b> and <b>Widened</b> 
+	meaning of these parameters. The parameters <b>Lens_Reflex</b> and <b>
+	Lens_Shadow</b> are colors used for the lens on top of the layers between 
+	the background and the foreground. The lens has a light reflex and/or shadow 
+	with the colors specified. The alpha channel of the color when transparent 
+	(0) disables rendering the corresponding effect. Otherwise it is typically 
+	half-transparent 0.5. The parameters <b>Deepened</b> and <b>Widened</b> 
 	define the border's behavior upon the widget's layer sizing as described in
 	<a href="#Gtk.Layered.Abstract_Bordered.Set_Deepened">Set_Deepened</a> and 
 	<a href="#Gtk.Layered.Set_Widened">Set_Widened</a>. The 
@@ -1759,11 +1829,15 @@ Border_Depth</b>&nbsp; : GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Border_Color</b>&nbsp; : Border_Color_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Border_Shadow</b> : Gtk_Shadow_Type<br>
+Border_Shadow</b> : Gtk_Shadow_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Lens_Reflex</b>&nbsp;&nbsp; : Gdk_RGBA;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Lens_Shadow</b>&nbsp;&nbsp; : Gdk_RGBA<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines.</p>
+is same as in the corresponding Add-subroutines.</p>
 <H3><a name="3.2"></a>3.2. Rectangular background</H3>
 <p><a name="Gtk.Layered.Rectangular_Background"></a>The package
 <a href="#Gtk.Layered.Rectangular_Background">Gtk.Layered.Rectangular_Background</a> provides background layer bound by 
@@ -1814,6 +1888,14 @@ private</font>;</tt></p>
 	Deepened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	:= False;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Lens_Reflex</b>&nbsp;&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">1.0</font>, <font color="#800000">1.0</font>,
+	<font color="#800000">1.0</font>, <font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Lens_Shadow</b>&nbsp;&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">0.0</font>, <font color="#800000">0.0</font>,
+	<font color="#800000">0.0</font>, <font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 	Scaled</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	:= False;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
@@ -1850,6 +1932,14 @@ private</font>;</tt></p>
 	Border_Color</b>&nbsp;&nbsp; : Border_Color_Type := Default_Color;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 	Border_Shadow</b>&nbsp; : Gtk_Shadow_Type&nbsp;&nbsp; := Shadow_In;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Lens_Reflex</b>&nbsp;&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">1.0</font>, <font color="#800000">1.0</font>,
+	<font color="#800000">1.0</font>, <font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Lens_Shadow</b>&nbsp;&nbsp;&nbsp; : Gdk_RGBA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	:= (<font color="#800000">0.0</font>, <font color="#800000">0.0</font>,
+	<font color="#800000">0.0</font>, <font color="#800000">0.0</font>);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Deepened</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	: Boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
 	False;<br>
@@ -1872,7 +1962,12 @@ rectangle corners. The parameter <b>Color</b> specifies the background color. Th
 	<b>Border_Width</b>, <b>Border_Depth</b>, <b>Border_Color</b>, <b>
 	Border_Shadow</b> are the parameters the background layer's border. See the 
 	procedure <a href="#Gtk.Layered.Abstract_Bordered.Set">Set</a> for the
-	meaning of these parameters. The parameters <b>Deepened</b> and <b>Widened</b> 
+	meaning of these parameters. The parameters <b>Lens_Reflex</b> and <b>
+Lens_Shadow</b> are colors used for the lens on top of the layers between the 
+background and the foreground. The lens has a light reflex and/or shadow with 
+the colors specified. The alpha channel of the color when transparent (0) 
+disables rendering the corresponding effect. Otherwise it is typically 
+half-transparent 0.5. The parameters <b>Deepened</b> and <b>Widened</b> 
 	define the border's behavior upon the widget's layer sizing as described in
 	<a href="#Gtk.Layered.Abstract_Bordered.Set_Deepened">Set_Deepened</a> and 
 	<a href="#Gtk.Layered.Set_Widened">Set_Widened</a>. The 
@@ -1936,11 +2031,15 @@ Border_Depth</b>&nbsp;&nbsp; : GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 Border_Color</b>&nbsp;&nbsp; : Border_Color_Type;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Border_Shadow</b>&nbsp; : Gtk_Shadow_Type<br>
+Border_Shadow</b>&nbsp; : Gtk_Shadow_Type;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Lens_Reflex</b>&nbsp;&nbsp;&nbsp; : Gdk_RGBA;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Lens_Shadow</b>&nbsp;&nbsp;&nbsp; : Gdk_RGBA<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines.</p>
+is same as in the corresponding Add-subroutines.</p>
 <hr>
 <p align="right">
   <a name="4"></a><a href="#2"><IMG src="prev.gif" alt="[Back]" width="29" height="29"></a><a href="#16"
@@ -1972,7 +2071,8 @@ The outer <a href="#ellipse_parameters">ellipse parameters</a> are (<i>r<sub>2</
 <i>&#946;<sub>1</sub></i> and end at the angle <i>&#946;<sub>2</sub></i>. The ticks are 
 numbered 1, 2, 3, 4 until the skipped tick, which is not drawn. On the figure 
 the skipped tick has the number 5. The number of the first tick can be different 
-from 1.<blockquote>
+from 1. For example, in our example the first tick has the number 1. Should the 
+first tick skipped, then its number must be set to 5.<blockquote>
 <p><tt><font color="#0000FF">type</font> Elliptic_Scale_Layer (&lt;&gt;)
 <font color="#0000FF">is<br>
 &nbsp;&nbsp; new</font> 
@@ -2142,7 +2242,7 @@ Length</b> : GDouble<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p><h3> <a name="4.2"></a>4.2. 
 Flat scale</h3>
 <p><a name="Gtk.Layered.Flat_Scale"></a>The package
@@ -2168,11 +2268,9 @@ private</font>;</tt></p>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Step</b>&nbsp;&nbsp;&nbsp;&nbsp; 
 	: GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-	First</b>&nbsp;&nbsp;&nbsp; : Natural&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	:= <font color="#800000">0</font>;<br>
+	First</b>&nbsp;&nbsp;&nbsp; : Tick_Number&nbsp;&nbsp;&nbsp;&nbsp;:= Tick_Number'Last;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-	Skipped</b>&nbsp; : Positive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := 
-	Positive'Last;<br>
+	Skipped</b>&nbsp; : Tick_Number&nbsp;&nbsp;&nbsp;&nbsp;:= Tick_Number'Last;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp;&nbsp;&nbsp; 
 	: Cairo_Tuple&nbsp;&nbsp;&nbsp; := (<font color="#800000">0.0</font>,
 	<font color="#800000">0.0</font>);<br>
@@ -2207,11 +2305,10 @@ private</font>;</tt></p>
 	: <font color="#0000FF">not null access</font> Layer_Location'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Step</b>&nbsp;&nbsp;&nbsp;&nbsp; 
 	: GDouble;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>First</b>&nbsp;&nbsp;&nbsp; 
-	: Natural&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := <font color="#800000">
-	0</font>;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Skipped</b>&nbsp; 
-	: Positive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := Positive'Last;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	First</b>&nbsp;&nbsp;&nbsp; : Tick_Number&nbsp;&nbsp;&nbsp;&nbsp;:= Tick_Number'Last;<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Skipped</b>&nbsp; : Tick_Number&nbsp;&nbsp;&nbsp;&nbsp;:= Tick_Number'Last;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp;&nbsp;&nbsp; 
 	: Cairo_Tuple&nbsp;&nbsp;&nbsp; := (<font color="#800000">0.0</font>,
 	<font color="#800000">0.0</font>);<br>
@@ -2308,7 +2405,7 @@ Angle</b>&nbsp;&nbsp; : GDouble<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when some of the parameters are illegal.</p>
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when some of the parameters are illegal.</p>
 <hr>
 <p align="right">
   <a name="5"></a><a href="#4"><IMG src="prev.gif" alt="[Back]" width="29" height="29"></a><a href="#16"
@@ -2550,7 +2647,7 @@ Color</b>&nbsp;&nbsp; : Gdk_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="5.2"></a>5.2. Flat annotation</h3>
 <p><a name="Gtk.Layered.Flat_Annotation"></a>The package
@@ -2769,7 +2866,7 @@ Justify</b>&nbsp;&nbsp;&nbsp;&nbsp; : Alignment<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <hr>
 <p align="right">
@@ -2958,7 +3055,7 @@ Color</b>&nbsp;&nbsp; : Gdk_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="6.2"></a>6.2. Clock hand
 </h3>
@@ -3181,7 +3278,7 @@ Color</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Gdk_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="6.3"></a>6.3. Elliptic bar needle</h3>
 <p> 
@@ -3329,7 +3426,7 @@ Length</b>&nbsp; : GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="6.4"></a>6.4. Filled shape needle</h3>
 <p> 
@@ -3477,7 +3574,7 @@ Color</b>&nbsp;&nbsp;: Gdk_Color;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="6.5"></a>6.5. Flat needle</h3>
 <p> 
@@ -3738,7 +3835,7 @@ Color</b>&nbsp; : Gdk_Color<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>These procedures change parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="6.6"></a>6.6. Bar needle</h3>
 <p> 
@@ -3923,7 +4020,7 @@ Bar_Layer) <font color="#0000FF">return</font> Cairo_Tuple;</tt></p>
 	<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Set<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp;: <font color="#0000FF">in out</font> 
-Flat_Needle_Layer;<br>
+Bar_Layer;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp;: Cairo_Tuple;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
 To&nbsp;&nbsp;&nbsp; </b>: Cairo_Tuple;<br>
@@ -3932,7 +4029,7 @@ Line_Parameters<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<font color="#0000FF"><br>
 procedure</font> Set<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp; 
-: <font color="#0000FF">in out</font> Flat_Needle_Layer;<br>
+: <font color="#0000FF">in out</font> Bar_Layer;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp; 
 : Cairo_Tuple;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
@@ -3944,7 +4041,7 @@ Line_Parameters<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>These procedures change parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="6.7"></a>6.7. Digital value</h3>
 <p> 
@@ -4238,7 +4335,7 @@ Put_Plus&nbsp; : Boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Set_Value (<b>Layer</b> :
@@ -4246,6 +4343,163 @@ some of the parameters are illegal.</p>
 </blockquote>
 <p>This procedure changes the indicated value. It is task-safe, it can be called on the 
 context of a task different from the main loop task.</p>
+<h3><a name="6.8"></a>6.8. Disk needle</h3>
+<p> 
+<a name="Gtk.Layered.Disk_Needle"></a>The package 
+<a href="#Gtk.Layered.Disk_Needle">Gtk.Layered.Disk_Needle</a> provides needles for 
+valve position indicators. The needle is a rotating disk consisting of two halves or four 
+sectors of interleaving colors. One color indicates open state, another does 
+closed state:</p>
+		<blockquote>
+<p><img border="0" src="disk_needle.png"></p>
+</blockquote>
+<p>The layer type is:</p>
+<blockquote>
+<p><tt><font color="#0000FF">type</font> Disk_Needle_Layer (&lt;&gt;)<font color="#0000FF"> is<br>
+&nbsp;&nbsp; new </font><a href="#Gtk.Layered.Abstract_Layer">Abstract_Layer</a><br>
+&nbsp;&nbsp; <font color="#0000FF">and</font> 
+<a href="#Gtk.Layered.Gauge_Needle">Gauge_Needle</a><br>
+&nbsp;&nbsp; <font color="#0000FF">and</font> 
+<a href="#Gtk.Layered.Scalable_Layer">Scalable_Layer</a> <font color="#0000FF">with private</font>;</tt></p>
+</blockquote>
+<p align="left">The type implements the <a href="#Gtk.Layered.Gauge_Needle">
+Gauge_Needle</a> interface, which can be used to get and set the indicated 
+value. Another way to do this is to use an
+<a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/gtk.adjustment.html">adjustment object</a>. The following operations are defined in the package:</p>
+		<blockquote>
+	<p><tt><font color="#0000FF">procedure</font> Add_Disk_Needle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Under</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: <font color="#0000FF">not null access</font> Layer_Location'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Center</b>&nbsp;&nbsp;&nbsp;&nbsp; : Cairo_Tuple := (<font color="#800000">0.0</font>,
+	<font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Radius</b>&nbsp;&nbsp;&nbsp;&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp; :=
+	<font color="#800000">0.5</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp; := Pi;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Length</b>&nbsp;&nbsp;&nbsp;&nbsp; : GDouble&nbsp;&nbsp;&nbsp;&nbsp; := Pi;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Sectors</b>&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp; := False;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	On_Color</b>&nbsp;&nbsp; : Gdk_Color&nbsp;&nbsp; := Needle_On_Color;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Off_Color</b>&nbsp; : Gdk_Color&nbsp;&nbsp; := Needle_Off_Color;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Adjustment</b> : <font color="#0000FF">access</font> 
+	Gtk_Adjustment_Record'Class := <font color="#0000FF">null</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Scaled</b>&nbsp;&nbsp;&nbsp;&nbsp; : Boolean&nbsp;&nbsp;&nbsp;&nbsp; := 
+	False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<br>
+	<font color="#0000FF">function</font> Add_Disk_Needle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Under</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: <font color="#0000FF">not null access</font> Layer_Location'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Center</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+	: Cairo_Tuple := (<font color="#800000">0.0</font>, <font color="#800000">
+	0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Radius</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp; := <font color="#800000">0.5</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp; := Pi;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Length</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+	: GDouble&nbsp;&nbsp;&nbsp;&nbsp; := Pi;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sectors</b>&nbsp;&nbsp;&nbsp; 
+	: Boolean&nbsp;&nbsp;&nbsp;&nbsp; := False;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>On_Color</b>&nbsp;&nbsp; 
+	: Gdk_Color&nbsp;&nbsp; := Needle_On_Color;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Off_Color</b>&nbsp; 
+	: Gdk_Color&nbsp;&nbsp; := Needle_Off_Color;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Adjustment</b> 
+	: <font color="#0000FF">access</font> Gtk_Adjustment_Record'Class :=
+	<font color="#0000FF">null</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Scaled</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+	: Boolean&nbsp;&nbsp;&nbsp;&nbsp; := False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+	return not null access </font>Disk_Needle_Layer;</tt></blockquote>
+<p>These procedure and function create a needle. The parameter <b>Under</b> 
+specifies the layer location. The parameter <b>Center</b> is the location of needle's center.
+<b>Radius</b> is the needle's radius. The needle rotates from the angle <b>From</b> 
+to the angle <b>From</b> + <b>Length</b>. The value 0.0 corresponds to <b>From</b> 
+and here is a border line between the on and off colors is located. The value 
+1.0 corresponds to <b>From</b> + <b>Length</b>. Usually it is the next border 
+line. <b>Sectors</b> when <i><font color="#800000">true</font></i> creates a 
+needle consisting of four sectors. Such needles usually rotate from 0 to Pi / 2 
+arc. When Sectors is false, the needle consists of two halves. Such needles 
+usually rotate from 0 to Pi.&nbsp; <b>On_Color </b>and <b>Off_Color</b> are the 
+needle colors (red and green). <b>Adjustment</b> is the adjustment object, which state needle 
+would reflect. The lower adjustment's value corresponds to <b>From</b>. The 
+upper adjustment's value corresponds to <b>From</b> + <b>Length</b>. When <b>
+Adjustment</b> is <font color="#0000FF">null</font>, no adjustment is used. The parameter <b>Scaled</b> when <i><font color="#800000">
+			true</font></i> resizes the layer when the widget is 
+			resized:<ul>
+	<li><b>Center</b>'s X is multiplied by the widget's size and placed in the 
+	co-ordinate system centered in the widget's center as returned by <a href="#Gtk.Layered.Get_Center">Get_Center</a>;</li>
+	<li><b>Center</b>'s Y is multiplied by the widget's size and placed in the 
+	co-ordinate system centered in the widget's center as returned by <a href="#Gtk.Layered.Get_Center">Get_Center</a>;</li>
+	<li><b>Radius</b> is multiplied by the widget's size 
+	as returned by <a href="#Gtk.Layered.Get_Size">Get_Size</a>.</li>
+	</ul>
+	<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Center (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> Cairo_Tuple;</tt></p>
+</blockquote>
+<p>This function returns the needle's center.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_From (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> GDouble;</tt></p>
+</blockquote>
+<p>This function returns the angle corresponding to the value 0.0.</p><blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Length (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> GDouble;</tt></p>
+</blockquote>
+<p>This function returns the angular length of the needle positions.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Off_Color (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> Gdk_Color;</tt></p>
+</blockquote>
+<p>This function returns the off-color.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_On_Color (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> Gdk_Color;</tt></p>
+</blockquote>
+<p>This function returns the on-color.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Radius (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> GDouble;</tt></p>
+</blockquote>
+<p>This function returns the disk radius.</p>
+		<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Sectors (<b>Layer</b> : 
+Disk_Needle_Layer) <font color="#0000FF">return</font> Boolean;</tt></p>
+</blockquote>
+<p>This function returns <i><font color="#800000">true</font></i> if the needle 
+has four sectors and <i><font color="#800000">false</font></i> if it has two 
+halves.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp;&nbsp;&nbsp;&nbsp; : <font color="#0000FF">in out</font> 
+Disk_Needle_Layer;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Center</b>&nbsp;&nbsp;&nbsp; : Cairo_Tuple;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Radius</b>&nbsp;&nbsp;&nbsp; : GDouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>From</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+: GDouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Length</b>&nbsp;&nbsp;&nbsp; : GDouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Sectors</b>&nbsp;&nbsp; : Boolean;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+On_Color</b>&nbsp; : Gdk_Color;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Off_Color</b> : Gdk_Color<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>These procedures change parameters of the layer. The meaning of the parameters 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
+some of the parameters are illegal.</p>
 <hr>
 <p align="right">
 <a name="7"></a><a href="#6"><IMG src="prev.gif" alt="[Back]" width="29" height="29"></a><a href="#16"
@@ -4373,7 +4627,7 @@ Length</b>&nbsp; : GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>These procedures change parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="7.2"></a>7.2. Cap</h3>
 <p> 
@@ -4515,7 +4769,7 @@ Border_Shadow</b> : Gtk_Shadow_Type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>These procedures change parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="7.3"></a>7.3. Line</h3>
 <p> 
@@ -4699,7 +4953,7 @@ Line_Parameters<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>These procedures change parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="7.4"></a>7.4. Text (label)</h3>
 <p> 
@@ -4911,7 +5165,7 @@ Angle</b>&nbsp;&nbsp;&nbsp; : GDouble;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Set_Text<br>
@@ -5023,8 +5277,73 @@ Opacity</b>&nbsp;&nbsp;&nbsp; : Fill_Opacity<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
+<h3><a name="7.6"></a>7.6. SVG image</h3>
+<p> 
+<a name="Gtk.Layered.SVG"></a>The package <a href="#Gtk.Layered.SVG">
+Gtk.Layered.SVG</a> provides a layer drawing an SVG image:</p>
+<blockquote>
+<p><tt><font color="#0000FF">type</font> SVG_Layer(&lt;&gt;)<font color="#0000FF"> is<br>
+&nbsp;&nbsp; new </font><a href="#Gtk.Layered.Abstract_Layer">Abstract_Layer</a><br>
+&nbsp;&nbsp; <font color="#0000FF">and</font> 
+<a href="#Gtk.Layered.Scalable_Layer">Scalable_Layer</a> <font color="#0000FF">
+with private</font>;</tt></p>
+</blockquote>
+<p align="left">The following operations are defined in the package:</p>
+		<blockquote>
+	<p><tt><font color="#0000FF">procedure</font> Add_SVG<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Under</b>&nbsp; 
+	: <font color="#0000FF">not null access</font> Layer_Location'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Image</b>&nbsp; : RSVG_Handle;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Center</b> : Cairo_Tuple := (<font color="#800000">0.0</font>,
+	<font color="#800000">0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+	Scaled</b> : Boolean&nbsp;&nbsp;&nbsp;&nbsp; := False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<br>
+	<font color="#0000FF">function</font> Add_SVG<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Under</b>&nbsp; :
+	<font color="#0000FF">not null access</font> Layer_Location'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Image</b>&nbsp; 
+	: RSVG_Handle;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Center</b> 
+	: Cairo_Tuple := (<font color="#800000">0.0</font>, <font color="#800000">
+	0.0</font>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Scaled</b> 
+	: Boolean&nbsp;&nbsp;&nbsp;&nbsp; := False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+	return not null access</font> SVG_Layer;</tt></blockquote>
+<p>These procedure and function create a layer drawing an image. The parameter <b>
+Under</b> 
+specifies the layer location. <b>Image</b> is a handle to the image to draw. <b>
+Center</b> is the location where the image's center is drawn. The parameter <b>
+Scaled</b> when <i><font color="#800000">
+			true</font></i> resizes the layer when the widget is resized:<ul>
+	<li>The SVG's width and height are extended to fill the box without 
+	clipping..</li>
+	</ul>
+<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Center (<b>Layer</b> : 
+SVG_Layer) <font color="#0000FF">return</font> Cairo_Tuple;</tt></p>
+</blockquote>
+<p>This function returns the image center.</p><blockquote>
+<p><tt><font color="#0000FF">function</font> Get_SVG (<b>Layer</b> : SVG_Layer) <font color="#0000FF">
+return</font> RSVG_Handle;</tt></p>
+</blockquote>
+<p>This function returns a handle to the SVG image. When the result is not null 
+the client is responsible to Unref it.</p>
+<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Layer</b>&nbsp; 
+: <font color="#0000FF">in out</font> SVG_Layer;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Center</b> : Cairo_Tuple<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
+</blockquote>
+<p>This procedure changes parameters of the layer. The meaning of the parameters 
+is same as in the corresponding Add-subroutines.</p>
 <hr>
 <p align="right">
   <a name="8"></a><a href="#7"><IMG src="prev.gif" alt="[Back]" width="29" height="29"></a><a href="#16"
@@ -5168,7 +5487,7 @@ Corner_Radius</b>&nbsp; : GDouble<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p>
 </blockquote>
 <p>This procedure changes parameters of the layer. The meaning of the parameters 
-is same as in the corresponding Gtk_New-subroutines. Constraint_Error is propagated when 
+is same as in the corresponding Add-subroutines. Constraint_Error is propagated when 
 some of the parameters are illegal.</p>
 <h3><a name="8.2"></a>8.2. Caching layer</h3>
 <p> 
@@ -8105,7 +8424,9 @@ return not null access</font> Needle_Layer;</tt></p></blockquote>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 Gtk_Gauge_Round_270_Outer_Record;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Value</b>&nbsp; :G Double<br>
+Value</b>&nbsp; : GDouble<br>
+<br>
+<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure changes the indicated value. The value can also be changed 
 through the widget's needle or its adjustment. Note that the procedure does not 
@@ -10658,6 +10979,95 @@ it does not emit events. In order to force redraw the widget use
 State</b>&nbsp; : Boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure changes the LED state. Note that the procedure does not 
+emit events. In order to redraw the widget use
+<a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/gtk.widget.html#L2297C14">Queue_Draw</a>.</p>
+<H3><a name="11.7"></a>11.7. Valves</H3>
+<h4><a name="11.7.1"></a>11.7.1. Gtk.Valves.Round_90</h4>
+<p>The package <a href="#Gtk.Gauge.LED_Round">Gtk.Valve.Round_90</a> 
+provides a valve position indicator:</p>
+<blockquote>
+	<p><a name="Gtk.Valve.Round_90"></a>
+	<img border="0" src="gtk_valve_round_90.png"></p>
+</blockquote>
+<blockquote>
+<p><tt><font color="#0000FF">type</font> 
+Gtk_Valve_Round_90_Record<font color="#0000FF"> is<br>
+&nbsp;&nbsp; new </font>Gtk_Layered_Record<font color="#0000FF"> with private</font>;<br>
+<font color="#0000FF">type </font>Gtk_Valve_Round_90<font color="#0000FF"> is<br>
+&nbsp;&nbsp; access all </font>Gtk_Valve_Round_90_Record'Class;</tt></p></blockquote>
+<p>The following operations are provided:</p>
+	<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Gtk_New<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp;&nbsp;&nbsp; 
+: <font color="#0000FF">out</font> Gtk_Valve_Round_90;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Texts</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <i>
+	<a href="#annotation_texts_specification">texts specification</a></i>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ <b>Delimiter</b>&nbsp; : 
+	Character := ' 
+	'; ]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Adjustment</b> : Gtk_Adjustment := <font color="#0000FF">null</font>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Sectors</b>&nbsp;&nbsp;&nbsp; : Positive := <font color="#800000">5</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>These procedures create the widget.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Initialize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+<font color="#0000FF">not null access<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</font>&nbsp;Gtk_Valve_Round_90_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Texts</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <i>
+	<a href="#annotation_texts_specification">texts specification</a></i>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [ <b>Delimiter</b>&nbsp; : 
+	Character; ]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Adjustment</b> : Gtk_Adjustment;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Sectors</b>&nbsp;&nbsp;&nbsp; : Positive<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>One of these procedures must be called from Initialize of any derived widget 
+type.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Annotation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+<font color="#0000FF">not null access</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Valve_Round_90_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return not null access</font> Elliptic_Annotation_Layer;</tt></p></blockquote>
+<p>This function returns the widget's major annotation layer.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Background<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+<font color="#0000FF">not null access</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Valve_Round_90_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return not null access</font> Elliptic_Background_Layer;</tt></p></blockquote>
+<p>This function returns the widget's background.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">function</font> Get_Needle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+<font color="#0000FF">not null access</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Gauge_Round_270_Outer_Record<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp; <font color="#0000FF">
+return not null access</font> Disk_Needle_Layer;</tt></p></blockquote>
+<p>This function returns the widget's needle.</p>
+	<blockquote>
+<p><tt><font color="#0000FF">procedure</font> Set_Value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b> :
+<font color="#0000FF">not null access</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Gtk_Gauge_Round_270_Outer_Record;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
+Value</b>&nbsp; : GDouble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
+<p>This procedure changes the indicated value. The value can also be changed 
+through the widget's needle or its adjustment. Note that the procedure does not 
 emit events. In order to redraw the widget use
 <a href="http://docs.adacore.com/gtkada-docs/gtkada_rm/gtkada_rm/docs/gtk.widget.html#L2297C14">Queue_Draw</a>.</p>
 <hr>
@@ -14634,10 +15044,10 @@ return</font> Gtk_Box;</tt></p></blockquote>
 add some custom buttons there, e.g. <i>load</i> and <i>save</i> buttons.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Gtk_New<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
 : <font color="#0000FF">out</font> Gtk_Layered_Editor;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Layered</b>&nbsp; : <font color="#0000FF">access</font> Gtk_Layered_Record'Class 
+Layered</b> : <font color="#0000FF">access</font> Gtk_Layered_Record'Class 
 := <font color="#0000FF">null</font><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure creates a new editor widget. The result is <b>Widget</b>. The 
@@ -14645,12 +15055,11 @@ parameter <b>Layered</b> is the widget to edit. Note that when omitted, no
 tooltips will be shown.</p>
 	<blockquote>
 <p><tt><font color="#0000FF">procedure</font> Initialize<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&nbsp; <b>Widget</b>&nbsp; 
 : <font color="#0000FF">not null access</font><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-Gtk_Layered_Editor_Record'Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; Gtk_Layered_Editor_Record'Class;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>
-Layered</b>&nbsp; : <font color="#0000FF">access</font> Gtk_Layered_Record'Class<br>
+Layered</b> : <font color="#0000FF">access</font> Gtk_Layered_Record'Class<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );</tt></p></blockquote>
 <p>This procedure has to be called from Initialize of a derived widget.</p>
 	<blockquote>
@@ -14682,17 +15091,6 @@ The distribution includes:<ul>
 	GtkAda contributions</a>;</li>
 	<li><a href="http://www.dmitry-kazakov.de/ada/strings_edit.htm">Strings edit</a>.</li>
 	</ul>
-<h3><a name="14.1"></a>14.1. Fedora packages repository</h3>
-<p>The Fedora packages of this library are located in a <i>yum</i> software 
-package manager repository. They can be searched, installed and updated 
-automatically using <i>yum</i>. In order to do so, the file
-<a href="http://dmitry-kazakov.de/dmitry-kazakov.repo">dmitry-kazakov.repo</a> 
-can be put into the directory <i>/etc/yum.repos.d</i>.</p>
-<h3><a name="14.2"></a>14.2. Debian packages repository</h3>
-<p>In order to use <i>apt</i> Debian repository for automatic install and update 
-these packages add the following line to <i>/etc/apt/sources.list</i>:</p>
-<blockquote>
-	<tt>deb http://dmitry-kazakov.de/distributions sid main</tt></blockquote>
 <hr>
 <p align="right">
   <a name="15"></a><a href="#14"
@@ -14713,6 +15111,17 @@ GNAT GPL 2016 (20160515-49)</li>
 <ul>
 	<li><i>GtkAda 3.14.2</i></li>
 </ul>
+<P>
+Changes (4 January 2018) to the version 3.17:<ul>
+	<li>The package Gtk.Layered.Line has color opacity parameter added;</li>
+	<li>The package Gtk.Layered.SVG layer was added to show an SVG image;</li>
+	<li>The package Gkt.Layered.Disk_Needle was added, a needle type used in valve position 
+	indicating instruments;</li>
+	<li>The package Gtk.Valve.Round_90 example added, it provides a valve position indicator;</li>
+	<li>Bordered layers have &quot;lens&quot; with light reflex and shadow;</li>
+	<li>Another bug fix in Gtk.Layered.Editor to work around GNAT compiler issues;</li>
+	<li>Minor bug fixes.</li>
+	</ul>
 <P>
 Changes (2 October 2017) to the version 3.15:<ul>
 	<li>Bug fix in Gtk.Layered.Editor to work around GNAT compiler issues.</li>
@@ -14959,6 +15368,7 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#6.5">6.5. Flat needle</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#6.6">6.6. Bar needle</A><br>
 &nbsp;&nbsp;&nbsp; <A href="#6.7">6.7. Digital value</A><BR>
+&nbsp;&nbsp;&nbsp; <A href="#6.8">6.8. Disk needle</A><BR>
 </td>
 <td valign="top">
 <b><big><big>7 </big></big></b><A href="#7"><big>Shapes</big></A><br>
@@ -14966,7 +15376,8 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#7.2">7.2. Cap</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#7.3">7.3. Line</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#7.4">7.4. Text (label)</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#7.5">7.5. Rectangle</A><hr>
+&nbsp;&nbsp;&nbsp; <A href="#7.5">7.5. Rectangle</A><br>
+&nbsp;&nbsp;&nbsp; <A href="#7.6">7.6. SVG image</A><hr>
 <b><big><big>8 </big></big></b><A href="#8"><big>Special layers</big></A><br>
 &nbsp;&nbsp;&nbsp; <a href="#8.1">8.1. Rectangular clip region</a><BR>
 &nbsp;&nbsp;&nbsp; <A href="#8.2">8.2. Caching layer</A><hr>
@@ -15034,7 +15445,9 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#11.5.3">11.5.3. Gtk.Wall_Clock.Modern</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#11.6">11.6. LEDs</A><BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#11.6.1">11.6.1. Gtk.Gauge.LED_Round</A><BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#11.6.2">11.6.2. Gtk.Gauge.LED_Rectangualar</A><hr>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#11.6.2">11.6.2. Gtk.Gauge.LED_Rectangualar</A><br>
+&nbsp;&nbsp;&nbsp; <A href="#11.7">11.7. Valves</A><BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#11.7.1">11.7.1. Gtk.Valve.Round_90</A><hr>
 <b><big><big>12 </big></big></b><A href="#12"><big>Oscilloscope</big></A><br>
 &nbsp;&nbsp;&nbsp; <A href="#12.1">12.1. Oscilloscope widget</A><BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="#12.1.1">12.1.1. Channels</A><BR>
@@ -15050,9 +15463,7 @@ The version 1.0.<HR>
 &nbsp;&nbsp;&nbsp; <A href="#12.5">12.5. Plotting data with the oscilloscope</A><BR>
 &nbsp;&nbsp;&nbsp; <A href="#12.6">12.6. Asynchronous plotting</A><hr>
 <b><big><big>13 </big></big></b><A href="#13"><big>Editor widget</big></A><hr>
-<b><big><big>14 </big></big></b><A href="#14"><big>Installation</big></A><br>
-&nbsp;&nbsp;&nbsp; <A href="#14.1">14.1. Fedora packages repository</A><BR>
-&nbsp;&nbsp;&nbsp; <A href="#14.2">14.2. Debian packages repository</A><hr>
+<b><big><big>14 </big></big></b><A href="#14"><big>Installation</big></A><hr>
 <b><big><big>15 </big></big></b><A href="#15"><big>Changes log</big></A><hr>
 <b><big><big>16 </big></big></b><A href="#16"><big>Table of contents</big></A></td>
 </tr>

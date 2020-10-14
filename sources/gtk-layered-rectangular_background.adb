@@ -3,7 +3,7 @@
 --     Gtk.Layered.Rectangular_Background          Luebeck            --
 --  Implementation                                 Winter, 2010       --
 --                                                                    --
---                                Last revision :  22:46 07 Apr 2016  --
+--                                Last revision :  19:07 02 Jan 2018  --
 --                                                                    --
 --  This  library  is  free software; you can redistribute it and/or  --
 --  modify it under the terms of the GNU General Public  License  as  --
@@ -70,19 +70,21 @@ package body Gtk.Layered.Rectangular_Background is
 
    procedure Add_Rectangular_Background
              (  Under          : not null access Layer_Location'Class;
-                Height         : GDouble      := 1.0;
-                Width          : GDouble      := 1.0;
+                Height         : GDouble     := 1.0;
+                Width          : GDouble     := 1.0;
                 Center         : Cairo_Tuple := (0.0, 0.0);
-                Rotation_Angle : GDouble      := 0.0;
-                Corner_Radius  : GDouble      := 0.0;
+                Rotation_Angle : GDouble     := 0.0;
+                Corner_Radius  : GDouble     := 0.0;
                 Color          : Gdk_Color   := RGB (0.0, 0.0, 0.0);
-                Border_Width   : GDouble            := 0.0;
-                Border_Depth   : GDouble            := 1.0;
+                Border_Width   : GDouble     := 0.0;
+                Border_Depth   : GDouble     := 1.0;
                 Border_Color   : Border_Color_Type := Default_Color;
                 Border_Shadow  : Gtk_Shadow_Type   := Shadow_In;
-                Deepened       : Boolean           := False;
-                Scaled         : Boolean           := False;
-                Widened        : Boolean           := False
+                Deepened       : Boolean     := False;
+                Lens_Reflex    : Gdk_RGBA     := (1.0, 1.0, 1.0, 0.0);
+                Lens_Shadow    : Gdk_RGBA     := (0.0, 0.0, 0.0, 0.0);
+                Scaled         : Boolean     := False;
+                Widened        : Boolean     := False
              )  is
       Ptr   : Rectangular_Background_Ptr :=
                  new Rectangular_Background_Layer;
@@ -104,7 +106,9 @@ package body Gtk.Layered.Rectangular_Background is
          Border_Width   => Border_Width,
          Border_Depth   => Border_Depth,
          Border_Color   => Border_Color,
-         Border_Shadow  => Border_Shadow
+         Border_Shadow  => Border_Shadow,
+         Lens_Reflex    => Lens_Reflex,
+         Lens_Shadow    => Lens_Shadow
       );
    exception
       when others =>
@@ -114,19 +118,21 @@ package body Gtk.Layered.Rectangular_Background is
 
    function Add_Rectangular_Background
             (  Under          : not null access Layer_Location'Class;
-               Height         : GDouble      := 1.0;
-               Width          : GDouble      := 1.0;
+               Height         : GDouble     := 1.0;
+               Width          : GDouble     := 1.0;
                Center         : Cairo_Tuple := (0.0, 0.0);
-               Rotation_Angle : GDouble      := 0.0;
-               Corner_Radius  : GDouble      := 0.0;
+               Rotation_Angle : GDouble     := 0.0;
+               Corner_Radius  : GDouble     := 0.0;
                Color          : Gdk_Color   := RGB (0.0, 0.0, 0.0);
-               Border_Width   : GDouble            := 0.0;
-               Border_Depth   : GDouble            := 1.0;
+               Border_Width   : GDouble     := 0.0;
+               Border_Depth   : GDouble     := 1.0;
                Border_Color   : Border_Color_Type := Default_Color;
                Border_Shadow  : Gtk_Shadow_Type   := Shadow_In;
-               Deepened       : Boolean           := False;
-               Scaled         : Boolean           := False;
-               Widened        : Boolean           := False
+               Deepened       : Boolean     := False;
+               Lens_Reflex    : Gdk_RGBA    := (1.0, 1.0, 1.0, 0.0);
+               Lens_Shadow    : Gdk_RGBA    := (0.0, 0.0, 0.0, 0.0);
+               Scaled         : Boolean     := False;
+               Widened        : Boolean     := False
             )  return not null access Rectangular_Background_Layer is
       Ptr   : Rectangular_Background_Ptr :=
                  new Rectangular_Background_Layer;
@@ -148,7 +154,9 @@ package body Gtk.Layered.Rectangular_Background is
          Border_Width   => Border_Width,
          Border_Depth   => Border_Depth,
          Border_Color   => Border_Color,
-         Border_Shadow  => Border_Shadow
+         Border_Shadow  => Border_Shadow,
+         Lens_Reflex    => Lens_Reflex,
+         Lens_Shadow    => Lens_Shadow
       );
       return Layer'Unchecked_Access;
    exception
@@ -443,7 +451,9 @@ package body Gtk.Layered.Rectangular_Background is
                 Border_Width   : GDouble;
                 Border_Depth   : GDouble;
                 Border_Color   : Border_Color_Type;
-                Border_Shadow  : Gtk_Shadow_Type
+                Border_Shadow  : Gtk_Shadow_Type;
+                Lens_Reflex    : Gdk_RGBA;
+                Lens_Shadow    : Gdk_RGBA
              )  is
    begin
       if 2.0 * Corner_Radius > Height then
@@ -468,7 +478,9 @@ package body Gtk.Layered.Rectangular_Background is
          Border_Width  => Border_Width,
          Border_Depth  => Border_Depth,
          Border_Color  => Border_Color,
-         Border_Shadow => Border_Shadow
+         Border_Shadow => Border_Shadow,
+         Lens_Reflex   => Lens_Reflex,
+         Lens_Shadow   => Lens_Shadow
       );
    end Set;
 
