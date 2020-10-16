@@ -10,4 +10,4 @@ project-files = ["sources/aicwl.gpr"]
 tags = ["widgets", "gauge", "graphics", "ui", "gtk"]
 
 [[depends-on]]
-gtkada = "^19"
+libgtkada = "^19"
