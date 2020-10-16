@@ -1,6 +1,6 @@
 description = "Ada Industrial Control Widgets Library"
 name = "aicwl"
-version = "3.24"
+version = "3.24.0"
 authors = ["Dmitry A. Kazakov <mailbox@dmitry-kazakov.de>"]
 website = "http://www.dmitry-kazakov.de/ada/aicwl.htm"
 licenses = ["GMGPL 2.0"]
