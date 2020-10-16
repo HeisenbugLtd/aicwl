@@ -1,13 +1,13 @@
 description = "Ada Industrial Control Widgets Library"
-name = "AICWL"
+name = "aicwl"
 version = "3.24"
 authors = ["Dmitry A. Kazakov <mailbox@dmitry-kazakov.de>"]
 website = "http://www.dmitry-kazakov.de/ada/aicwl.htm"
-licenses = ["GPL2"]
+licenses = ["GPL 2.0"]
 maintainers = ["vinzent@heisenbug.eu"]
 maintainers-logins = ["Jellix"]
 project-files = ["sources/aicwl.gpr"]
 tags = ["widgets", "gauge", "graphics", "ui", "gtk"]
 
-[depends]
-gtkada = "^3.14"
+[[depends-on]]
+libgtkada = "^19"
