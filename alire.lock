@@ -9,4 +9,10 @@ fulfilment = "hinted"
 pinned = false
 transitivity = "direct"
 versions = ">=17"
+[[solution.state]]
+crate = "libgio"
+fulfilment = "missed"
+pinned = false
+transitivity = "direct"
+versions = "^2.0"
 
