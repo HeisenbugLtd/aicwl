@@ -9,5 +9,12 @@ maintainers-logins = ["Jellix"]
 project-files = ["sources/aicwl.gpr"]
 tags = ["widgets", "gauge", "graphics", "ui", "gtk"]
 
+[gpr-externals]
+Legacy                 = ["Ada95", "Ada2005", "Ada2012"]
+Development            = ["Debug", "Release", "Profile"]
+Target_OS              = ["Windows", "Windows_NT", "Linux", "UNIX", "OSX", "FreeBSD", "auto"]
+Arch                   = ["x86_64", "i686", "armhf", "aarch64", "auto"]
+Object_Dir_Scheme_Type = [".", "nested"]
+
 [[depends-on]]
 gtkada = ">=17"
