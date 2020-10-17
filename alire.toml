@@ -18,3 +18,4 @@ Object_Dir_Scheme_Type = [".", "nested"]
 
 [[depends-on]]
 gtkada = ">=17"
+libgio = "2.0"
