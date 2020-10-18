@@ -41,7 +41,7 @@ licenses = ["GMGPL 2.0", # according to website (http://www.dmitry-kazakov.de/ad
             "LGPL 3.0"]  # according to sourceforge (https://sf.net/projects/aicwl)
 maintainers = ["Vinzent \"Jellix\" Saranen <vinzent@heisenbug.eu>"]
 maintainers-logins = ["Jellix"]
-note="Due to missing libraries on the test machines, most executables are not currently built."
+notes = "Due to missing libraries on the test machines, most executables are not currently built."
 project-files = ["sources/aicwl.gpr",
                  "sources/aicwl-editor.gpr",
                  # Next three extend simple components
