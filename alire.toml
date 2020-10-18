@@ -159,4 +159,3 @@ Development = ["Debug", "Release", "Profile"] # defaults to "Debug"
 
 [[depends-on]]
 gtkada = ">=17"
-libgio = "^2.0"
