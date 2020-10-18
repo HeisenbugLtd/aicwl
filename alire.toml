@@ -21,9 +21,9 @@ For further information, visit the
 
 Maintainer's note:
 
-This Alire crate is packaged rather minimalistic to keep dependencies on
-external libraries at a minimum. The crate covers the core functionality of AICWL,
-though, so it should be sufficient for most needs.
+This Alire crate is packaged in a rather minimalistic way to keep dependencies
+on external libraries at a minimum. The crate covers the core functionality of
+AICWL, though, so it should be sufficient for most needs.
 
 For example, the original distribution has references to
 [Simple Components](http://www.dmitry-kazakov.de/ada/components.htm) which are
@@ -35,11 +35,11 @@ to cover the core functionality.
 """
 name = "aicwl"
 version = "3.24.1"
-authors = ["Dmitry A. Kazakov"]
+authors = ["Dmitry A. Kazakov <mailbox@dmitry-kazakov.de>"]
 website = "http://www.dmitry-kazakov.de/ada/aicwl.htm"
 licenses = ["GMGPL 2.0", # according to website (http://www.dmitry-kazakov.de/ada/aicwl.htm)
             "LGPL 3.0"]  # according to sourceforge (https://sf.net/projects/aicwl)
-maintainers = ["vinzent@heisenbug.eu"]
+maintainers = ["Vinzent \"Jellix\" Saranen <vinzent@heisenbug.eu>"]
 maintainers-logins = ["Jellix"]
 project-files = ["sources/aicwl.gpr",
                  "sources/aicwl-editor.gpr",
@@ -139,11 +139,23 @@ executables = [# examples/on_line_plotter/on_line_plotter.gpr
 tags = ["widgets", "gauge", "graphics", "ui", "gtk"]
 
 [gpr-externals]
-Legacy                 = ["Ada95", "Ada2005", "Ada2012"]
-Development            = ["Debug", "Release", "Profile"]
-Target_OS              = ["Windows", "Windows_NT", "Linux", "UNIX", "OSX", "FreeBSD", "auto"]
-Arch                   = ["x86_64", "i686", "armhf", "aarch64", "auto"]
-Object_Dir_Scheme_Type = [".", "nested"]
+Legacy      = ["Ada95", "Ada2005", "Ada2012"] # defaults to "Ada2012"
+Development = ["Debug", "Release", "Profile"] # defaults to "Debug"
+
+# Target_OS   = ["Windows", "Windows_NT", "Linux", "UNIX", "OSX", "FreeBSD", "auto"]
+# arch        = ["x86_64", "i686", "armhf", "aarch64", "auto"]
+#
+# Note: Arch and Target_OS are determined automatically from Project'Target, so
+#       no need to have them set explicitely.
+#
+# Object_Dir  = [".", "nested"]
+#
+# Note: Object_Dir works as follows: If it's ".", it will remain so, if it's
+#       "nested", Object_Dir will become roughly obj/{OS}/{arch}/{Development},
+#       e.g. "obj/linux/x86_64/debug", all other cases result in Object_Dir
+#       being unchanged.
+#       Hence we should leave it as is (the default is "."), trusting Alire to
+#       set an appropriate one.
 
 [[depends-on]]
 gtkada = ">=17"
