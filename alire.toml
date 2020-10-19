@@ -30,7 +30,7 @@ For example, the original distribution has references to
 not strictly necessary for the core functionality of the library.
 """
 name = "aicwl"
-version = "3.24.1"
+version = "3.24.2"
 authors = ["Dmitry A. Kazakov <mailbox@dmitry-kazakov.de>"]
 website = "http://www.dmitry-kazakov.de/ada/aicwl.htm"
 licenses = ["GMGPL 2.0", # according to website (http://www.dmitry-kazakov.de/ada/aicwl.htm)
