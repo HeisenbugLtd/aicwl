@@ -1009,7 +1009,12 @@ package body Gtk.Main.Router is
                   Buffer_X,
                   Buffer_Y
                );
-               Dialog.Get_Iter_At_Location (Start, Buffer_X, Buffer_Y);
+               --  Gtk.Missed.Get_Iter_At_Location
+               --  (  Dialog,
+               --     Start,
+               --     Buffer_X,
+               --     Buffer_Y
+               --  );
                Copy (Start, Stop);
                Moved := Standard.True;
                while Moved and then not Starts_Line (Start) loop
