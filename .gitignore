@@ -1,0 +1,8 @@
+alire/
+
+# If Object_Dir_Scheme_Type is ".", objects end up in the source directory.
+# Rather don't do that, but if you do, we should ignore the files
+sources/*.ali
+sources/*.o
+sources/*.stderr
+sources/*.stdout

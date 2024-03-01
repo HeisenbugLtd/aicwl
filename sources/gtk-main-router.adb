@@ -970,7 +970,7 @@ package body Gtk.Main.Router is
       Menu   : Gtk_Menu;
       Item   : Gtk_Image_Menu_Item;
       Icon   : Gtk_Image;
-      Start  : Gtk_Text_Iter;
+      Start  : aliased Gtk_Text_Iter;
       Stop   : Gtk_Text_Iter;
       Can_Go : Boolean := Standard.False;
    begin
@@ -1001,6 +1001,7 @@ package body Gtk.Main.Router is
                Buffer_X : GInt;
                Buffer_Y : GInt;
                Moved    : Boolean;
+               Res      : Boolean;
             begin
                Dialog.Window_To_Buffer_Coords
                (  Text_Window_Widget,
@@ -1009,7 +1010,7 @@ package body Gtk.Main.Router is
                   Buffer_X,
                   Buffer_Y
                );
-               Dialog.Get_Iter_At_Location (Start, Buffer_X, Buffer_Y);
+               Res := Dialog.Get_Iter_At_Location (Start'Access, Buffer_X, Buffer_Y);
                Copy (Start, Stop);
                Moved := Standard.True;
                while Moved and then not Starts_Line (Start) loop
